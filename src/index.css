@@ -49,15 +49,6 @@
     --warning: 38 90% 55%;
     --info: 200 95% 65%;
 
-    /* Glass effect for modern look */
-    --glass-bg: 0 0% 100% / 0.7;
-    --glass-border: 214 32% 91% / 0.5;
-
-    /* Gradients for hero sections */
-    --gradient-primary: linear-gradient(135deg, hsl(158 60% 45%) 0%, hsl(158 70% 55%) 100%);
-    --gradient-subtle: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(200 50% 96%) 100%);
-    --grid-pattern: radial-gradient(circle at 1px 1px, hsl(215 25% 27% / 0.05) 1px, transparent 0);
-
     /* Shadows for depth */
     --shadow-soft: 0 4px 20px hsl(215 25% 27% / 0.08);
     --shadow-medium: 0 8px 30px hsl(215 25% 27% / 0.12);
@@ -98,20 +89,11 @@
     --warning: 38 90% 60%;
     --info: 200 95% 70%;
 
-    --glass-bg: 222 47% 11% / 0.8;
-    --glass-border: 217 33% 17% / 0.5;
-
-    --gradient-primary: linear-gradient(135deg, hsl(158 60% 50%) 0%, hsl(158 70% 60%) 100%);
-    --gradient-subtle: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(217 33% 17%) 100%);
-    --grid-pattern: radial-gradient(circle at 1px 1px, hsl(210 40% 98% / 0.05) 1px, transparent 0);
-
     --shadow-soft: 0 4px 20px hsl(222 47% 11% / 0.3);
     --shadow-medium: 0 8px 30px hsl(222 47% 11% / 0.4);
     --shadow-strong: 0 20px 40px hsl(222 47% 11% / 0.5);
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -136,9 +118,8 @@
 
   /* Glass morphism cards */
   .card-glass {
-    @apply rounded-2xl border backdrop-blur-sm shadow-xl;
-    background: hsl(var(--glass-bg));
-    border-color: hsl(var(--glass-border));
+    @apply rounded-2xl border backdrop-blur-sm shadow-xl bg-card/70 dark:bg-card/60;
+    border-color: hsl(var(--border) / 0.5);
   }
 
   /* Medical section spacing */
@@ -148,7 +129,7 @@
 
   /* Grid pattern background */
   .bg-grid {
-    background-image: var(--grid-pattern);
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--foreground) / 0.05) 1px, transparent 0);
     background-size: 20px 20px;
   }
 
@@ -191,11 +172,11 @@
 
   /* Gradient backgrounds */
   .bg-gradient-primary {
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
   }
 
   .bg-gradient-subtle {
-    background: var(--gradient-subtle);
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
 
   /* Shadow utilities */
