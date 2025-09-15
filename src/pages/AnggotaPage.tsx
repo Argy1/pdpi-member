@@ -59,11 +59,31 @@ export default function AnggotaPage() {
       const query = filters.query.toLowerCase()
       result = result.filter(member => 
         member.nama.toLowerCase().includes(query) ||
-        member.rumahSakit?.toLowerCase().includes(query) ||
+        member.gelar?.toLowerCase().includes(query) ||
+        member.npa?.toLowerCase().includes(query) ||
+        member.spesialis?.toLowerCase().includes(query) ||
+        member.subspesialis?.toLowerCase().includes(query) ||
+        member.tempatLahir?.toLowerCase().includes(query) ||
+        member.tanggalLahir?.toLowerCase().includes(query) ||
+        member.jenisKelamin?.toLowerCase().includes(query) ||
+        member.alamat?.toLowerCase().includes(query) ||
         member.kota?.toLowerCase().includes(query) ||
         member.provinsi?.toLowerCase().includes(query) ||
         member.pd?.toLowerCase().includes(query) ||
-        member.subspesialis?.toLowerCase().includes(query)
+        member.rumahSakit?.toLowerCase().includes(query) ||
+        member.unitKerja?.toLowerCase().includes(query) ||
+        member.jabatan?.toLowerCase().includes(query) ||
+        member.nik?.toLowerCase().includes(query) ||
+        member.noSTR?.toLowerCase().includes(query) ||
+        member.strBerlakuSampai?.toLowerCase().includes(query) ||
+        member.noSIP?.toLowerCase().includes(query) ||
+        member.sipBerlakuSampai?.toLowerCase().includes(query) ||
+        member.tahunLulus?.toString().includes(query) ||
+        member.status?.toLowerCase().includes(query) ||
+        member.kontakEmail?.toLowerCase().includes(query) ||
+        member.kontakTelepon?.toLowerCase().includes(query) ||
+        member.website?.toLowerCase().includes(query) ||
+        member.sosialMedia?.toLowerCase().includes(query)
       )
     }
 
@@ -161,7 +181,7 @@ export default function AnggotaPage() {
 
           {/* Search Bar */}
           <SearchBar 
-            placeholder="Cari nama, rumah sakit, kota, provinsi, PD..."
+            placeholder="Cari semua data anggota (nama, NPA, alamat, telepon, dll)..."
             className="max-w-xl"
           />
         </div>

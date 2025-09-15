@@ -11,7 +11,7 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ 
-  placeholder = "Cari nama, rumah sakit, kota, provinsi, PD...",
+  placeholder = "Cari semua data anggota (nama, NPA, alamat, telepon, dll)...",
   size = "default",
   className = ""
 }: SearchBarProps) {
