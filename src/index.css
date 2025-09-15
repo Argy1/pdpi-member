@@ -1,3 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 27%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+    --primary: 158 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 158 60% 40%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 200 95% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 158 60% 45%;
+    --radius: 1rem;
+    --success: 142 70% 45%;
+    --warning: 38 90% 55%;
+    --info: 200 95% 65%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 158 60% 50%;
+    --primary-foreground: 222 47% 11%;
+    --primary-hover: 158 60% 55%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 200 95% 65%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 158 60% 50%;
+    --success: 142 70% 50%;
+    --warning: 38 90% 60%;
+    --info: 200 95% 70%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .container-pdpi {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .card-glass {
+    @apply rounded-2xl border backdrop-blur-sm shadow-xl bg-card/70 dark:bg-card/60;
+  }
+
+  .section-spacing {
+    @apply py-10 md:py-14;
+  }
+
+  .bg-grid {
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--foreground) / 0.05) 1px, transparent 0);
+    background-size: 20px 20px;
+  }
+
+  .transition-smooth {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .input-hero {
+    @apply h-12 rounded-xl border-2 border-muted focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all duration-200;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium cursor-pointer transition-smooth bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .chip-selected {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+}
+
+@layer utilities {
+  .text-medical-body {
+    @apply text-foreground/90 leading-relaxed tracking-normal;
+  }
+
+  .heading-medical {
+    @apply font-semibold text-foreground tracking-tight;
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
+  }
+
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
+  }
+}
