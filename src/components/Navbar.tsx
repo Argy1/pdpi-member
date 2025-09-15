@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserCircle, Stethoscope } from "lucide-react"
+import { UserCircle } from "lucide-react"
+import logoImage from "@/assets/logo-pdpi.png"
 
 export function Navbar() {
   return (
@@ -10,12 +11,16 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 transition-smooth hover:opacity-80">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary text-white">
-              <Stethoscope className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+              <img 
+                src={logoImage} 
+                alt="PDPI Logo" 
+                className="h-10 w-10 object-contain"
+              />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-lg font-semibold heading-medical">PDPI</h1>
-              <p className="text-xs text-muted-foreground">Anggota Directory</p>
+              <p className="text-xs text-muted-foreground">Direktori Anggota</p>
             </div>
           </Link>
 

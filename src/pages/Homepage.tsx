@@ -5,6 +5,7 @@ import { StatCard } from "@/components/StatCard"
 import { SearchBar } from "@/components/SearchBar"
 import { ProvinceChips } from "@/components/ProvinceChips"
 import { HowToUse } from "@/components/HowToUse"
+import logoImage from "@/assets/logo-pdpi.png"
 
 export default function Homepage() {
   return (
@@ -13,17 +14,27 @@ export default function Homepage() {
       <section className="section-spacing bg-gradient-subtle bg-grid">
         <div className="container-pdpi">
           <div className="relative">
-            <div className="text-center space-y-6 max-w-4xl mx-auto">
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-bold heading-medical">
-                  Daftar Anggota{" "}
-                  <span className="bg-gradient-primary bg-clip-text text-transparent">
-                    PDPI
-                  </span>
-                </h1>
-                <p className="text-xl text-medical-body max-w-2xl mx-auto">
-                  Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi profesional
-                </p>
+            <div className="text-center space-y-8 max-w-4xl mx-auto">
+              {/* Logo and Title */}
+              <div className="flex flex-col items-center space-y-6">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full overflow-hidden bg-white shadow-xl">
+                  <img 
+                    src={logoImage} 
+                    alt="PDPI Logo" 
+                    className="h-20 w-20 object-contain"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <h1 className="text-4xl md:text-6xl font-bold heading-medical">
+                    Daftar Anggota{" "}
+                    <span className="bg-gradient-primary bg-clip-text text-transparent">
+                      PDPI
+                    </span>
+                  </h1>
+                  <p className="text-xl text-medical-body max-w-2xl mx-auto">
+                    Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi profesional
+                  </p>
+                </div>
               </div>
 
               {/* CTA Button */}

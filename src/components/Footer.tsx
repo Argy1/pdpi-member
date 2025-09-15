@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Stethoscope } from "lucide-react"
+import logoImage from "@/assets/logo-pdpi.png"
 
 export function Footer() {
   return (
@@ -9,8 +9,12 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary text-white">
-                <Stethoscope className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden bg-white shadow-md">
+                <img 
+                  src={logoImage} 
+                  alt="PDPI Logo" 
+                  className="h-8 w-8 object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-semibold text-sm">PDPI Directory</h3>

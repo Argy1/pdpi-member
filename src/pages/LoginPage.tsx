@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Stethoscope, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Eye, EyeOff, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import logoImage from "@/assets/logo-pdpi.png"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -40,8 +41,12 @@ export default function LoginPage() {
           <Card className="w-full max-w-md card-glass">
             <CardHeader className="text-center space-y-4">
               <div className="flex justify-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-primary text-white">
-                  <Stethoscope className="h-7 w-7" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full overflow-hidden bg-white shadow-lg">
+                  <img 
+                    src={logoImage} 
+                    alt="PDPI Logo" 
+                    className="h-12 w-12 object-contain"
+                  />
                 </div>
               </div>
               <div className="space-y-2">
