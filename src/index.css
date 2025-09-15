@@ -4,47 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Medical PDPI Design System - Clean, Professional, Modern */
-
 @layer base {
   :root {
-    /* Global Design Tokens */
-    --radius: 1rem;
-    
-    /* Medical Color Palette */
     --background: 0 0% 100%;
     --foreground: 215 25% 27%;
-
     --card: 0 0% 100%;
     --card-foreground: 215 25% 27%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
-
-    /* Primary: Teal for medical trust */
     --primary: 158 60% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 158 60% 40%;
-
-    /* Secondary: Soft slate */
     --secondary: 210 40% 96%;
     --secondary-foreground: 215 25% 27%;
-
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-
-    /* Accent: Sky for highlights */
     --accent: 200 95% 65%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 158 60% 45%;
-
-    /* Semantic colors for medical context */
+    --radius: 1rem;
     --success: 142 70% 45%;
     --warning: 38 90% 55%;
     --info: 200 95% 65%;
@@ -53,33 +34,23 @@
   .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 158 60% 50%;
     --primary-foreground: 222 47% 11%;
-    --primary-hover: 158 60% 55%;
-
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-
     --accent: 200 95% 65%;
     --accent-foreground: 222 47% 11%;
-
     --destructive: 0 75% 60%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 158 60% 50%;
-
     --success: 142 70% 50%;
     --warning: 38 90% 60%;
     --info: 200 95% 70%;
@@ -92,11 +63,6 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-  }
-
-  .focus-visible {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
   }
 }
 
@@ -106,8 +72,7 @@
   }
 
   .card-glass {
-    @apply rounded-2xl border backdrop-blur-sm shadow-xl bg-card/70 dark:bg-card/60;
-    border-color: hsl(var(--border) / 0.5);
+    @apply rounded-2xl border backdrop-blur-sm shadow-xl bg-card/70;
   }
 
   .section-spacing {
@@ -115,7 +80,7 @@
   }
 
   .bg-grid {
-    background-image: radial-gradient(circle at 1px 1px, hsl(var(--foreground) / 0.05) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.05) 1px, transparent 0);
     background-size: 20px 20px;
   }
 
@@ -123,17 +88,13 @@
     @apply transition-all duration-200 ease-out;
   }
 
-  .badge-medical {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-medium;
-  }
-
   .input-hero {
     @apply h-12 rounded-xl border-2 border-muted focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all duration-200;
   }
 
   .chip {
-    @apply inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium cursor-pointer transition-smooth;
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium cursor-pointer;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all duration-200;
   }
 
   .chip-selected {
@@ -143,30 +104,18 @@
 
 @layer utilities {
   .text-medical-body {
-    @apply text-foreground/90 leading-relaxed tracking-normal;
+    @apply text-foreground/90 leading-relaxed;
   }
 
   .heading-medical {
-    @apply font-semibold text-foreground tracking-tight;
+    @apply font-semibold text-foreground;
   }
 
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
+    background: linear-gradient(135deg, hsl(158 60% 45%) 0%, hsl(158 70% 55%) 100%);
   }
 
   .bg-gradient-subtle {
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
-  }
-
-  .shadow-soft {
-    box-shadow: 0 4px 20px hsla(var(--foreground), 0.08);
-  }
-
-  .shadow-medical {
-    box-shadow: 0 8px 30px hsla(var(--foreground), 0.12);
-  }
-
-  .shadow-strong {
-    box-shadow: 0 20px 40px hsla(var(--foreground), 0.15);
+    background: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(200 50% 96%) 100%);
   }
 }
