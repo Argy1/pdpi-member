@@ -27,7 +27,7 @@ export default function Homepage() {
                 <div className="space-y-4">
                   <h1 className="text-4xl md:text-6xl font-bold heading-medical">
                     Daftar Anggota{" "}
-                    <span className="bg-gradient-primary bg-clip-text text-transparent">
+                    <span className="text-primary">
                       PDPI
                     </span>
                   </h1>
