@@ -522,7 +522,253 @@ export default function AdminMemberForm() {
             </Card>
           </TabsContent>
 
-          {/* Add similar simplified versions for legal, kontak, and media tabs */}
+          {/* Legal Tab */}
+          <TabsContent value="legal">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informasi Legal</CardTitle>
+                <CardDescription>
+                  Dokumen dan perizinan profesional anggota
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nik">NIK *</Label>
+                      <Input
+                        id="nik"
+                        value={formData.nik}
+                        onChange={(e) => handleInputChange('nik', e.target.value)}
+                        placeholder="1234567890123456"
+                        maxLength={16}
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="noSTR">Nomor STR *</Label>
+                      <Input
+                        id="noSTR"
+                        value={formData.noSTR}
+                        onChange={(e) => handleInputChange('noSTR', e.target.value)}
+                        placeholder="STR123456789"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>STR Berlaku Sampai</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !formData.strBerlakuSampai && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.strBerlakuSampai ? (
+                              format(formData.strBerlakuSampai, "dd MMMM yyyy")
+                            ) : (
+                              <span>Pilih tanggal</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.strBerlakuSampai}
+                            onSelect={(date) => handleInputChange('strBerlakuSampai', date)}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="noSIP">Nomor SIP</Label>
+                      <Input
+                        id="noSIP"
+                        value={formData.noSIP}
+                        onChange={(e) => handleInputChange('noSIP', e.target.value)}
+                        placeholder="SIP123456789"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>SIP Berlaku Sampai</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !formData.sipBerlakuSampai && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.sipBerlakuSampai ? (
+                              format(formData.sipBerlakuSampai, "dd MMMM yyyy")
+                            ) : (
+                              <span>Pilih tanggal</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.sipBerlakuSampai}
+                            onSelect={(date) => handleInputChange('sipBerlakuSampai', date)}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
+                      <Input
+                        id="tahunLulus"
+                        value={formData.tahunLulus}
+                        onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
+                        placeholder="2010"
+                        type="number"
+                        min="1970"
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Kontak Tab */}
+          <TabsContent value="kontak">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informasi Kontak</CardTitle>
+                <CardDescription>
+                  Data kontak dan komunikasi anggota
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="kontakEmail">Email *</Label>
+                      <Input
+                        id="kontakEmail"
+                        type="email"
+                        value={formData.kontakEmail}
+                        onChange={(e) => handleInputChange('kontakEmail', e.target.value)}
+                        placeholder="dokter@email.com"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="kontakTelepon">Nomor Telepon *</Label>
+                      <Input
+                        id="kontakTelepon"
+                        type="tel"
+                        value={formData.kontakTelepon}
+                        onChange={(e) => handleInputChange('kontakTelepon', e.target.value)}
+                        placeholder="081234567890"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <h4 className="font-medium mb-2">Catatan Kontak</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Email dan nomor telepon akan digunakan untuk komunikasi resmi dari PDPI. 
+                        Pastikan informasi yang dimasukkan aktif dan dapat dihubungi.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Media Tab */}
+          <TabsContent value="media">
+            <Card>
+              <CardHeader>
+                <CardTitle>Media & Website</CardTitle>
+                <CardDescription>
+                  Informasi website dan media sosial anggota
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="website">Website Pribadi</Label>
+                      <Input
+                        id="website"
+                        type="url"
+                        value={formData.website}
+                        onChange={(e) => handleInputChange('website', e.target.value)}
+                        placeholder="https://www.dokteranda.com"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="sosialMedia">Media Sosial</Label>
+                      <Textarea
+                        id="sosialMedia"
+                        value={formData.sosialMedia}
+                        onChange={(e) => handleInputChange('sosialMedia', e.target.value)}
+                        placeholder="Instagram: @dokter_anda&#10;LinkedIn: linkedin.com/in/dokter-anda&#10;Twitter: @dokter_anda"
+                        rows={4}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <h4 className="font-medium mb-2">Panduan Media Sosial</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• Cantumkan akun media sosial yang bersifat profesional</li>
+                        <li>• Gunakan format: Platform: @username atau URL lengkap</li>
+                        <li>• Pisahkan setiap platform dengan baris baru</li>
+                        <li>• Informasi ini akan ditampilkan di profil publik anggota</li>
+                      </ul>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Status Keanggotaan *</Label>
+                      <Select 
+                        value={formData.status} 
+                        onValueChange={(value) => handleInputChange('status', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Aktif">Aktif</SelectItem>
+                          <SelectItem value="Tidak Aktif">Tidak Aktif</SelectItem>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </form>
     </div>
