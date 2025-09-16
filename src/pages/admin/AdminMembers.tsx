@@ -33,7 +33,8 @@ import {
   Trash2, 
   UserPlus,
   SortAsc,
-  SortDesc
+  SortDesc,
+  ArrowLeft
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -170,7 +171,15 @@ export default function AdminMembers() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Kembali ke Dashboard
+              </Link>
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold tracking-tight">Manajemen Anggota</h1>
           <p className="text-muted-foreground">
             Kelola data anggota PDPI
