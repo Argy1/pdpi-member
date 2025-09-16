@@ -1,7 +1,9 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, Building, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, UserPlus, Building, CheckCircle, Settings, FileText, BarChart3, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface DashboardStats {
@@ -125,6 +127,86 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">Akses Cepat</h2>
+          <p className="text-muted-foreground text-sm">
+            Navigasi cepat ke fitur administrasi utama
+          </p>
+        </div>
+        
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold">Manajemen Anggota</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Kelola data anggota, tambah anggota baru, dan update informasi
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="mt-4">
+                <Button asChild className="w-full">
+                  <Link to="/admin/anggota">
+                    Kelola Anggota
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold">Laporan & Statistik</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Lihat laporan keanggotaan dan statistik data
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="mt-4">
+                <Button variant="outline" className="w-full" disabled>
+                  Segera Tersedia
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Settings className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold">Pengaturan Sistem</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Konfigurasi sistem dan pengaturan admin
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="mt-4">
+                <Button variant="outline" className="w-full" disabled>
+                  Segera Tersedia
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
