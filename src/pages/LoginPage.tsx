@@ -22,16 +22,7 @@ export default function LoginPage() {
     password: ""
   })
 
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        navigate("/")
-      }
-    }
-    checkUser()
-  }, [navigate])
+  // Note: Removed automatic redirect check to allow access to login page
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
