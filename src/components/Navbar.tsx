@@ -1,10 +1,20 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserCircle } from "lucide-react"
+import { UserCircle, LogOut, Settings } from "lucide-react"
 import logoImage from "@/assets/logo-pdpi.png"
+import { useAuth } from "@/contexts/AuthContext"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function Navbar() {
+  const { user, profile, signOut, isAdmin } = useAuth()
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container-pdpi">
@@ -43,17 +53,51 @@ export function Navbar() {
           {/* Right Section */}
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="hidden sm:flex focus-visible"
-              asChild
-            >
-              <Link to="/login">
-                <UserCircle className="h-4 w-4 mr-2" />
-                Login
-              </Link>
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="hidden sm:flex focus-visible">
+                    <UserCircle className="h-4 w-4 mr-2" />
+                    {user.email}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {profile && (
+                    <DropdownMenuItem disabled>
+                      Role: {profile.role}
+                    </DropdownMenuItem>
+                  )}
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Dashboard Admin
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="hidden sm:flex focus-visible"
+                asChild
+              >
+                <Link to="/login">
+                  <UserCircle className="h-4 w-4 mr-2" />
+                  Login
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

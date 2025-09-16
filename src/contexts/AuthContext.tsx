@@ -104,9 +104,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return profile ? roles.includes(profile.role) : false;
   };
 
-  const isAdmin = hasRole(['admin', 'ADMIN_PUSAT', 'ADMIN_CABANG']);
-  const isPusatAdmin = hasRole(['ADMIN_PUSAT']);
-  const isCabangAdmin = hasRole(['ADMIN_CABANG']);
+  const isAdmin = hasRole(['admin', 'admin_pusat', 'admin_cabang', 'ADMIN_PUSAT', 'ADMIN_CABANG']);
+  const isPusatAdmin = hasRole(['admin_pusat', 'ADMIN_PUSAT']);
+  const isCabangAdmin = hasRole(['admin_cabang', 'ADMIN_CABANG']);
 
   const value = {
     user,
