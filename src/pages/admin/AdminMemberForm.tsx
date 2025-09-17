@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useMemberContext } from '@/contexts/MemberContext';
+import { ExcelImport } from '@/components/admin/ExcelImport';
 
 interface MemberFormData {
   // Identitas
@@ -214,6 +215,12 @@ export default function AdminMemberForm() {
           </Button>
         </div>
       </div>
+
+      {!isEditing && (
+        <div className="mb-6">
+          <ExcelImport />
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Tabs defaultValue="identitas" className="space-y-6">
