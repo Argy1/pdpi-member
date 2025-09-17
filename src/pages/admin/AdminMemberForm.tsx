@@ -15,6 +15,7 @@ import { CalendarIcon, Upload, ArrowLeft, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useMemberContext } from '@/contexts/MemberContext';
 
 interface MemberFormData {
   // Identitas
@@ -93,6 +94,7 @@ export default function AdminMemberForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addMember, updateMember } = useMemberContext();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -150,11 +152,16 @@ export default function AdminMemberForm() {
     setLoading(true);
 
     try {
-      // In real implementation, this would be an API call
       console.log('Submitting form data:', formData);
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      if (isEditing) {
+        updateMember(id!, formData);
+      } else {
+        addMember(formData);
+      }
       
       toast({
         title: isEditing ? 'Data anggota diperbarui' : 'Anggota baru ditambahkan',

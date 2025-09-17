@@ -23,11 +23,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useMemberContext } from '@/contexts/MemberContext';
 import { 
   Search, 
   Filter, 
   Download, 
-  MoreHorizontal, 
+  MoreHorizontal,
   Eye, 
   Edit, 
   Trash2, 
@@ -70,8 +71,8 @@ const mockMembers = [
 ];
 
 export default function AdminMembers() {
-  const [members, setMembers] = useState(mockMembers);
-  const [filteredMembers, setFilteredMembers] = useState(mockMembers);
+  const { members, deleteMember } = useMemberContext();
+  const [filteredMembers, setFilteredMembers] = useState(members);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -131,8 +132,7 @@ export default function AdminMembers() {
 
   const handleDeleteMember = async (memberId: string) => {
     try {
-      // In real implementation, this would be an API call
-      setMembers(prev => prev.filter(m => m.id !== memberId));
+      deleteMember(memberId);
       toast({
         title: 'Anggota dihapus',
         description: 'Data anggota berhasil dihapus dari sistem.',
@@ -276,11 +276,11 @@ export default function AdminMembers() {
                   <TableHead>Status</TableHead>
                   <TableHead 
                     className="cursor-pointer"
-                    onClick={() => handleSort('tanggalDaftar')}
+                    onClick={() => handleSort('createdAt')}
                   >
                     <div className="flex items-center gap-2">
                       Tgl Daftar
-                      <SortIcon column="tanggalDaftar" />
+                      <SortIcon column="createdAt" />
                     </div>
                   </TableHead>
                   <TableHead className="text-right">Aksi</TableHead>
@@ -295,7 +295,7 @@ export default function AdminMembers() {
                     <TableCell>{member.rumahSakit}</TableCell>
                     <TableCell>{member.kota}, {member.provinsi}</TableCell>
                     <TableCell>{getStatusBadge(member.status)}</TableCell>
-                    <TableCell>{new Date(member.tanggalDaftar).toLocaleDateString('id-ID')}</TableCell>
+                    <TableCell>{new Date(member.createdAt).toLocaleDateString('id-ID')}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

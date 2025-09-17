@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { MemberProvider } from "@/contexts/MemberContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -22,7 +23,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="pdpi-theme">
       <AuthProvider>
-        <TooltipProvider>
+        <MemberProvider>
+          <TooltipProvider>
           <BrowserRouter>
             <Routes>
               {/* Public routes */}
@@ -61,7 +63,8 @@ const App = () => (
             <Toaster />
             <Sonner />
           </BrowserRouter>
-        </TooltipProvider>
+          </TooltipProvider>
+        </MemberProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>

@@ -7,10 +7,12 @@ import { MemberModal } from "@/components/MemberModal"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Member, MemberFilters, MemberSort } from "@/types/member"
-import { mockMembers, mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
+import { mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
+import { useMemberContext } from '@/contexts/MemberContext';
 import { ArrowUpDown, Users } from "lucide-react"
 
 export default function AnggotaPage() {
+  const { members } = useMemberContext();
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -52,7 +54,7 @@ export default function AnggotaPage() {
 
   // Filter and sort logic
   const filteredAndSortedMembers = useMemo(() => {
-    let result = [...mockMembers]
+    let result = [...members]
 
     // Apply filters
     if (filters.query) {
