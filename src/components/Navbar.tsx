@@ -51,15 +51,15 @@ export function Navbar() {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <ThemeToggle />
             
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="hidden sm:flex focus-visible">
-                    <UserCircle className="h-4 w-4 mr-2" />
-                    {user.email}
+                  <Button variant="outline" size="sm" className="focus-visible">
+                    <UserCircle className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
@@ -89,12 +89,12 @@ export function Navbar() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="hidden sm:flex focus-visible"
+                className="focus-visible"
                 asChild
               >
                 <Link to="/login">
-                  <UserCircle className="h-4 w-4 mr-2" />
-                  Login
+                  <UserCircle className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Login</span>
                 </Link>
               </Button>
             )}
