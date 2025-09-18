@@ -36,7 +36,7 @@ export class AnggotaAPI {
       let query = supabase
         .from('members')
         .select(`
-          id, nama, npa, gelar, tempat_tugas, 
+          id, nama, npa, gelar, gelar2, tempat_tugas, 
           kota_kabupaten, provinsi, status, 
           created_at, email, no_hp, cabang,
           thn_lulus, alumni

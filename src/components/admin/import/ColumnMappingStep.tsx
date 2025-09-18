@@ -22,7 +22,8 @@ const dbFields = {
   
   // Other optional fields
   npa: { label: 'NPA (Nomor Peserta Anggota)', required: false, type: 'text' },
-  gelar: { label: 'Gelar', required: false, type: 'text' },
+  gelar: { label: 'Gelar 1', required: false, type: 'text' },
+  gelar2: { label: 'Gelar 2', required: false, type: 'text' },
   spesialis: { label: 'Spesialis', required: false, type: 'text' },
   subspesialis: { label: 'Subspesialis', required: false, type: 'text' },
   jenisKelamin: { label: 'Jenis Kelamin (L/P)', required: false, type: 'text' },
@@ -67,7 +68,8 @@ export const ColumnMappingStep = () => {
     const mappingRules: { [key: string]: string[] } = {
       nama: ['nama', 'namalengkap', 'name', 'fullname'],
       npa: ['npa', 'nomoranggota', 'memberid', 'id'],
-      gelar: ['gelar', 'title', 'degree'],
+      gelar: ['gelar', 'gelar1', 'title', 'degree'],
+      gelar2: ['gelar2', 'title2', 'degree2', 'gelardua'],
       spesialis: ['spesialis', 'speciality', 'specialty', 'bidang'],
       subspesialis: ['subspesialis', 'subspecialty', 'subbidang'],
       tempat_tugas: ['tempattugas', 'rumahsakit', 'rs', 'fasyankes', 'instansi', 'tempatpraktik', 'hospital', 'tempatkerja', 'workplace'],
