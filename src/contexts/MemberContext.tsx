@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Member } from '@/types/member';
 import { mockMembers } from '@/data/mockMembers';
 
@@ -7,6 +7,7 @@ interface MemberContextType {
   addMember: (memberData: any) => void;
   updateMember: (id: string, memberData: any) => void;
   deleteMember: (id: string) => void;
+  resetMembers: () => void; // Add reset function for testing
 }
 
 const MemberContext = createContext<MemberContextType | undefined>(undefined);
@@ -24,7 +25,31 @@ interface MemberProviderProps {
 }
 
 export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
-  const [members, setMembers] = useState<Member[]>(mockMembers);
+  // Initialize members from localStorage or use mockMembers as fallback
+  const [members, setMembers] = useState<Member[]>(() => {
+    try {
+      const savedMembers = localStorage.getItem('pdpi-members');
+      if (savedMembers) {
+        const parsed = JSON.parse(savedMembers);
+        console.log('Loaded members from localStorage:', parsed);
+        return parsed;
+      }
+    } catch (error) {
+      console.error('Error loading members from localStorage:', error);
+    }
+    console.log('Using mock members as fallback:', mockMembers);
+    return mockMembers;
+  });
+
+  // Save to localStorage whenever members change
+  useEffect(() => {
+    try {
+      localStorage.setItem('pdpi-members', JSON.stringify(members));
+      console.log('Saved members to localStorage:', members);
+    } catch (error) {
+      console.error('Error saving members to localStorage:', error);
+    }
+  }, [members]);
 
   const addMember = (memberData: any) => {
     const newMember: Member = {
@@ -115,8 +140,14 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
     });
   };
 
+  const resetMembers = () => {
+    console.log('Resetting members to mock data');
+    setMembers(mockMembers);
+    localStorage.removeItem('pdpi-members');
+  };
+
   return (
-    <MemberContext.Provider value={{ members, addMember, updateMember, deleteMember }}>
+    <MemberContext.Provider value={{ members, addMember, updateMember, deleteMember, resetMembers }}>
       {children}
     </MemberContext.Provider>
   );

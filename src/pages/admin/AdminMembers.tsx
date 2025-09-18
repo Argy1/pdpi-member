@@ -41,37 +41,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock data for demo
-const mockMembers = [
-  {
-    id: '1',
-    nama: 'Dr. Andi Wijaya, Sp.P',
-    npa: 'NPA001234',
-    spesialis: 'Pulmonologi',
-    rumahSakit: 'RSUD Dr. Soetomo',
-    kota: 'Surabaya',
-    provinsi: 'Jawa Timur',
-    status: 'Aktif',
-    email: 'andi.wijaya@email.com',
-    tanggalDaftar: '2024-01-15'
-  },
-  {
-    id: '2',
-    nama: 'Dr. Sari Indira, Sp.P',
-    npa: 'NPA005678',
-    spesialis: 'Pulmonologi',
-    rumahSakit: 'RS Persahabatan',
-    kota: 'Jakarta',
-    provinsi: 'DKI Jakarta',
-    status: 'Pending',
-    email: 'sari.indira@email.com',
-    tanggalDaftar: '2024-02-20'
-  },
-  // Add more mock data as needed
-];
+// Removed mock data - will use data from MemberContext instead
 
 export default function AdminMembers() {
-  const { members, deleteMember } = useMemberContext();
+  const { members, deleteMember, resetMembers } = useMemberContext();
   const [filteredMembers, setFilteredMembers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
@@ -89,6 +62,7 @@ export default function AdminMembers() {
   }, [members, filteredMembers]);
 
   const filterAndSortMembers = () => {
+    console.log('Starting filter with members:', members.length, 'items');
     let filtered = [...members];
 
     // Filter by search term
@@ -124,6 +98,7 @@ export default function AdminMembers() {
       });
     }
 
+    console.log('After all filters, filtered members:', filtered.length, 'items');
     setFilteredMembers(filtered);
   };
 
@@ -193,12 +168,17 @@ export default function AdminMembers() {
             Kelola data anggota PDPI
           </p>
         </div>
-        <Button asChild>
-          <Link to="/admin/anggota/new">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Tambah Anggota
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild>
+            <Link to="/admin/anggota/new">
+              <UserPlus className="mr-2 h-4 w-4" />
+              Tambah Anggota
+            </Link>
+          </Button>
+          <Button variant="outline" onClick={resetMembers}>
+            Reset Data (Testing)
+          </Button>
+        </div>
       </div>
 
       <Card>
