@@ -107,6 +107,31 @@ export default function AdminMembers() {
     }
   };
 
+  const handleDeleteAllMembers = async () => {
+    try {
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .neq('id', ''); // Delete all records
+
+      if (error) {
+        throw error;
+      }
+
+      await refresh(); // Refresh the list
+      toast({
+        title: 'Semua data dihapus',
+        description: 'Seluruh data anggota berhasil dihapus dari sistem.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Gagal menghapus semua data anggota.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'AKTIF':
@@ -162,15 +187,47 @@ export default function AdminMembers() {
               Import Excel
             </Link>
           </Button>
-          <Button 
-            variant="outline" 
-            onClick={refresh}
-            disabled={loading}
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh Data
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button 
+              variant="outline" 
+              onClick={refresh}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh Data
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Hapus Semua Data
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Konfirmasi Hapus Semua Data</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Apakah Anda yakin ingin menghapus SEMUA data anggota beserta biodatanya? 
+                    Tindakan ini tidak dapat dibatalkan dan akan menghapus seluruh database anggota.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAllMembers}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Ya, Hapus Semua
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </div>
 
