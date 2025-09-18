@@ -25,11 +25,11 @@ interface ExcelMember {
   'KOTA/KABUPATEN'?: string;
   PROVINSI?: string;
   'ALAMAT RUMAH/KORESPONDENSI'?: string;
-  'KOTA/KABUPATEN_RUMAH'?: string;
-  PROVINSI_RUMAH?: string;
   'NO HP'?: string;
   EMAIL?: string;
-  'KETERANGAN/STATUS KEANGGOTAAN'?: string;
+  FOTO?: string;
+  KETERANGAN?: string;
+  'Non JOB'?: string;
 }
 
 export const ExcelImport: React.FC = () => {
@@ -55,64 +55,68 @@ export const ExcelImport: React.FC = () => {
   };
 
   const parseExcelData = (data: any[]): ExcelMember[] => {
-    // Skip header rows and find the actual data
-    const startIndex = data.findIndex(row => 
+    // Find the header row that contains the column names
+    const headerIndex = data.findIndex(row => 
       row && typeof row === 'object' && 
-      (row['NAMA'] || row['Nama'] || row['nama'] || 
-       Object.values(row).some(val => typeof val === 'string' && val.includes('Dr.')))
+      (row['CABANG'] || row['STATUS'] || row['NPA'] || row['NAMA'])
     );
     
-    if (startIndex === -1) return [];
+    if (headerIndex === -1) return [];
     
-    return data.slice(startIndex).filter(row => 
+    // Get data rows after header
+    return data.slice(headerIndex + 1).filter(row => 
       row && typeof row === 'object' && 
-      (row['NAMA'] || row['Nama'] || row['nama'] || 
-       Object.values(row).some(val => typeof val === 'string' && val.includes('Dr.')))
+      (row['NAMA'] && row['NAMA'].toString().trim() !== '' && 
+       !row['NAMA'].toString().includes('Grand Total'))
     );
   };
 
   const mapExcelToMember = (excelMember: any): any => {
-    // Map Excel columns to member fields with proper case handling
-    const nama = excelMember['NAMA'] || excelMember['Nama'] || excelMember['nama'] || '';
-    const gelar1 = excelMember['GELAR 1'] || excelMember['Gelar 1'] || excelMember['gelar 1'] || 
-                   excelMember['GELAR'] || excelMember['Gelar'] || excelMember['gelar'] || '';
-    const gelar2 = excelMember['GELAR 2'] || excelMember['Gelar 2'] || excelMember['gelar 2'] || '';
-    const npa = excelMember['NPA'] || excelMember['Npa'] || excelMember['npa'] || '';
-    const jenisKelamin = excelMember['JENIS KELAMIN'] || excelMember['Jenis Kelamin'] || excelMember['jenis kelamin'] || 
-                        excelMember['JENIS_KELAMIN'] || excelMember['Jenis_Kelamin'] || excelMember['jenis_kelamin'] || '';
-    const tempatLahir = excelMember['TEMPAT LAHIR'] || excelMember['Tempat Lahir'] || excelMember['tempat lahir'] ||
-                       excelMember['KOTA_LAHIR'] || excelMember['Kota_Lahir'] || excelMember['kota_lahir'] || '';
-    const tanggalLahir = excelMember['TGL LAHIR'] || excelMember['Tgl Lahir'] || excelMember['tgl lahir'] ||
-                        excelMember['TGL_LAHIR'] || excelMember['Tgl_Lahir'] || excelMember['tgl_lahir'] || '';
-    const alumni = excelMember['ALUMNI'] || excelMember['Alumni'] || excelMember['alumni'] || '';
-    const tahunLulus = excelMember['THN LULUS'] || excelMember['Thn Lulus'] || excelMember['thn lulus'] ||
-                      excelMember['TAHUN_LULUS'] || excelMember['Tahun_Lulus'] || excelMember['tahun_lulus'] || '';
-    const tempatTugas = excelMember['TEMPAT TUGAS/RS'] || excelMember['Tempat Tugas/Rs'] || excelMember['tempat tugas/rs'] ||
-                       excelMember['RS_KERJA'] || excelMember['Rs_Kerja'] || excelMember['rs_kerja'] || '';
-    const kota = excelMember['KOTA/KABUPATEN'] || excelMember['Kota/Kabupaten'] || excelMember['kota/kabupaten'] ||
-                excelMember['KOTA_KERJA'] || excelMember['Kota_Kerja'] || excelMember['kota_kerja'] || '';
-    const provinsi = excelMember['PROVINSI'] || excelMember['Provinsi'] || excelMember['provinsi'] ||
-                    excelMember['PROVINSI_KERJA'] || excelMember['Provinsi_Kerja'] || excelMember['provinsi_kerja'] || '';
-    const alamatRumah = excelMember['ALAMAT RUMAH/KORESPONDENSI'] || excelMember['Alamat Rumah/Korespondensi'] || 
-                       excelMember['alamat rumah/korespondensi'] || excelMember['ALAMAT'] || excelMember['Alamat'] || excelMember['alamat'] || '';
-    const kotaRumah = excelMember['KOTA/KABUPATEN_RUMAH'] || excelMember['Kota/Kabupaten_Rumah'] || excelMember['kota/kabupaten_rumah'] ||
-                     excelMember['KOTA_TINGGAL'] || excelMember['Kota_Tinggal'] || excelMember['kota_tinggal'] || '';
-    const provinsiRumah = excelMember['PROVINSI_RUMAH'] || excelMember['Provinsi_Rumah'] || excelMember['provinsi_rumah'] ||
-                         excelMember['PROVINSI_TINGGAL'] || excelMember['Provinsi_Tinggal'] || excelMember['provinsi_tinggal'] || '';
-    const telepon = excelMember['NO HP'] || excelMember['No Hp'] || excelMember['no hp'] ||
-                   excelMember['TELEPON'] || excelMember['Telepon'] || excelMember['telepon'] || '';
-    const email = excelMember['EMAIL'] || excelMember['Email'] || excelMember['email'] || '';
-    const cabang = excelMember['CABANG'] || excelMember['Cabang'] || excelMember['cabang'] || '';
-    const status = excelMember['STATUS'] || excelMember['Status'] || excelMember['status'] || 'AKTIF';
-    const keteranganStatus = excelMember['KETERANGAN/STATUS KEANGGOTAAN'] || excelMember['Keterangan/Status Keanggotaan'] || 
-                            excelMember['keterangan/status keanggotaan'] || '';
+    // Extract data based on exact Excel column names from the file
+    const nama = excelMember['NAMA'] || '';
+    const gelar1 = excelMember['GELAR 1'] || '';
+    const gelar2 = excelMember['GELAR 2'] || '';
+    const npa = excelMember['NPA'] || '';
+    const jenisKelamin = excelMember['JENIS KELAMIN'] || '';
+    const tempatLahir = excelMember['TEMPAT LAHIR'] || '';
+    const tanggalLahir = excelMember['TGL LAHIR'] || '';
+    const alumni = excelMember['ALUMNI'] || '';
+    const tahunLulus = excelMember['THN LULUS'] || '';
+    const tempatTugas = excelMember['TEMPAT TUGAS/RS'] || '';
+    const kota = excelMember['KOTA/KABUPATEN'] || '';
+    const provinsi = excelMember['PROVINSI'] || '';
+    const alamatRumah = excelMember['ALAMAT RUMAH/KORESPONDENSI'] || '';
+    const telepon = excelMember['NO HP'] || '';
+    const email = excelMember['EMAIL'] || '';
+    const cabang = excelMember['CABANG'] || '';
+    const status = excelMember['STATUS'] || 'Biasa';
+    const keterangan = excelMember['KETERANGAN'] || '';
 
     // Convert gender format
     let convertedGender = '';
-    if (jenisKelamin.toString().toUpperCase() === 'L' || jenisKelamin.toString().toLowerCase().includes('laki')) {
+    if (jenisKelamin.toString().toUpperCase() === 'L') {
       convertedGender = 'L';
-    } else if (jenisKelamin.toString().toUpperCase() === 'P' || jenisKelamin.toString().toLowerCase().includes('perempuan')) {
+    } else if (jenisKelamin.toString().toUpperCase() === 'P') {
       convertedGender = 'P';
+    }
+
+    // Parse date if available
+    let parsedDate = null;
+    if (tanggalLahir) {
+      try {
+        // Handle different date formats
+        const dateStr = tanggalLahir.toString();
+        if (dateStr.includes('-')) {
+          const parts = dateStr.split('-');
+          if (parts.length === 3) {
+            parsedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+          }
+        } else {
+          parsedDate = dateStr;
+        }
+      } catch (error) {
+        console.warn('Date parsing error:', error);
+      }
     }
 
     return {
@@ -122,7 +126,7 @@ export const ExcelImport: React.FC = () => {
       npa: npa.toString().trim(),
       jenisKelamin: convertedGender,
       tempatLahir: tempatLahir.toString().trim(),
-      tanggalLahir: tanggalLahir ? new Date(tanggalLahir) : null,
+      tanggalLahir: parsedDate,
       alumni: alumni.toString().trim(),
       tahunLulus: tahunLulus ? parseInt(tahunLulus.toString()) : undefined,
       tempatTugas: tempatTugas.toString().trim(),
@@ -131,14 +135,12 @@ export const ExcelImport: React.FC = () => {
       provinsi: provinsi.toString().trim(),
       alamatRumah: alamatRumah.toString().trim(),
       alamat: alamatRumah.toString().trim(),
-      kotaRumah: kotaRumah.toString().trim(),
-      provinsiRumah: provinsiRumah.toString().trim(),
       kontakTelepon: telepon.toString().trim(),
       kontakEmail: email.toString().trim(),
       pd: cabang.toString().trim(),
-      status: status.toString().toUpperCase() === 'AKTIF' ? 'AKTIF' : 
-              status.toString().toUpperCase() === 'TIDAK AKTIF' || status.toString().toUpperCase() === 'TIDAK_AKTIF' ? 'TIDAK_AKTIF' : 'AKTIF',
-      keteranganStatus: keteranganStatus.toString().trim()
+      status: status.toString().toLowerCase().includes('biasa') ? 'AKTIF' : 
+              status.toString().toLowerCase().includes('luar biasa') ? 'TIDAK_AKTIF' : 'AKTIF',
+      keteranganStatus: keterangan.toString().trim()
     };
   };
 
@@ -266,13 +268,13 @@ export const ExcelImport: React.FC = () => {
         <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-950 rounded-md">
           <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
           <div className="text-sm text-blue-800 dark:text-blue-200">
-            <p className="font-medium">Format Excel yang Diharapkan:</p>
+            <p className="font-medium">Format Excel yang Sesuai:</p>
             <ul className="mt-1 text-xs space-y-1">
-              <li>• <strong>Cabang</strong> - Nama cabang/wilayah</li>
-              <li>• <strong>Status</strong> - Status keanggotaan</li>
+              <li>• <strong>Cabang</strong> - Nama cabang/wilayah (contoh: 01-Aceh, 14-Jakarta)</li>
+              <li>• <strong>Status</strong> - Status keanggotaan (Biasa/Luar Biasa)</li>
               <li>• <strong>NPA</strong> - Nomor Peserta Anggota</li>
               <li>• <strong>Nama</strong> - Nama lengkap anggota</li>
-              <li>• <strong>Jenis Kelamin</strong> - L/P atau Laki-laki/Perempuan</li>
+              <li>• <strong>Jenis Kelamin</strong> - L atau P</li>
               <li>• <strong>Gelar 1</strong> & <strong>Gelar 2</strong> - Gelar akademik/profesi</li>
               <li>• <strong>Tempat Lahir</strong> & <strong>Tgl Lahir</strong> - Data kelahiran</li>
               <li>• <strong>Alumni</strong> & <strong>Thn Lulus</strong> - Riwayat pendidikan</li>
@@ -280,7 +282,8 @@ export const ExcelImport: React.FC = () => {
               <li>• <strong>Kota/Kabupaten</strong> & <strong>Provinsi</strong> - Lokasi kerja</li>
               <li>• <strong>Alamat Rumah/Korespondensi</strong> - Alamat tempat tinggal</li>
               <li>• <strong>No HP</strong> & <strong>Email</strong> - Kontak</li>
-              <li>• <strong>Keterangan/Status Keanggotaan</strong> - Catatan tambahan</li>
+              <li>• <strong>Foto</strong> - Status foto (opsional)</li>
+              <li>• <strong>Keterangan</strong> - Catatan tambahan</li>
             </ul>
           </div>
         </div>
