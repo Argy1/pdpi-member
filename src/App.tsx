@@ -15,6 +15,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMembers from "./pages/admin/AdminMembers";
 import AdminMemberForm from "./pages/admin/AdminMemberForm";
+import AdminImport from "./pages/admin/AdminImport";
 import AdminReports from "./pages/admin/AdminReports";
 import NotFound from "./pages/NotFound";
 
@@ -56,6 +57,7 @@ const App = () => (
                 <Route path="anggota/new" element={<AdminMemberForm />} />
                 <Route path="anggota/:id" element={<AdminMemberForm />} />
                 <Route path="anggota/:id/edit" element={<AdminMemberForm />} />
+                <Route path="import" element={<AdminImport />} />
                 <Route path="laporan" element={<AdminReports />} />
                 {/* Add more admin routes as needed */}
               </Route>

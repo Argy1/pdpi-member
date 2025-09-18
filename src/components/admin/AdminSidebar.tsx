@@ -4,7 +4,8 @@ import {
   Users, 
   Building, 
   Settings, 
-  UserPlus
+  UserPlus,
+  Upload
 } from 'lucide-react';
 import {
   Sidebar,
@@ -38,6 +39,12 @@ const menuItems = [
     title: 'Tambah Anggota',
     url: '/admin/anggota/new',
     icon: UserPlus,
+    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Import Anggota',
+    url: '/admin/import',
+    icon: Upload,
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {

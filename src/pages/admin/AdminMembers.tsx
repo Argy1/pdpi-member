@@ -33,6 +33,7 @@ import {
   Edit, 
   Trash2, 
   UserPlus,
+  Upload,
   SortAsc,
   SortDesc,
   ArrowLeft
@@ -173,6 +174,12 @@ export default function AdminMembers() {
             <Link to="/admin/anggota/new">
               <UserPlus className="mr-2 h-4 w-4" />
               Tambah Anggota
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/admin/import">
+              <Upload className="mr-2 h-4 w-4" />
+              Import Excel
             </Link>
           </Button>
           <Button variant="outline" onClick={resetMembers}>
