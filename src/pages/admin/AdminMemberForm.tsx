@@ -95,7 +95,7 @@ export default function AdminMemberForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addMember, updateMember } = useMemberContext();
+  const { members, addMember, updateMember } = useMemberContext();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -104,29 +104,44 @@ export default function AdminMemberForm() {
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
 
   useEffect(() => {
-    if (isEditing) {
-      // In real implementation, fetch member data by ID
-      // For demo, we'll use mock data
-      const mockMemberData = {
-        ...initialFormData,
-        nama: 'Dr. John Doe',
-        gelar: 'Sp.P',
-        npa: 'NPA123456',
-        spesialis: 'Pulmonologi',
-        tempatLahir: 'Jakarta',
-        tanggalLahir: new Date('1980-01-01'),
-        jenisKelamin: 'Laki-laki',
-        alamat: 'Jl. Sudirman No. 123',
-        kota: 'Jakarta',
-        provinsi: 'DKI Jakarta',
-        rumahSakit: 'RSUP Dr. Cipto Mangunkusumo',
-        kontakEmail: 'john.doe@email.com',
-        kontakTelepon: '081234567890',
-        status: 'Aktif',
-      };
-      setFormData(mockMemberData);
+    if (isEditing && id) {
+      // Find member by ID from context
+      const existingMember = members.find(m => m.id === id);
+      if (existingMember) {
+        const memberFormData = {
+          nama: existingMember.nama,
+          gelar: existingMember.gelar,
+          npa: existingMember.npa,
+          spesialis: existingMember.spesialis,
+          subspesialis: existingMember.subspesialis,
+          tempatLahir: existingMember.tempatLahir,
+          tanggalLahir: existingMember.tanggalLahir ? new Date(existingMember.tanggalLahir) : undefined,
+          jenisKelamin: existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan',
+          foto: existingMember.fotoUrl,
+          alamat: existingMember.alamat,
+          kota: existingMember.kota,
+          provinsi: existingMember.provinsi,
+          pd: existingMember.pd,
+          rumahSakit: existingMember.rumahSakit,
+          unitKerja: existingMember.unitKerja,
+          jabatan: existingMember.jabatan,
+          nik: existingMember.nik,
+          noSTR: existingMember.noSTR,
+          strBerlakuSampai: existingMember.strBerlakuSampai ? new Date(existingMember.strBerlakuSampai) : undefined,
+          noSIP: existingMember.noSIP,
+          sipBerlakuSampai: existingMember.sipBerlakuSampai ? new Date(existingMember.sipBerlakuSampai) : undefined,
+          tahunLulus: existingMember.tahunLulus?.toString() || '',
+          kontakEmail: existingMember.kontakEmail,
+          kontakTelepon: existingMember.kontakTelepon,
+          website: existingMember.website,
+          sosialMedia: existingMember.sosialMedia,
+          status: existingMember.status === 'AKTIF' ? 'Aktif' : existingMember.status === 'PENDING' ? 'Pending' : 'Tidak Aktif',
+        };
+        setFormData(memberFormData);
+        setPhotoPreview(existingMember.fotoUrl);
+      }
     }
-  }, [id, isEditing]);
+  }, [id, isEditing, members]);
 
   const handleInputChange = (field: keyof MemberFormData, value: any) => {
     setFormData(prev => ({

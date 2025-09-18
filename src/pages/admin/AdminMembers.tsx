@@ -72,7 +72,7 @@ const mockMembers = [
 
 export default function AdminMembers() {
   const { members, deleteMember } = useMemberContext();
-  const [filteredMembers, setFilteredMembers] = useState(members);
+  const [filteredMembers, setFilteredMembers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -82,6 +82,11 @@ export default function AdminMembers() {
   useEffect(() => {
     filterAndSortMembers();
   }, [searchTerm, selectedStatus, sortConfig, members]);
+
+  useEffect(() => {
+    console.log('Members dari context:', members);
+    console.log('Filtered members:', filteredMembers);
+  }, [members, filteredMembers]);
 
   const filterAndSortMembers = () => {
     let filtered = [...members];

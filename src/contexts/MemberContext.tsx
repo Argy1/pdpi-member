@@ -60,7 +60,12 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
       updatedAt: new Date().toISOString()
     };
 
-    setMembers(prev => [...prev, newMember]);
+    console.log('Adding new member:', newMember);
+    setMembers(prev => {
+      const updatedMembers = [...prev, newMember];
+      console.log('Updated members after add:', updatedMembers);
+      return updatedMembers;
+    });
   };
 
   const updateMember = (id: string, memberData: any) => {
@@ -68,7 +73,33 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
       member.id === id 
         ? { 
             ...member, 
-            ...memberData,
+            nama: memberData.nama || member.nama,
+            gelar: memberData.gelar || member.gelar,
+            npa: memberData.npa || member.npa,
+            spesialis: memberData.spesialis || member.spesialis,
+            subspesialis: memberData.subspesialis || member.subspesialis,
+            tempatLahir: memberData.tempatLahir || member.tempatLahir,
+            tanggalLahir: memberData.tanggalLahir ? memberData.tanggalLahir.toISOString().split('T')[0] : member.tanggalLahir,
+            jenisKelamin: memberData.jenisKelamin === 'Laki-laki' ? 'L' : memberData.jenisKelamin === 'Perempuan' ? 'P' : member.jenisKelamin,
+            alamat: memberData.alamat || member.alamat,
+            kota: memberData.kota || member.kota,
+            provinsi: memberData.provinsi || member.provinsi,
+            pd: memberData.pd || member.pd,
+            rumahSakit: memberData.rumahSakit || member.rumahSakit,
+            unitKerja: memberData.unitKerja || member.unitKerja,
+            jabatan: memberData.jabatan || member.jabatan,
+            nik: memberData.nik || member.nik,
+            noSTR: memberData.noSTR || member.noSTR,
+            strBerlakuSampai: memberData.strBerlakuSampai ? memberData.strBerlakuSampai.toISOString().split('T')[0] : member.strBerlakuSampai,
+            noSIP: memberData.noSIP || member.noSIP,
+            sipBerlakuSampai: memberData.sipBerlakuSampai ? memberData.sipBerlakuSampai.toISOString().split('T')[0] : member.sipBerlakuSampai,
+            tahunLulus: memberData.tahunLulus ? parseInt(memberData.tahunLulus) : member.tahunLulus,
+            status: memberData.status === 'Aktif' ? 'AKTIF' : memberData.status === 'Tidak Aktif' ? 'TIDAK_AKTIF' : memberData.status === 'Pending' ? 'PENDING' : member.status,
+            kontakEmail: memberData.kontakEmail || member.kontakEmail,
+            kontakTelepon: memberData.kontakTelepon || member.kontakTelepon,
+            website: memberData.website || member.website,
+            sosialMedia: memberData.sosialMedia || member.sosialMedia,
+            fotoUrl: memberData.foto || member.fotoUrl,
             updatedAt: new Date().toISOString()
           }
         : member
@@ -76,7 +107,12 @@ export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
   };
 
   const deleteMember = (id: string) => {
-    setMembers(prev => prev.filter(member => member.id !== id));
+    console.log('Deleting member with id:', id);
+    setMembers(prev => {
+      const updatedMembers = prev.filter(member => member.id !== id);
+      console.log('Updated members after delete:', updatedMembers);
+      return updatedMembers;
+    });
   };
 
   return (

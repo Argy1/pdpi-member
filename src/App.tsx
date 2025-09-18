@@ -53,6 +53,7 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="anggota" element={<AdminMembers />} />
                 <Route path="anggota/new" element={<AdminMemberForm />} />
+                <Route path="anggota/:id" element={<AdminMemberForm />} />
                 <Route path="anggota/:id/edit" element={<AdminMemberForm />} />
                 {/* Add more admin routes as needed */}
               </Route>
