@@ -110,6 +110,11 @@ export const ImportProcessStep = () => {
         processedRow.status = 'Aktif';
       }
       
+      // Fill tempat_tugas from rumahSakit if tempat_tugas is empty but rumahSakit exists
+      if (!processedRow.tempat_tugas && processedRow.rumahSakit) {
+        processedRow.tempat_tugas = processedRow.rumahSakit;
+      }
+      
       // Validate required fields
       if (!processedRow.nama || !processedRow.tempat_tugas || !processedRow.provinsi) {
         errors.push({

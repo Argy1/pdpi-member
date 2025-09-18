@@ -13,12 +13,14 @@ import { ArrowLeft, Wand2, Eye, AlertTriangle } from 'lucide-react';
 const dbFields = {
   // Required fields
   nama: { label: 'Nama Lengkap', required: true, type: 'text' },
-  rumahSakit: { label: 'Rumah Sakit/Tempat Kerja', required: true, type: 'text' },
-  kota: { label: 'Kota/Kabupaten', required: true, type: 'text' },
+  tempat_tugas: { label: 'Tempat Tugas/RS/Fasyankes', required: true, type: 'text' },
   provinsi: { label: 'Provinsi', required: true, type: 'text' },
-  pd: { label: 'PD/Wilayah/Cabang', required: true, type: 'text' },
   
-  // Optional fields
+  // Optional fields (but important)
+  rumahSakit: { label: 'Rumah Sakit (alternatif)', required: false, type: 'text' },
+  pd: { label: 'PD/Wilayah/Cabang', required: false, type: 'text' },
+  
+  // Other optional fields
   npa: { label: 'NPA (Nomor Peserta Anggota)', required: false, type: 'text' },
   gelar: { label: 'Gelar', required: false, type: 'text' },
   spesialis: { label: 'Spesialis', required: false, type: 'text' },
@@ -68,6 +70,7 @@ export const ColumnMappingStep = () => {
       gelar: ['gelar', 'title', 'degree'],
       spesialis: ['spesialis', 'speciality', 'specialty', 'bidang'],
       subspesialis: ['subspesialis', 'subspecialty', 'subbidang'],
+      tempat_tugas: ['tempattugas', 'rumahsakit', 'rs', 'fasyankes', 'instansi', 'tempatpraktik', 'hospital', 'tempatkerja', 'workplace'],
       rumahSakit: ['rumahsakit', 'rs', 'hospital', 'tempatkerja', 'workplace'],
       kota: ['kota', 'kabupaten', 'kotakabupaten', 'city'],
       provinsi: ['provinsi', 'province', 'prop'],
@@ -108,11 +111,22 @@ export const ColumnMappingStep = () => {
 
   // Validate mapping
   const validateMapping = () => {
-    const requiredFields = Object.entries(dbFields)
-      .filter(([_, config]) => config.required)
-      .map(([field, _]) => field);
-    
+    const requiredFields = ['nama', 'provinsi']; // Base required fields
     const mappedFields = Object.values(columnMapping);
+    
+    // Check if either tempat_tugas OR rumahSakit is mapped
+    const hasTempatTugas = mappedFields.includes('tempat_tugas');
+    const hasRumahSakit = mappedFields.includes('rumahSakit');
+    
+    if (!hasTempatTugas && !hasRumahSakit) {
+      setValidationErrors([{
+        type: 'missing_required',
+        message: 'Wajib mapping: nama, provinsi, dan tempat_tugas (atau rumahSakit sebagai alternatif)'
+      }]);
+      return false;
+    }
+    
+    // Check other required fields
     const missingRequired = requiredFields.filter(field => !mappedFields.includes(field));
     
     if (missingRequired.length > 0) {
@@ -154,14 +168,36 @@ export const ColumnMappingStep = () => {
     );
   }
 
-  const requiredFieldsMapped = Object.entries(dbFields)
-    .filter(([_, config]) => config.required)
-    .filter(([field, _]) => Object.values(columnMapping).includes(field))
-    .length;
+  // Calculate required fields mapping status
+  const mappedFields = Object.values(columnMapping);
+  const hasNama = mappedFields.includes('nama');
+  const hasProvinsi = mappedFields.includes('provinsi');
+  const hasTempatTugas = mappedFields.includes('tempat_tugas');
+  const hasRumahSakit = mappedFields.includes('rumahSakit');
   
-  const totalRequiredFields = Object.entries(dbFields)
-    .filter(([_, config]) => config.required)
-    .length;
+  const requiredFieldsMapped = [
+    hasNama,
+    hasProvinsi,
+    hasTempatTugas || hasRumahSakit
+  ].filter(Boolean).length;
+  
+  const totalRequiredFields = 3; // nama, provinsi, tempat_tugas/rumahSakit
+  
+  // Check tempat_tugas empty percentage for preview warning
+  const getTempatTugasEmptyPercentage = () => {
+    if (!showPreview || !fileData) return 0;
+    
+    const tempatTugasCol = Object.keys(columnMapping).find(col => columnMapping[col] === 'tempat_tugas');
+    if (!tempatTugasCol) return 100; // If not mapped, consider 100% empty
+    
+    const colIndex = fileData.headers.indexOf(tempatTugasCol);
+    if (colIndex === -1) return 100;
+    
+    const emptyCount = fileData.previewRows.filter(row => !row[colIndex] || String(row[colIndex]).trim() === '').length;
+    return (emptyCount / fileData.previewRows.length) * 100;
+  };
+  
+  const tempatTugasEmptyPercentage = getTempatTugasEmptyPercentage();
 
   return (
     <div className="space-y-6">
@@ -190,12 +226,53 @@ export const ColumnMappingStep = () => {
       </div>
 
       {/* Progress indicator */}
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-muted-foreground">Field wajib dimapping:</span>
-        <Badge variant={requiredFieldsMapped === totalRequiredFields ? "default" : "secondary"}>
-          {requiredFieldsMapped} / {totalRequiredFields}
-        </Badge>
+      <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">Field wajib dimapping:</span>
+          <Badge variant={requiredFieldsMapped === totalRequiredFields ? "default" : "destructive"}>
+            {requiredFieldsMapped} / {totalRequiredFields}
+          </Badge>
+        </div>
+        
+        {/* Required fields breakdown */}
+        <div className="flex items-center gap-2 text-xs">
+          <Badge variant={hasNama ? "default" : "outline"} className="text-xs">
+            Nama {hasNama ? '✓' : '✗'}
+          </Badge>
+          <Badge variant={hasProvinsi ? "default" : "outline"} className="text-xs">
+            Provinsi {hasProvinsi ? '✓' : '✗'}
+          </Badge>
+          <Badge variant={hasTempatTugas || hasRumahSakit ? "default" : "outline"} className="text-xs">
+            Tempat Tugas {hasTempatTugas || hasRumahSakit ? '✓' : '✗'}
+          </Badge>
+        </div>
       </div>
+
+      {/* Warning for missing required fields */}
+      {requiredFieldsMapped < totalRequiredFields && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Field wajib belum lengkap:</strong>
+            <ul className="mt-1 ml-4 list-disc text-sm">
+              {!hasNama && <li>Nama Lengkap harus dimapping</li>}
+              {!hasProvinsi && <li>Provinsi harus dimapping</li>}
+              {!hasTempatTugas && !hasRumahSakit && <li>Tempat Tugas/RS/Fasyankes atau Rumah Sakit harus dimapping</li>}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Warning for empty tempat_tugas */}
+      {showPreview && tempatTugasEmptyPercentage >= 10 && (
+        <Alert>
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Peringatan:</strong> {Math.round(tempatTugasEmptyPercentage)}% data Tempat Tugas kosong. 
+            Pastikan data lengkap untuk hasil import yang optimal.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Mapping Table */}
       <Card>
@@ -329,8 +406,15 @@ export const ColumnMappingStep = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Kembali
         </Button>
-        <Button onClick={handleNext} disabled={requiredFieldsMapped < totalRequiredFields}>
-          Lanjutkan ke Import
+        <Button 
+          onClick={handleNext} 
+          disabled={requiredFieldsMapped < totalRequiredFields}
+          className={requiredFieldsMapped < totalRequiredFields ? "opacity-50 cursor-not-allowed" : ""}
+        >
+          {requiredFieldsMapped < totalRequiredFields 
+            ? `Mapping belum lengkap (${requiredFieldsMapped}/${totalRequiredFields})`
+            : 'Lanjutkan ke Import'
+          }
         </Button>
       </div>
     </div>
