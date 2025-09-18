@@ -12,22 +12,24 @@ import * as XLSX from 'xlsx';
 interface ExcelMember {
   CABANG?: string;
   STATUS?: string;
+  NPA?: string;
   NAMA?: string;
-  GELAR?: string;
-  SPESIALIS?: string;
-  KOTA_LAHIR?: string;
-  TGL_LAHIR?: string;
-  UNIVERSITAS?: string;
-  TAHUN_LULUS?: string;
-  RS_KERJA?: string;
-  KOTA_KERJA?: string;
-  PROVINSI_KERJA?: string;
-  ALAMAT?: string;
-  KOTA_TINGGAL?: string;
-  PROVINSI_TINGGAL?: string;
-  TELEPON?: string;
+  'JENIS KELAMIN'?: string;
+  'GELAR 1'?: string;
+  'GELAR 2'?: string;
+  'TEMPAT LAHIR'?: string;
+  'TGL LAHIR'?: string;
+  ALUMNI?: string;
+  'THN LULUS'?: string;
+  'TEMPAT TUGAS/RS'?: string;
+  'KOTA/KABUPATEN'?: string;
+  PROVINSI?: string;
+  'ALAMAT RUMAH/KORESPONDENSI'?: string;
+  'KOTA/KABUPATEN_RUMAH'?: string;
+  PROVINSI_RUMAH?: string;
+  'NO HP'?: string;
   EMAIL?: string;
-  JENIS_KELAMIN?: string;
+  'KETERANGAN/STATUS KEANGGOTAAN'?: string;
 }
 
 export const ExcelImport: React.FC = () => {
@@ -70,42 +72,73 @@ export const ExcelImport: React.FC = () => {
   };
 
   const mapExcelToMember = (excelMember: any): any => {
-    // Map Excel columns to member fields
+    // Map Excel columns to member fields with proper case handling
     const nama = excelMember['NAMA'] || excelMember['Nama'] || excelMember['nama'] || '';
-    const gelar = excelMember['GELAR'] || excelMember['Gelar'] || excelMember['gelar'] || '';
-    const spesialis = excelMember['SPESIALIS'] || excelMember['Spesialis'] || excelMember['spesialis'] || '';
-    const tempatLahir = excelMember['KOTA_LAHIR'] || excelMember['Kota_Lahir'] || excelMember['kota_lahir'] || '';
-    const tanggalLahir = excelMember['TGL_LAHIR'] || excelMember['Tgl_Lahir'] || excelMember['tgl_lahir'] || '';
-    const tahunLulus = excelMember['TAHUN_LULUS'] || excelMember['Tahun_Lulus'] || excelMember['tahun_lulus'] || '';
-    const rumahSakit = excelMember['RS_KERJA'] || excelMember['Rs_Kerja'] || excelMember['rs_kerja'] || '';
-    const kota = excelMember['KOTA_KERJA'] || excelMember['Kota_Kerja'] || excelMember['kota_kerja'] || 
-                 excelMember['KOTA_TINGGAL'] || excelMember['Kota_Tinggal'] || excelMember['kota_tinggal'] || '';
-    const provinsi = excelMember['PROVINSI_KERJA'] || excelMember['Provinsi_Kerja'] || excelMember['provinsi_kerja'] ||
-                     excelMember['PROVINSI_TINGGAL'] || excelMember['Provinsi_Tinggal'] || excelMember['provinsi_tinggal'] || '';
-    const alamat = excelMember['ALAMAT'] || excelMember['Alamat'] || excelMember['alamat'] || '';
-    const telepon = excelMember['TELEPON'] || excelMember['Telepon'] || excelMember['telepon'] || '';
+    const gelar1 = excelMember['GELAR 1'] || excelMember['Gelar 1'] || excelMember['gelar 1'] || 
+                   excelMember['GELAR'] || excelMember['Gelar'] || excelMember['gelar'] || '';
+    const gelar2 = excelMember['GELAR 2'] || excelMember['Gelar 2'] || excelMember['gelar 2'] || '';
+    const npa = excelMember['NPA'] || excelMember['Npa'] || excelMember['npa'] || '';
+    const jenisKelamin = excelMember['JENIS KELAMIN'] || excelMember['Jenis Kelamin'] || excelMember['jenis kelamin'] || 
+                        excelMember['JENIS_KELAMIN'] || excelMember['Jenis_Kelamin'] || excelMember['jenis_kelamin'] || '';
+    const tempatLahir = excelMember['TEMPAT LAHIR'] || excelMember['Tempat Lahir'] || excelMember['tempat lahir'] ||
+                       excelMember['KOTA_LAHIR'] || excelMember['Kota_Lahir'] || excelMember['kota_lahir'] || '';
+    const tanggalLahir = excelMember['TGL LAHIR'] || excelMember['Tgl Lahir'] || excelMember['tgl lahir'] ||
+                        excelMember['TGL_LAHIR'] || excelMember['Tgl_Lahir'] || excelMember['tgl_lahir'] || '';
+    const alumni = excelMember['ALUMNI'] || excelMember['Alumni'] || excelMember['alumni'] || '';
+    const tahunLulus = excelMember['THN LULUS'] || excelMember['Thn Lulus'] || excelMember['thn lulus'] ||
+                      excelMember['TAHUN_LULUS'] || excelMember['Tahun_Lulus'] || excelMember['tahun_lulus'] || '';
+    const tempatTugas = excelMember['TEMPAT TUGAS/RS'] || excelMember['Tempat Tugas/Rs'] || excelMember['tempat tugas/rs'] ||
+                       excelMember['RS_KERJA'] || excelMember['Rs_Kerja'] || excelMember['rs_kerja'] || '';
+    const kota = excelMember['KOTA/KABUPATEN'] || excelMember['Kota/Kabupaten'] || excelMember['kota/kabupaten'] ||
+                excelMember['KOTA_KERJA'] || excelMember['Kota_Kerja'] || excelMember['kota_kerja'] || '';
+    const provinsi = excelMember['PROVINSI'] || excelMember['Provinsi'] || excelMember['provinsi'] ||
+                    excelMember['PROVINSI_KERJA'] || excelMember['Provinsi_Kerja'] || excelMember['provinsi_kerja'] || '';
+    const alamatRumah = excelMember['ALAMAT RUMAH/KORESPONDENSI'] || excelMember['Alamat Rumah/Korespondensi'] || 
+                       excelMember['alamat rumah/korespondensi'] || excelMember['ALAMAT'] || excelMember['Alamat'] || excelMember['alamat'] || '';
+    const kotaRumah = excelMember['KOTA/KABUPATEN_RUMAH'] || excelMember['Kota/Kabupaten_Rumah'] || excelMember['kota/kabupaten_rumah'] ||
+                     excelMember['KOTA_TINGGAL'] || excelMember['Kota_Tinggal'] || excelMember['kota_tinggal'] || '';
+    const provinsiRumah = excelMember['PROVINSI_RUMAH'] || excelMember['Provinsi_Rumah'] || excelMember['provinsi_rumah'] ||
+                         excelMember['PROVINSI_TINGGAL'] || excelMember['Provinsi_Tinggal'] || excelMember['provinsi_tinggal'] || '';
+    const telepon = excelMember['NO HP'] || excelMember['No Hp'] || excelMember['no hp'] ||
+                   excelMember['TELEPON'] || excelMember['Telepon'] || excelMember['telepon'] || '';
     const email = excelMember['EMAIL'] || excelMember['Email'] || excelMember['email'] || '';
-    const jenisKelamin = excelMember['JENIS_KELAMIN'] || excelMember['Jenis_Kelamin'] || excelMember['jenis_kelamin'] || 
-                        (excelMember['L'] || excelMember['P'] ? (excelMember['L'] ? 'L' : 'P') : '');
     const cabang = excelMember['CABANG'] || excelMember['Cabang'] || excelMember['cabang'] || '';
     const status = excelMember['STATUS'] || excelMember['Status'] || excelMember['status'] || 'AKTIF';
+    const keteranganStatus = excelMember['KETERANGAN/STATUS KEANGGOTAAN'] || excelMember['Keterangan/Status Keanggotaan'] || 
+                            excelMember['keterangan/status keanggotaan'] || '';
+
+    // Convert gender format
+    let convertedGender = '';
+    if (jenisKelamin.toString().toUpperCase() === 'L' || jenisKelamin.toString().toLowerCase().includes('laki')) {
+      convertedGender = 'L';
+    } else if (jenisKelamin.toString().toUpperCase() === 'P' || jenisKelamin.toString().toLowerCase().includes('perempuan')) {
+      convertedGender = 'P';
+    }
 
     return {
       nama: nama.toString().trim(),
-      gelar: gelar.toString().trim(),
-      spesialis: spesialis.toString().trim(),
+      gelar: gelar1.toString().trim(),
+      gelar2: gelar2.toString().trim(),
+      npa: npa.toString().trim(),
+      jenisKelamin: convertedGender,
       tempatLahir: tempatLahir.toString().trim(),
       tanggalLahir: tanggalLahir ? new Date(tanggalLahir) : null,
+      alumni: alumni.toString().trim(),
       tahunLulus: tahunLulus ? parseInt(tahunLulus.toString()) : undefined,
-      rumahSakit: rumahSakit.toString().trim(),
+      tempatTugas: tempatTugas.toString().trim(),
+      rumahSakit: tempatTugas.toString().trim(),
       kota: kota.toString().trim(),
       provinsi: provinsi.toString().trim(),
-      alamat: alamat.toString().trim(),
+      alamatRumah: alamatRumah.toString().trim(),
+      alamat: alamatRumah.toString().trim(),
+      kotaRumah: kotaRumah.toString().trim(),
+      provinsiRumah: provinsiRumah.toString().trim(),
       kontakTelepon: telepon.toString().trim(),
       kontakEmail: email.toString().trim(),
-      jenisKelamin: jenisKelamin === 'L' ? 'Laki-laki' : jenisKelamin === 'P' ? 'Perempuan' : '',
       pd: cabang.toString().trim(),
-      status: status === 'Biasa' ? 'Aktif' : status === 'Luar Biasa' ? 'Tidak Aktif' : 'Aktif'
+      status: status.toString().toUpperCase() === 'AKTIF' ? 'AKTIF' : 
+              status.toString().toUpperCase() === 'TIDAK AKTIF' || status.toString().toUpperCase() === 'TIDAK_AKTIF' ? 'TIDAK_AKTIF' : 'AKTIF',
+      keteranganStatus: keteranganStatus.toString().trim()
     };
   };
 
@@ -235,12 +268,19 @@ export const ExcelImport: React.FC = () => {
           <div className="text-sm text-blue-800 dark:text-blue-200">
             <p className="font-medium">Format Excel yang Diharapkan:</p>
             <ul className="mt-1 text-xs space-y-1">
-              <li>• Kolom NAMA untuk nama anggota</li>
-              <li>• Kolom GELAR untuk gelar</li>
-              <li>• Kolom SPESIALIS untuk spesialisasi</li>
-              <li>• Kolom EMAIL untuk email</li>
-              <li>• Kolom TELEPON untuk nomor telepon</li>
-              <li>• Kolom PROVINSI_KERJA atau PROVINSI_TINGGAL untuk provinsi</li>
+              <li>• <strong>Cabang</strong> - Nama cabang/wilayah</li>
+              <li>• <strong>Status</strong> - Status keanggotaan</li>
+              <li>• <strong>NPA</strong> - Nomor Peserta Anggota</li>
+              <li>• <strong>Nama</strong> - Nama lengkap anggota</li>
+              <li>• <strong>Jenis Kelamin</strong> - L/P atau Laki-laki/Perempuan</li>
+              <li>• <strong>Gelar 1</strong> & <strong>Gelar 2</strong> - Gelar akademik/profesi</li>
+              <li>• <strong>Tempat Lahir</strong> & <strong>Tgl Lahir</strong> - Data kelahiran</li>
+              <li>• <strong>Alumni</strong> & <strong>Thn Lulus</strong> - Riwayat pendidikan</li>
+              <li>• <strong>Tempat Tugas/RS</strong> - Tempat kerja saat ini</li>
+              <li>• <strong>Kota/Kabupaten</strong> & <strong>Provinsi</strong> - Lokasi kerja</li>
+              <li>• <strong>Alamat Rumah/Korespondensi</strong> - Alamat tempat tinggal</li>
+              <li>• <strong>No HP</strong> & <strong>Email</strong> - Kontak</li>
+              <li>• <strong>Keterangan/Status Keanggotaan</strong> - Catatan tambahan</li>
             </ul>
           </div>
         </div>

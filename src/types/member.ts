@@ -2,15 +2,22 @@ export interface Member {
   id: string
   nama: string
   gelar?: string
+  gelar2?: string
   npa?: string
   spesialis?: string
   subspesialis?: string
   tempatLahir?: string
   tanggalLahir?: string
   jenisKelamin?: "L" | "P"
+  alumni?: string
+  tahunLulus?: number
+  tempatTugas?: string
   alamat?: string
   kota?: string
   provinsi?: string
+  alamatRumah?: string
+  kotaRumah?: string
+  provinsiRumah?: string
   pd?: string
   rumahSakit?: string
   unitKerja?: string
@@ -20,8 +27,8 @@ export interface Member {
   strBerlakuSampai?: string
   noSIP?: string
   sipBerlakuSampai?: string
-  tahunLulus?: number
   status?: "AKTIF" | "TIDAK_AKTIF" | "PENDING"
+  keteranganStatus?: string
   kontakEmail?: string
   kontakTelepon?: string
   website?: string
