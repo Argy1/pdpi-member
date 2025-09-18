@@ -14,6 +14,7 @@ export interface ColumnMapping {
 export interface ImportSettings {
   mode: 'insert' | 'upsert' | 'skip';
   createBranchIfMissing: boolean;
+  forceAdminBranch: boolean;
 }
 
 export interface ImportProgress {
@@ -22,9 +23,20 @@ export interface ImportProgress {
   inserted: number;
   updated: number;
   skipped: number;
+  duplicate: number;
+  invalid: number;
+  cabangTidakDitemukan: number;
+  npaNullUpsertError: number;
   errors: number;
   isProcessing: boolean;
   isDone: boolean;
+}
+
+export interface ImportError {
+  row: number;
+  data: any;
+  reason: string;
+  details?: string;
 }
 
 interface ImportContextType {
@@ -72,7 +84,8 @@ export const ImportProvider = ({ children }: { children: ReactNode }) => {
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({});
   const [importSettings, setImportSettings] = useState<ImportSettings>({
     mode: 'insert',
-    createBranchIfMissing: true
+    createBranchIfMissing: true,
+    forceAdminBranch: false
   });
   const [importProgress, setImportProgress] = useState<ImportProgress>({
     total: 0,
@@ -80,6 +93,10 @@ export const ImportProvider = ({ children }: { children: ReactNode }) => {
     inserted: 0,
     updated: 0,
     skipped: 0,
+    duplicate: 0,
+    invalid: 0,
+    cabangTidakDitemukan: 0,
+    npaNullUpsertError: 0,
     errors: 0,
     isProcessing: false,
     isDone: false
@@ -92,7 +109,8 @@ export const ImportProvider = ({ children }: { children: ReactNode }) => {
     setColumnMapping({});
     setImportSettings({
       mode: 'insert',
-      createBranchIfMissing: true
+      createBranchIfMissing: true,
+      forceAdminBranch: false
     });
     setImportProgress({
       total: 0,
@@ -100,6 +118,10 @@ export const ImportProvider = ({ children }: { children: ReactNode }) => {
       inserted: 0,
       updated: 0,
       skipped: 0,
+      duplicate: 0,
+      invalid: 0,
+      cabangTidakDitemukan: 0,
+      npaNullUpsertError: 0,
       errors: 0,
       isProcessing: false,
       isDone: false

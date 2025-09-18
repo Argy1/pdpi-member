@@ -8,9 +8,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { useImport } from '@/contexts/ImportContext';
+import { useImport, ImportError } from '@/contexts/ImportContext';
 import { useMemberContext } from '@/contexts/MemberContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { 
+  normalizeText, 
+  createDuplicateKey, 
+  normalizeBranchName, 
+  normalizeDate, 
+  normalizeStatus, 
+  validateEmail,
+  generateErrorCSV,
+  downloadCSV 
+} from '@/utils/importHelpers';
 import { 
   ArrowLeft, 
   Play, 
@@ -36,58 +47,33 @@ export const ImportProcessStep = () => {
   const { importExcelData } = useMemberContext();
   const { toast } = useToast();
   const [isStarted, setIsStarted] = useState(false);
+  const [importErrors, setImportErrors] = useState<ImportError[]>([]);
 
-  // Normalize and validate data
-  const normalizeText = (text: string): string => {
-    if (!text) return '';
-    return text.toString().trim().replace(/[^\w\s-]/gi, '').toLowerCase();
-  };
-
-  const normalizeDate = (dateStr: string): string | null => {
-    if (!dateStr || dateStr === 'Kosong') return null;
-    
-    try {
-      // Handle DD/MM/YYYY or DD-MM-YYYY format
-      const parts = dateStr.toString().split(/[\/\-]/);
-      if (parts.length === 3) {
-        const [day, month, year] = parts;
-        const fullYear = year.length === 2 ? `20${year}` : year;
-        return `${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      }
-      
-      // Handle YYYY-MM-DD format
-      if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return dateStr;
-      }
-      
-      return null;
-    } catch {
-      return null;
-    }
-  };
-
-  const normalizeStatus = (status: string): string => {
-    if (!status) return 'AKTIF';
-    const normalized = status.toString().toLowerCase();
-    if (normalized.includes('aktif') || normalized.includes('active')) return 'AKTIF';
-    if (normalized.includes('nonaktif') || normalized.includes('inactive')) return 'TIDAK_AKTIF';
-    return 'AKTIF';
-  };
-
-  const validateEmail = (email: string): string | null => {
-    if (!email) return null;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email) ? email : null;
-  };
-
-  const processData = () => {
-    if (!fileData) return [];
+  const processData = async () => {
+    if (!fileData) return { validData: [], errors: [] };
     
     const processedData = [];
+    const errors: ImportError[] = [];
+    const duplicateKeys = new Set<string>();
+    
+    // Get existing branches
+    const { data: branches } = await supabase.from('branches').select('id, name');
+    const branchMap = new Map(branches?.map(b => [normalizeBranchName(b.name), b.id]) || []);
+    
+    // Get existing members for duplicate checking
+    const { data: existingMembers } = await supabase
+      .from('members')
+      .select('npa, nama, tempat_tugas');
+    
+    const existingNPAs = new Set(existingMembers?.map(m => m.npa).filter(Boolean) || []);
+    const existingDuplicateKeys = new Set(
+      existingMembers?.map(m => createDuplicateKey(m.nama, m.tempat_tugas || '')) || []
+    );
     
     for (let i = 0; i < fileData.rows.length; i++) {
       const row = fileData.rows[i];
       const processedRow: any = {};
+      let hasError = false;
       
       // Map columns according to mapping
       Object.entries(columnMapping).forEach(([excelCol, dbField]) => {
@@ -96,22 +82,20 @@ export const ImportProcessStep = () => {
         
         if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
           switch (dbField) {
-            case 'tanggalLahir':
-            case 'strBerlakuSampai':
-            case 'sipBerlakuSampai':
+            case 'tgl_lahir':
               processedRow[dbField] = normalizeDate(rawValue);
               break;
             case 'status':
               processedRow[dbField] = normalizeStatus(rawValue);
               break;
-            case 'kontakEmail':
+            case 'email':
               processedRow[dbField] = validateEmail(rawValue.toString());
               break;
-            case 'tahunLulus':
+            case 'thn_lulus':
               const year = parseInt(rawValue.toString());
               processedRow[dbField] = isNaN(year) ? null : year;
               break;
-            case 'jenisKelamin':
+            case 'jenis_kelamin':
               const gender = rawValue.toString().toUpperCase();
               processedRow[dbField] = (gender === 'L' || gender === 'P') ? gender : null;
               break;
@@ -121,29 +105,141 @@ export const ImportProcessStep = () => {
         }
       });
       
-      // Only include rows with required fields
-      if (processedRow.nama && processedRow.rumahSakit && processedRow.kota && processedRow.provinsi) {
-        processedData.push(processedRow);
+      // Set default status if empty
+      if (!processedRow.status) {
+        processedRow.status = 'Aktif';
       }
+      
+      // Validate required fields
+      if (!processedRow.nama || !processedRow.tempat_tugas || !processedRow.provinsi) {
+        errors.push({
+          row: i + 2, // +2 for header row and 1-based indexing
+          data: processedRow,
+          reason: 'FIELD_REQUIRED',
+          details: 'Missing required fields: nama, tempat_tugas, or provinsi'
+        });
+        continue;
+      }
+      
+      // Handle branch mapping
+      let cabangId = null;
+      if (importSettings.forceAdminBranch) {
+        // Force admin branch (will be set later when we have session)
+        cabangId = 'ADMIN_BRANCH';
+      } else if (processedRow.cabang) {
+        const normalizedBranch = normalizeBranchName(processedRow.cabang);
+        cabangId = branchMap.get(normalizedBranch);
+        
+        if (!cabangId && importSettings.createBranchIfMissing) {
+          // Create new branch
+          const { data: newBranch, error } = await supabase
+            .from('branches')
+            .insert({ name: processedRow.cabang })
+            .select('id')
+            .single();
+            
+          if (newBranch && !error) {
+            cabangId = newBranch.id;
+            branchMap.set(normalizedBranch, cabangId);
+          }
+        }
+        
+        if (!cabangId) {
+          errors.push({
+            row: i + 2,
+            data: processedRow,
+            reason: 'CABANG_TIDAK_DITEMUKAN',
+            details: `Branch '${processedRow.cabang}' not found and createBranchIfMissing is disabled`
+          });
+          continue;
+        }
+      }
+      
+      // Handle duplicate checking
+      const duplicateKey = processedRow.npa ? 
+        processedRow.npa : 
+        createDuplicateKey(processedRow.nama, processedRow.tempat_tugas);
+      
+      if (processedRow.npa) {
+        if (existingNPAs.has(processedRow.npa) || duplicateKeys.has(processedRow.npa)) {
+          if (importSettings.mode === 'skip') {
+            errors.push({
+              row: i + 2,
+              data: processedRow,
+              reason: 'DUPLICATE_NPA',
+              details: `NPA ${processedRow.npa} already exists`
+            });
+            continue;
+          }
+        } else {
+          duplicateKeys.add(processedRow.npa);
+        }
+      } else {
+        if (existingDuplicateKeys.has(duplicateKey) || duplicateKeys.has(duplicateKey)) {
+          if (importSettings.mode === 'skip') {
+            errors.push({
+              row: i + 2,
+              data: processedRow,
+              reason: 'DUPLICATE',
+              details: `Duplicate combination: ${processedRow.nama} + ${processedRow.tempat_tugas}`
+            });
+            continue;
+          }
+        } else {
+          duplicateKeys.add(duplicateKey);
+        }
+      }
+      
+      processedRow.cabang_id = cabangId;
+      processedData.push(processedRow);
     }
     
-    return processedData;
+    return { validData: processedData, errors };
   };
 
   const handleStartImport = async () => {
     setIsStarted(true);
-    const processedData = processData();
+    const { validData, errors } = await processData();
+    
+    setImportErrors(errors);
     
     setImportProgress({
-      total: processedData.length,
+      total: validData.length + errors.length,
       processed: 0,
       inserted: 0,
       updated: 0,
       skipped: 0,
+      duplicate: 0,
+      invalid: errors.length,
+      cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
+      npaNullUpsertError: 0,
       errors: 0,
       isProcessing: true,
       isDone: false
     });
+
+    if (validData.length === 0) {
+      setImportProgress({
+        total: errors.length,
+        processed: errors.length,
+        inserted: 0,
+        updated: 0,
+        skipped: 0,
+        duplicate: 0,
+        invalid: errors.length,
+        cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
+        npaNullUpsertError: 0,
+        errors: 0,
+        isProcessing: false,
+        isDone: true
+      });
+      toast({
+        title: 'Import selesai',
+        description: `Tidak ada data valid untuk diimport. ${errors.length} baris error.`,
+        variant: 'destructive'
+      });
+      return;
+    }
 
     try {
       // Import data in chunks
@@ -151,14 +247,69 @@ export const ImportProcessStep = () => {
       let totalInserted = 0;
       let totalUpdated = 0;
       let totalSkipped = 0;
+      let totalDuplicate = 0;
+      let totalNpaNullUpsertError = 0;
       let totalErrors = 0;
 
-      for (let i = 0; i < processedData.length; i += chunkSize) {
-        const chunk = processedData.slice(i, i + chunkSize);
+      for (let i = 0; i < validData.length; i += chunkSize) {
+        const chunk = validData.slice(i, i + chunkSize);
         
         try {
-          await importExcelData(chunk);
-          totalInserted += chunk.length;
+          // Process each item individually for better error handling
+          for (const item of chunk) {
+            try {
+              // Force admin branch if setting is enabled
+              if (importSettings.forceAdminBranch) {
+                // This would need session info - for now, we'll skip this
+                // item.cabang_id = session.user.cabangId;
+              }
+              
+              if (importSettings.mode === 'upsert') {
+                const whereCondition = item.npa ? 
+                  { npa: item.npa } : 
+                  { 
+                    nama: item.nama, 
+                    tempat_tugas: item.tempat_tugas 
+                  };
+                
+                const { data: existing } = await supabase
+                  .from('members')
+                  .select('id')
+                  .match(whereCondition)
+                  .single();
+                
+                if (existing) {
+                  await supabase
+                    .from('members')
+                    .update(item)
+                    .eq('id', existing.id);
+                  totalUpdated++;
+                } else {
+                  await supabase
+                    .from('members')
+                    .insert(item);
+                  totalInserted++;
+                }
+              } else if (importSettings.mode === 'insert') {
+                const { error } = await supabase
+                  .from('members')
+                  .insert(item);
+                
+                if (error) {
+                  if (error.code === '23505') { // Unique constraint violation
+                    totalDuplicate++;
+                  } else {
+                    totalErrors++;
+                  }
+                } else {
+                  totalInserted++;
+                }
+              }
+            } catch (itemError) {
+              console.error('Item import error:', itemError);
+              totalErrors++;
+            }
+          }
         } catch (error) {
           console.error('Chunk import error:', error);
           totalErrors += chunk.length;
@@ -166,11 +317,15 @@ export const ImportProcessStep = () => {
         
         // Update progress
         setImportProgress({
-          total: processedData.length,
-          processed: Math.min(i + chunkSize, processedData.length),
+          total: validData.length + errors.length,
+          processed: Math.min(i + chunkSize, validData.length) + errors.length,
           inserted: totalInserted,
           updated: totalUpdated,
           skipped: totalSkipped,
+          duplicate: totalDuplicate,
+          invalid: errors.length,
+          cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
+          npaNullUpsertError: totalNpaNullUpsertError,
           errors: totalErrors,
           isProcessing: true,
           isDone: false
@@ -181,11 +336,15 @@ export const ImportProcessStep = () => {
       }
       
       setImportProgress({
-        total: processedData.length,
-        processed: processedData.length,
+        total: validData.length + errors.length,
+        processed: validData.length + errors.length,
         inserted: totalInserted,
         updated: totalUpdated,
         skipped: totalSkipped,
+        duplicate: totalDuplicate,
+        invalid: errors.length,
+        cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
+        npaNullUpsertError: totalNpaNullUpsertError,
         errors: totalErrors,
         isProcessing: false,
         isDone: true
@@ -193,18 +352,22 @@ export const ImportProcessStep = () => {
       
       toast({
         title: 'Import selesai',
-        description: `Berhasil mengimport ${totalInserted} anggota`
+        description: `Berhasil: ${totalInserted} insert, ${totalUpdated} update. Error: ${totalErrors + errors.length}`
       });
       
     } catch (error) {
       console.error('Import error:', error);
       setImportProgress({
-        total: processedData.length,
-        processed: processedData.length,
+        total: validData.length + importErrors.length,
+        processed: validData.length + importErrors.length,
         inserted: 0,
         updated: 0,
         skipped: 0,
-        errors: processedData.length,
+        duplicate: 0,
+        invalid: importErrors.length,
+        cabangTidakDitemukan: importErrors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
+        npaNullUpsertError: 0,
+        errors: validData.length,
         isProcessing: false,
         isDone: true
       });
@@ -236,7 +399,6 @@ export const ImportProcessStep = () => {
     );
   }
 
-  const processedData = processData();
   const progressPercentage = importProgress.total > 0 
     ? (importProgress.processed / importProgress.total) * 100 
     : 0;
@@ -261,8 +423,8 @@ export const ImportProcessStep = () => {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{processedData.length}</div>
-            <p className="text-xs text-muted-foreground">Baris valid untuk import</p>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">Baris valid (akan dihitung)</p>
           </CardContent>
         </Card>
         <Card>
@@ -324,6 +486,22 @@ export const ImportProcessStep = () => {
                 Buat cabang baru secara otomatis jika belum ada
               </Label>
             </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="forceAdminBranch"
+                checked={importSettings.forceAdminBranch}
+                onCheckedChange={(checked) => 
+                  setImportSettings({ 
+                    ...importSettings, 
+                    forceAdminBranch: checked as boolean 
+                  })
+                }
+              />
+              <Label htmlFor="forceAdminBranch">
+                Paksa cabang = cabang saya (ADMIN_CABANG)
+              </Label>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -354,32 +532,59 @@ export const ImportProcessStep = () => {
             </div>
 
             {/* Results */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">{importProgress.inserted}</div>
-                <div className="text-xs text-muted-foreground">Berhasil</div>
+                <div className="text-xs text-muted-foreground">Insert</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">{importProgress.updated}</div>
-                <div className="text-xs text-muted-foreground">Diupdate</div>
+                <div className="text-xs text-muted-foreground">Update</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">{importProgress.skipped}</div>
-                <div className="text-xs text-muted-foreground">Dilewati</div>
+                <div className="text-2xl font-bold text-yellow-600">{importProgress.duplicate}</div>
+                <div className="text-xs text-muted-foreground">Duplikat</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-600">{importProgress.invalid}</div>
+                <div className="text-xs text-muted-foreground">Invalid</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">{importProgress.cabangTidakDitemukan}</div>
+                <div className="text-xs text-muted-foreground">Cabang Error</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">{importProgress.errors}</div>
-                <div className="text-xs text-muted-foreground">Error</div>
+                <div className="text-xs text-muted-foreground">System Error</div>
               </div>
             </div>
 
             {importProgress.isDone && (
-              <Alert>
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Import selesai! {importProgress.inserted} anggota berhasil diimport.
-                </AlertDescription>
-              </Alert>
+              <div className="space-y-2">
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Import selesai! {importProgress.inserted} insert, {importProgress.updated} update, {importProgress.errors + importProgress.invalid} error.
+                  </AlertDescription>
+                </Alert>
+                
+                {importErrors.length > 0 && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const csvContent = generateErrorCSV(importErrors);
+                        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                        downloadCSV(csvContent, `import-errors-${timestamp}.csv`);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Unduh Log Error CSV
+                    </Button>
+                  </div>
+                )}
+              </div>
             )}
           </CardContent>
         </Card>
@@ -407,7 +612,7 @@ export const ImportProcessStep = () => {
           ) : (
             <Button 
               onClick={handleStartImport} 
-              disabled={isStarted || processedData.length === 0}
+              disabled={isStarted}
               className="px-8"
             >
               <Play className="h-4 w-4 mr-2" />
