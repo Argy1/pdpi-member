@@ -112,7 +112,7 @@ export default function AdminMembers() {
       const { error } = await supabase
         .from('members')
         .delete()
-        .neq('id', ''); // Delete all records
+        .gt('created_at', '1900-01-01'); // Delete all records by using a condition that matches all
 
       if (error) {
         throw error;
@@ -124,6 +124,7 @@ export default function AdminMembers() {
         description: 'Seluruh data anggota berhasil dihapus dari sistem.',
       });
     } catch (error) {
+      console.error('Error deleting all members:', error);
       toast({
         title: 'Error',
         description: 'Gagal menghapus semua data anggota.',
