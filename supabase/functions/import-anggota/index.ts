@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
           nama: row.nama,
           tempat_tugas: row.tempat_tugas,
           provinsi: row.provinsi,
-          status: row.status || 'Aktif',
+          status: row.status || 'Biasa',
         };
 
         // Add optional fields if present

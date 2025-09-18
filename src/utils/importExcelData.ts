@@ -52,7 +52,7 @@ const cleanText = (text: string): string | null => {
 export const convertExcelToMemberData = (excelData: ExcelMemberData[]) => {
   return excelData.map(row => ({
     cabang: cleanText(row.CABANG),
-    status: cleanText(row.STATUS) || 'AKTIF',
+    status: cleanText(row.STATUS) || 'Biasa',
     npa: cleanText(row.NPA),
     nama: row.NAMA?.trim() || 'Unknown',
     jenis_kelamin: cleanText(row['JENIS KELAMIN']) as 'L' | 'P' | null,

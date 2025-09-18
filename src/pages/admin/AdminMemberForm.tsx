@@ -90,7 +90,7 @@ const initialFormData: MemberFormData = {
   kontakTelepon: '',
   website: '',
   sosialMedia: '',
-  status: 'Aktif',
+  status: 'Biasa',
 };
 
 export default function AdminMemberForm() {
@@ -138,7 +138,7 @@ export default function AdminMemberForm() {
           kontakTelepon: existingMember.kontakTelepon,
           website: existingMember.website,
           sosialMedia: existingMember.sosialMedia,
-          status: existingMember.status === 'AKTIF' ? 'Aktif' : existingMember.status === 'PENDING' ? 'Pending' : 'Tidak Aktif',
+          status: existingMember.status || 'Biasa',
         };
         setFormData(memberFormData);
         setPhotoPreview(existingMember.fotoUrl);
@@ -908,9 +908,10 @@ export default function AdminMemberForm() {
                           <SelectValue placeholder="Pilih status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Aktif">Aktif</SelectItem>
-                          <SelectItem value="Tidak Aktif">Tidak Aktif</SelectItem>
-                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="Biasa">Biasa</SelectItem>
+                          <SelectItem value="Luar Biasa">Luar Biasa</SelectItem>
+                          <SelectItem value="Meninggal">Meninggal</SelectItem>
+                          <SelectItem value="Muda">Muda</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -26,12 +26,14 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
 
   const getStatusBadge = (status?: string) => {
     switch (status) {
-      case "AKTIF":
-        return <Badge className="bg-success/10 text-success border-success/20">Aktif</Badge>
-      case "TIDAK_AKTIF":
-        return <Badge variant="secondary">Tidak Aktif</Badge>
-      case "PENDING":
-        return <Badge className="bg-warning/10 text-warning border-warning/20">Pending</Badge>
+      case "Biasa":
+        return <Badge className="bg-success/10 text-success border-success/20">Biasa</Badge>
+      case "Luar Biasa":
+        return <Badge className="bg-primary/10 text-primary border-primary/20">Luar Biasa</Badge>
+      case "Meninggal":
+        return <Badge className="bg-destructive/10 text-destructive border-destructive/20">Meninggal</Badge>
+      case "Muda":
+        return <Badge className="bg-warning/10 text-warning border-warning/20">Muda</Badge>
       default:
         return <Badge variant="outline">-</Badge>
     }

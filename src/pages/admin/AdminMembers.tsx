@@ -204,14 +204,17 @@ export default function AdminMembers() {
                   <DropdownMenuItem onClick={() => setSelectedStatus('')}>
                     Semua Status
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('AKTIF')}>
-                    Aktif
+                  <DropdownMenuItem onClick={() => setSelectedStatus('Biasa')}>
+                    Biasa
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('PENDING')}>
-                    Pending
+                  <DropdownMenuItem onClick={() => setSelectedStatus('Luar Biasa')}>
+                    Luar Biasa
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('TIDAK_AKTIF')}>
-                    Nonaktif
+                  <DropdownMenuItem onClick={() => setSelectedStatus('Meninggal')}>
+                    Meninggal
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSelectedStatus('Muda')}>
+                    Muda
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
