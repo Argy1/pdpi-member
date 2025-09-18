@@ -176,10 +176,52 @@ export default function AdminMemberForm() {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      const memberData = {
+        nama: formData.nama,
+        gelar: formData.gelar,
+        gelar2: formData.gelar2,
+        npa: formData.npa,
+        spesialis: formData.spesialis,
+        subspesialis: formData.subspesialis,
+        // Map form fields to database fields
+        tgl_lahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : undefined,
+        tempat_lahir: formData.tempatLahir,
+        jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : undefined,
+        thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : undefined,
+        tempat_tugas: formData.rumahSakit,
+        kota_kabupaten: formData.kota,
+        provinsi: formData.provinsi,
+        alamat_rumah: formData.alamat,
+        no_hp: formData.kontakTelepon,
+        email: formData.kontakEmail,
+        foto: formData.foto,
+        status: formData.status,
+        // Legacy compatibility
+        tanggalLahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : undefined,
+        jenisKelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : undefined,
+        tahunLulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : undefined,
+        tempatLahir: formData.tempatLahir,
+        alamat: formData.alamat,
+        kota: formData.kota,
+        pd: formData.pd,
+        rumahSakit: formData.rumahSakit,
+        unitKerja: formData.unitKerja,
+        jabatan: formData.jabatan,
+        nik: formData.nik,
+        noSTR: formData.noSTR,
+        strBerlakuSampai: formData.strBerlakuSampai ? formData.strBerlakuSampai.toISOString().split('T')[0] : undefined,
+        noSIP: formData.noSIP,
+        sipBerlakuSampai: formData.sipBerlakuSampai ? formData.sipBerlakuSampai.toISOString().split('T')[0] : undefined,
+        kontakEmail: formData.kontakEmail,
+        kontakTelepon: formData.kontakTelepon,
+        website: formData.website,
+        sosialMedia: formData.sosialMedia
+      }
+
       if (isEditing) {
-        updateMember(id!, formData);
+        await updateMember(id!, memberData);
       } else {
-        addMember(formData);
+        await addMember(memberData);
       }
       
       toast({

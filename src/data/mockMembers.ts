@@ -22,6 +22,8 @@ export const mockMembers: Member[] = [
     status: "AKTIF",
     kontakEmail: "bambang.suryanto@ui.ac.id",
     tahunLulus: 1995,
+    created_at: "2024-01-15T08:30:00Z",
+    updated_at: "2024-01-15T08:30:00Z",
     createdAt: "2024-01-15T08:30:00Z",
     updatedAt: "2024-01-15T08:30:00Z"
   },
@@ -45,6 +47,8 @@ export const mockMembers: Member[] = [
     status: "AKTIF",
     kontakEmail: "siti.nurhaliza@unpad.ac.id",
     tahunLulus: 2005,
+    created_at: "2024-01-15T09:15:00Z",
+    updated_at: "2024-01-15T09:15:00Z",
     createdAt: "2024-01-15T09:15:00Z",
     updatedAt: "2024-01-15T09:15:00Z"
   },
@@ -68,6 +72,8 @@ export const mockMembers: Member[] = [
     status: "AKTIF",
     kontakEmail: "ahmad.fauzi@unair.ac.id",
     tahunLulus: 2000,
+    created_at: "2024-01-15T10:00:00Z",
+    updated_at: "2024-01-15T10:00:00Z",
     createdAt: "2024-01-15T10:00:00Z",
     updatedAt: "2024-01-15T10:00:00Z"
   },
@@ -91,6 +97,8 @@ export const mockMembers: Member[] = [
     status: "AKTIF",
     kontakEmail: "maya.sari@usu.ac.id",
     tahunLulus: 2008,
+    created_at: "2024-01-15T11:30:00Z",
+    updated_at: "2024-01-15T11:30:00Z",
     createdAt: "2024-01-15T11:30:00Z",
     updatedAt: "2024-01-15T11:30:00Z"
   },
@@ -114,6 +122,8 @@ export const mockMembers: Member[] = [
     status: "AKTIF",
     kontakEmail: "gunawan.santoso@ugm.ac.id",
     tahunLulus: 1990,
+    created_at: "2024-01-15T12:45:00Z",
+    updated_at: "2024-01-15T12:45:00Z",
     createdAt: "2024-01-15T12:45:00Z",
     updatedAt: "2024-01-15T12:45:00Z"
   }

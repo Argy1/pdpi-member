@@ -36,7 +36,7 @@ export const ExcelImport: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { addMember } = useMemberContext();
+  const { importExcelData } = useMemberContext();
   const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,7 +196,7 @@ export const ExcelImport: React.FC = () => {
         const memberData = mapExcelToMember(excelMember);
         
         if (memberData.nama) {
-          addMember(memberData);
+          // Data will be imported in bulk at the end
           importedCount++;
         }
         

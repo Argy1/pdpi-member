@@ -1,20 +1,39 @@
 export interface Member {
   id: string
+  cabang?: string
+  status?: string
+  npa?: string
   nama: string
+  jenis_kelamin?: "L" | "P"
   gelar?: string
   gelar2?: string
-  npa?: string
+  tempat_lahir?: string
+  tgl_lahir?: string
+  alumni?: string
+  thn_lulus?: number
+  tempat_tugas?: string
+  kota_kabupaten?: string
+  provinsi?: string
+  alamat_rumah?: string
+  kota_kabupaten_rumah?: string
+  provinsi_rumah?: string
+  no_hp?: string
+  email?: string
+  foto?: string
+  keterangan?: string
+  created_at: string
+  updated_at: string
+  
+  // Legacy fields for compatibility
   spesialis?: string
   subspesialis?: string
   tempatLahir?: string
   tanggalLahir?: string
   jenisKelamin?: "L" | "P"
-  alumni?: string
   tahunLulus?: number
   tempatTugas?: string
   alamat?: string
   kota?: string
-  provinsi?: string
   alamatRumah?: string
   kotaRumah?: string
   provinsiRumah?: string
@@ -27,7 +46,6 @@ export interface Member {
   strBerlakuSampai?: string
   noSIP?: string
   sipBerlakuSampai?: string
-  status?: "AKTIF" | "TIDAK_AKTIF" | "PENDING"
   keteranganStatus?: string
   kontakEmail?: string
   kontakTelepon?: string
@@ -35,8 +53,8 @@ export interface Member {
   sosialMedia?: string
   fotoUrl?: string
   cabangId?: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface MemberFilters {

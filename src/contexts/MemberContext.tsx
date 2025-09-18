@@ -1,154 +1,154 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Member } from '@/types/member';
-import { mockMembers } from '@/data/mockMembers';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { Member } from '@/types/member'
+import { mockMembers } from '@/data/mockMembers'
+import { supabase } from '@/integrations/supabase/client'
 
 interface MemberContextType {
-  members: Member[];
-  addMember: (memberData: any) => void;
-  updateMember: (id: string, memberData: any) => void;
-  deleteMember: (id: string) => void;
-  resetMembers: () => void; // Add reset function for testing
+  members: Member[]
+  addMember: (member: Omit<Member, 'id' | 'created_at' | 'updated_at'>) => Promise<void>
+  updateMember: (id: string, member: Partial<Member>) => Promise<void>
+  deleteMember: (id: string) => Promise<void>
+  resetMembers: () => void
+  loading: boolean
+  importExcelData: (data: any[]) => Promise<void>
 }
 
-const MemberContext = createContext<MemberContextType | undefined>(undefined);
+const MemberContext = createContext<MemberContextType | undefined>(undefined)
 
 export const useMemberContext = () => {
-  const context = useContext(MemberContext);
+  const context = useContext(MemberContext)
   if (!context) {
-    throw new Error('useMemberContext must be used within a MemberProvider');
+    throw new Error('useMemberContext must be used within a MemberProvider')
   }
-  return context;
-};
-
-interface MemberProviderProps {
-  children: ReactNode;
+  return context
 }
 
-export const MemberProvider: React.FC<MemberProviderProps> = ({ children }) => {
-  // Initialize members from localStorage or use mockMembers as fallback
-  const [members, setMembers] = useState<Member[]>(() => {
+export function MemberProvider({ children }: { children: ReactNode }) {
+  const [members, setMembers] = useState<Member[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchMembers()
+  }, [])
+
+  const fetchMembers = async () => {
     try {
-      const savedMembers = localStorage.getItem('pdpi-members');
-      if (savedMembers) {
-        const parsed = JSON.parse(savedMembers);
-        console.log('Loaded members from localStorage:', parsed);
-        return parsed;
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching members:', error)
+        // Fallback to mock data if database fails
+        setMembers(mockMembers)
+      } else {
+        setMembers(data as Member[] || [])
       }
     } catch (error) {
-      console.error('Error loading members from localStorage:', error);
+      console.error('Error fetching members:', error)
+      setMembers(mockMembers)
+    } finally {
+      setLoading(false)
     }
-    console.log('Using mock members as fallback:', mockMembers);
-    return mockMembers;
-  });
+  }
 
-  // Save to localStorage whenever members change
-  useEffect(() => {
+  const addMember = async (newMember: Omit<Member, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      localStorage.setItem('pdpi-members', JSON.stringify(members));
-      console.log('Saved members to localStorage:', members);
+      const { data, error } = await supabase
+        .from('members')
+        .insert([newMember])
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error adding member:', error)
+        throw error
+      }
+
+      setMembers(prev => [data as Member, ...prev])
     } catch (error) {
-      console.error('Error saving members to localStorage:', error);
+      console.error('Error adding member:', error)
+      throw error
     }
-  }, [members]);
+  }
 
-  const addMember = (memberData: any) => {
-    const newMember: Member = {
-      id: String(Date.now()), // Simple ID generation
-      nama: memberData.nama || '',
-      gelar: memberData.gelar || '',
-      npa: memberData.npa || '',
-      spesialis: memberData.spesialis || '',
-      subspesialis: memberData.subspesialis || '',
-      tempatLahir: memberData.tempatLahir || '',
-      tanggalLahir: memberData.tanggalLahir ? memberData.tanggalLahir.toISOString().split('T')[0] : '',
-      jenisKelamin: memberData.jenisKelamin === 'Laki-laki' ? 'L' : 'P',
-      alamat: memberData.alamat || '',
-      kota: memberData.kota || '',
-      provinsi: memberData.provinsi || '',
-      pd: memberData.pd || '',
-      rumahSakit: memberData.rumahSakit || '',
-      unitKerja: memberData.unitKerja || '',
-      jabatan: memberData.jabatan || '',
-      nik: memberData.nik || '',
-      noSTR: memberData.noSTR || '',
-      strBerlakuSampai: memberData.strBerlakuSampai ? memberData.strBerlakuSampai.toISOString().split('T')[0] : '',
-      noSIP: memberData.noSIP || '',
-      sipBerlakuSampai: memberData.sipBerlakuSampai ? memberData.sipBerlakuSampai.toISOString().split('T')[0] : '',
-      tahunLulus: memberData.tahunLulus ? parseInt(memberData.tahunLulus) : undefined,
-      status: memberData.status === 'Aktif' ? 'AKTIF' : memberData.status === 'Tidak Aktif' ? 'TIDAK_AKTIF' : 'PENDING',
-      kontakEmail: memberData.kontakEmail || '',
-      kontakTelepon: memberData.kontakTelepon || '',
-      website: memberData.website || '',
-      sosialMedia: memberData.sosialMedia || '',
-      fotoUrl: memberData.foto || '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  const updateMember = async (id: string, updatedMember: Partial<Member>) => {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .update(updatedMember)
+        .eq('id', id)
+        .select()
+        .single()
 
-    console.log('Adding new member:', newMember);
-    setMembers(prev => {
-      const updatedMembers = [...prev, newMember];
-      console.log('Updated members after add:', updatedMembers);
-      return updatedMembers;
-    });
-  };
+      if (error) {
+        console.error('Error updating member:', error)
+        throw error
+      }
 
-  const updateMember = (id: string, memberData: any) => {
-    setMembers(prev => prev.map(member => 
-      member.id === id 
-        ? { 
-            ...member, 
-            nama: memberData.nama || member.nama,
-            gelar: memberData.gelar || member.gelar,
-            npa: memberData.npa || member.npa,
-            spesialis: memberData.spesialis || member.spesialis,
-            subspesialis: memberData.subspesialis || member.subspesialis,
-            tempatLahir: memberData.tempatLahir || member.tempatLahir,
-            tanggalLahir: memberData.tanggalLahir ? memberData.tanggalLahir.toISOString().split('T')[0] : member.tanggalLahir,
-            jenisKelamin: memberData.jenisKelamin === 'Laki-laki' ? 'L' : memberData.jenisKelamin === 'Perempuan' ? 'P' : member.jenisKelamin,
-            alamat: memberData.alamat || member.alamat,
-            kota: memberData.kota || member.kota,
-            provinsi: memberData.provinsi || member.provinsi,
-            pd: memberData.pd || member.pd,
-            rumahSakit: memberData.rumahSakit || member.rumahSakit,
-            unitKerja: memberData.unitKerja || member.unitKerja,
-            jabatan: memberData.jabatan || member.jabatan,
-            nik: memberData.nik || member.nik,
-            noSTR: memberData.noSTR || member.noSTR,
-            strBerlakuSampai: memberData.strBerlakuSampai ? memberData.strBerlakuSampai.toISOString().split('T')[0] : member.strBerlakuSampai,
-            noSIP: memberData.noSIP || member.noSIP,
-            sipBerlakuSampai: memberData.sipBerlakuSampai ? memberData.sipBerlakuSampai.toISOString().split('T')[0] : member.sipBerlakuSampai,
-            tahunLulus: memberData.tahunLulus ? parseInt(memberData.tahunLulus) : member.tahunLulus,
-            status: memberData.status === 'Aktif' ? 'AKTIF' : memberData.status === 'Tidak Aktif' ? 'TIDAK_AKTIF' : memberData.status === 'Pending' ? 'PENDING' : member.status,
-            kontakEmail: memberData.kontakEmail || member.kontakEmail,
-            kontakTelepon: memberData.kontakTelepon || member.kontakTelepon,
-            website: memberData.website || member.website,
-            sosialMedia: memberData.sosialMedia || member.sosialMedia,
-            fotoUrl: memberData.foto || member.fotoUrl,
-            updatedAt: new Date().toISOString()
-          }
-        : member
-    ));
-  };
+      setMembers(prev => prev.map(member => 
+        member.id === id ? data as Member : member
+      ))
+    } catch (error) {
+      console.error('Error updating member:', error)
+      throw error
+    }
+  }
 
-  const deleteMember = (id: string) => {
-    console.log('Deleting member with id:', id);
-    setMembers(prev => {
-      const updatedMembers = prev.filter(member => member.id !== id);
-      console.log('Updated members after delete:', updatedMembers);
-      return updatedMembers;
-    });
-  };
+  const deleteMember = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', id)
+
+      if (error) {
+        console.error('Error deleting member:', error)
+        throw error
+      }
+
+      setMembers(prev => prev.filter(member => member.id !== id))
+    } catch (error) {
+      console.error('Error deleting member:', error)
+      throw error
+    }
+  }
 
   const resetMembers = () => {
-    console.log('Resetting members to mock data');
-    setMembers(mockMembers);
-    localStorage.removeItem('pdpi-members');
-  };
+    setMembers(mockMembers)
+    localStorage.removeItem('pdpi-members')
+  }
+
+  const importExcelData = async (data: any[]) => {
+    try {
+      const { error } = await supabase
+        .from('members')
+        .insert(data)
+
+      if (error) {
+        console.error('Error importing Excel data:', error)
+        throw error
+      }
+
+      await fetchMembers() // Refresh the members list
+    } catch (error) {
+      console.error('Error importing Excel data:', error)
+      throw error
+    }
+  }
 
   return (
-    <MemberContext.Provider value={{ members, addMember, updateMember, deleteMember, resetMembers }}>
+    <MemberContext.Provider value={{ 
+      members, 
+      addMember, 
+      updateMember, 
+      deleteMember, 
+      resetMembers, 
+      loading,
+      importExcelData
+    }}>
       {children}
     </MemberContext.Provider>
-  );
-};
+  )
+}
