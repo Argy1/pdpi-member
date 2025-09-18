@@ -393,9 +393,17 @@ export const ImportProcessStep = () => {
         </Button>
         <div className="flex gap-2">
           {importProgress.isDone ? (
-            <Button onClick={handleReset}>
-              Import File Lain
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => window.location.href = '/admin/anggota'}
+              >
+                Lihat di Tabel Admin
+              </Button>
+              <Button onClick={handleReset}>
+                Import File Lain
+              </Button>
+            </div>
           ) : (
             <Button 
               onClick={handleStartImport} 

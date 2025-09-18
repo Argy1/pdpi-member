@@ -23,7 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { useMemberContext } from '@/contexts/MemberContext';
+import { useMembers } from '@/hooks/useMembers';
 import { 
   Search, 
   Filter, 
@@ -36,72 +36,43 @@ import {
   Upload,
   SortAsc,
   SortDesc,
-  ArrowLeft
+  ArrowLeft,
+  RefreshCw
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 // Removed mock data - will use data from MemberContext instead
 
 export default function AdminMembers() {
-  const { members, deleteMember, resetMembers } = useMemberContext();
-  const [filteredMembers, setFilteredMembers] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { isPusatAdmin, profile } = useAuth();
   const { toast } = useToast();
 
+  // Use the new hook for fetching data
+  const { 
+    members, 
+    total, 
+    loading, 
+    error, 
+    refresh 
+  } = useMembers({
+    query: searchTerm,
+    status: selectedStatus || undefined,
+    sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
+    limit: 50,
+    page: currentPage
+  });
+
+  // Reset page when search or filter changes
   useEffect(() => {
-    filterAndSortMembers();
-  }, [searchTerm, selectedStatus, sortConfig, members]);
-
-  useEffect(() => {
-    console.log('Members dari context:', members);
-    console.log('Filtered members:', filteredMembers);
-  }, [members, filteredMembers]);
-
-  const filterAndSortMembers = () => {
-    console.log('Starting filter with members:', members.length, 'items');
-    let filtered = [...members];
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(member =>
-        member.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.npa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.spesialis.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.rumahSakit.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.kota.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.provinsi.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter by status
-    if (selectedStatus) {
-      filtered = filtered.filter(member => member.status === selectedStatus);
-    }
-
-    // Sort
-    if (sortConfig.key) {
-      filtered.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof typeof a];
-        const bValue = b[sortConfig.key as keyof typeof b];
-        
-        if (aValue < bValue) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    console.log('After all filters, filtered members:', filtered.length, 'items');
-    setFilteredMembers(filtered);
-  };
+    setCurrentPage(1);
+  }, [searchTerm, selectedStatus]);
 
   const handleSort = (key: string) => {
     let direction = 'asc';
@@ -113,7 +84,16 @@ export default function AdminMembers() {
 
   const handleDeleteMember = async (memberId: string) => {
     try {
-      deleteMember(memberId);
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', memberId);
+
+      if (error) {
+        throw error;
+      }
+
+      await refresh(); // Refresh the list
       toast({
         title: 'Anggota dihapus',
         description: 'Data anggota berhasil dihapus dari sistem.',
@@ -182,8 +162,14 @@ export default function AdminMembers() {
               Import Excel
             </Link>
           </Button>
-          <Button variant="outline" onClick={resetMembers}>
-            Reset Data (Testing)
+          <Button 
+            variant="outline" 
+            onClick={refresh}
+            disabled={loading}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh Data
           </Button>
         </div>
       </div>
@@ -240,7 +226,10 @@ export default function AdminMembers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Daftar Anggota ({filteredMembers.length})</CardTitle>
+          <CardTitle>
+            Daftar Anggota ({loading ? 'Memuat...' : total})
+            {error && <span className="text-red-600 text-sm"> - Error: {error}</span>}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -282,80 +271,102 @@ export default function AdminMembers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredMembers.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">{member.nama}</TableCell>
-                    <TableCell>{member.npa}</TableCell>
-                    <TableCell>{member.spesialis}</TableCell>
-                    <TableCell>{member.rumahSakit}</TableCell>
-                    <TableCell>{member.kota}, {member.provinsi}</TableCell>
-                    <TableCell>{getStatusBadge(member.status)}</TableCell>
-                    <TableCell>{new Date(member.createdAt).toLocaleDateString('id-ID')}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link to={`/admin/anggota/${member.id}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Lihat Detail
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link to={`/admin/anggota/${member.id}/edit`}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Hapus
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Apakah Anda yakin ingin menghapus data anggota "{member.nama}"? 
-                                  Tindakan ini tidak dapat dibatalkan.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Batal</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteMember(member.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Hapus
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-12">
+                      <div className="inline-flex items-center gap-2">
+                        <RefreshCw className="h-5 w-5 animate-spin" />
+                        <span>Memuat data anggota...</span>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-12">
+                      <div className="text-red-600 mb-4">
+                        Gagal memuat data: {error}
+                      </div>
+                      <Button onClick={refresh} variant="outline">
+                        Coba Lagi
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ) : members.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-12">
+                      <p className="text-muted-foreground">
+                        Tidak ada anggota yang ditemukan.
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  members.map((member) => (
+                    <TableRow key={member.id}>
+                      <TableCell className="font-medium">{member.nama}</TableCell>
+                      <TableCell>{member.npa}</TableCell>
+                      <TableCell>{member.spesialis}</TableCell>
+                      <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
+                      <TableCell>{member.kota || member.kota_kabupaten}, {member.provinsi}</TableCell>
+                      <TableCell>{getStatusBadge(member.status)}</TableCell>
+                      <TableCell>{new Date(member.createdAt || member.created_at).toLocaleDateString('id-ID')}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem asChild>
+                              <Link to={`/admin/anggota/${member.id}`}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Lihat Detail
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <Link to={`/admin/anggota/${member.id}/edit`}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Hapus
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Apakah Anda yakin ingin menghapus data anggota "{member.nama}"? 
+                                    Tindakan ini tidak dapat dibatalkan.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteMember(member.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Hapus
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
-          
-          {filteredMembers.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                Tidak ada anggota yang ditemukan.
-              </p>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
 import { SearchBar } from "@/components/SearchBar"
 import { MemberFiltersComponent } from "@/components/MemberFilters"
@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Member, MemberFilters, MemberSort } from "@/types/member"
 import { mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
-import { useMemberContext } from '@/contexts/MemberContext';
-import { ArrowUpDown, Users } from "lucide-react"
+import { useMembers } from '@/hooks/useMembers'
+import { ArrowUpDown, Users, RefreshCw } from "lucide-react"
 
 export default function AnggotaPage() {
-  const { members } = useMemberContext();
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -35,6 +34,24 @@ export default function AnggotaPage() {
     limit: parseInt(searchParams.get("limit") || "25")
   })
 
+  // Use the new hook for fetching data
+  const { 
+    members, 
+    total, 
+    totalPages, 
+    loading, 
+    error, 
+    refresh 
+  } = useMembers({
+    query: filters.query,
+    provinsi: filters.provinsi?.[0],
+    pd: filters.pd?.[0],
+    subspesialis: filters.subspesialis?.[0],
+    sort: `${sort.field}_${sort.direction}`,
+    limit: pagination.limit,
+    page: pagination.page
+  })
+
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams()
@@ -52,90 +69,11 @@ export default function AnggotaPage() {
     setSearchParams(params)
   }, [filters, pagination, sort, setSearchParams])
 
-  // Filter and sort logic
-  const filteredAndSortedMembers = useMemo(() => {
-    let result = [...members]
-
-    // Apply filters
-    if (filters.query) {
-      const query = filters.query.toLowerCase()
-      result = result.filter(member => 
-        member.nama.toLowerCase().includes(query) ||
-        member.gelar?.toLowerCase().includes(query) ||
-        member.npa?.toLowerCase().includes(query) ||
-        member.spesialis?.toLowerCase().includes(query) ||
-        member.subspesialis?.toLowerCase().includes(query) ||
-        member.tempatLahir?.toLowerCase().includes(query) ||
-        member.tanggalLahir?.toLowerCase().includes(query) ||
-        member.jenisKelamin?.toLowerCase().includes(query) ||
-        member.alamat?.toLowerCase().includes(query) ||
-        member.kota?.toLowerCase().includes(query) ||
-        member.provinsi?.toLowerCase().includes(query) ||
-        member.pd?.toLowerCase().includes(query) ||
-        member.rumahSakit?.toLowerCase().includes(query) ||
-        member.unitKerja?.toLowerCase().includes(query) ||
-        member.jabatan?.toLowerCase().includes(query) ||
-        member.nik?.toLowerCase().includes(query) ||
-        member.noSTR?.toLowerCase().includes(query) ||
-        member.strBerlakuSampai?.toLowerCase().includes(query) ||
-        member.noSIP?.toLowerCase().includes(query) ||
-        member.sipBerlakuSampai?.toLowerCase().includes(query) ||
-        member.tahunLulus?.toString().includes(query) ||
-        member.status?.toLowerCase().includes(query) ||
-        member.kontakEmail?.toLowerCase().includes(query) ||
-        member.kontakTelepon?.toLowerCase().includes(query) ||
-        member.website?.toLowerCase().includes(query) ||
-        member.sosialMedia?.toLowerCase().includes(query)
-      )
-    }
-
-    if (filters.provinsi?.length) {
-      result = result.filter(member => 
-        member.provinsi && filters.provinsi!.includes(member.provinsi)
-      )
-    }
-
-    if (filters.pd?.length) {
-      result = result.filter(member => 
-        member.pd && filters.pd!.includes(member.pd)
-      )
-    }
-
-    if (filters.subspesialis?.length) {
-      result = result.filter(member => 
-        member.subspesialis && filters.subspesialis!.includes(member.subspesialis)
-      )
-    }
-
-    // Apply sorting
-    result.sort((a, b) => {
-      const aValue = a[sort.field] || ""
-      const bValue = b[sort.field] || ""
-      
-      let comparison = 0
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        comparison = aValue.localeCompare(bValue, "id")
-      } else {
-        comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0
-      }
-      
-      return sort.direction === "asc" ? comparison : -comparison
-    })
-
-    return result
-  }, [filters, sort])
-
-  // Pagination logic
-  const paginatedMembers = useMemo(() => {
-    const startIndex = (pagination.page - 1) * pagination.limit
-    return filteredAndSortedMembers.slice(startIndex, startIndex + pagination.limit)
-  }, [filteredAndSortedMembers, pagination])
-
   const paginationInfo = {
     page: pagination.page,
     limit: pagination.limit,
-    total: filteredAndSortedMembers.length,
-    totalPages: Math.ceil(filteredAndSortedMembers.length / pagination.limit)
+    total: total,
+    totalPages: totalPages
   }
 
   const handleFiltersChange = (newFilters: MemberFilters) => {
@@ -205,12 +143,27 @@ export default function AnggotaPage() {
               <div className="flex items-center space-x-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">
-                  {filteredAndSortedMembers.length} anggota ditemukan
+                  {loading ? 'Memuat...' : `${total} anggota ditemukan`}
                 </span>
               </div>
+              {error && (
+                <div className="text-sm text-red-600">
+                  Error: {error}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={refresh}
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
               <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
               <Select
                 value={`${sort.field}-${sort.direction}`}
@@ -232,13 +185,31 @@ export default function AnggotaPage() {
         </div>
 
         {/* Table */}
-        <MemberTable
-          members={paginatedMembers}
-          onViewMember={handleViewMember}
-          pagination={paginationInfo}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-        />
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center gap-2">
+              <RefreshCw className="h-5 w-5 animate-spin" />
+              <span>Memuat data anggota...</span>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <div className="text-red-600 mb-4">
+              Gagal memuat data: {error}
+            </div>
+            <Button onClick={refresh} variant="outline">
+              Coba Lagi
+            </Button>
+          </div>
+        ) : (
+          <MemberTable
+            members={members}
+            onViewMember={handleViewMember}
+            pagination={paginationInfo}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
+        )}
 
         {/* Member Detail Modal */}
         <MemberModal
