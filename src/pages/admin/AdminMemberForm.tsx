@@ -505,13 +505,47 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="pd">Pengurus Daerah (PD)</Label>
-                      <Input
-                        id="pd"
-                        value={formData.pd}
-                        onChange={(e) => handleInputChange('pd', e.target.value)}
-                        placeholder="PD PDPI Jakarta"
-                      />
+                      <Label htmlFor="pd">Cabang/Wilayah</Label>
+                      <Select 
+                        value={formData.pd} 
+                        onValueChange={(value) => handleInputChange('pd', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih cabang" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Cabang Aceh">Cabang Aceh</SelectItem>
+                          <SelectItem value="Cabang Sumatera Utara">Cabang Sumatera Utara</SelectItem>
+                          <SelectItem value="Cabang Sumatera Barat">Cabang Sumatera Barat</SelectItem>
+                          <SelectItem value="Cabang Riau">Cabang Riau</SelectItem>
+                          <SelectItem value="Cabang Kep. Riau">Cabang Kep. Riau</SelectItem>
+                          <SelectItem value="Cabang Jambi">Cabang Jambi</SelectItem>
+                          <SelectItem value="Cabang Sum Sel & Bangka Belitung">Cabang Sum Sel & Bangka Belitung</SelectItem>
+                          <SelectItem value="Cabang Lampung">Cabang Lampung</SelectItem>
+                          <SelectItem value="Cabang Banten">Cabang Banten</SelectItem>
+                          <SelectItem value="Cabang Jakarta">Cabang Jakarta</SelectItem>
+                          <SelectItem value="Cabang Bogor">Cabang Bogor</SelectItem>
+                          <SelectItem value="Cabang Depok">Cabang Depok</SelectItem>
+                          <SelectItem value="Cabang Bekasi">Cabang Bekasi</SelectItem>
+                          <SelectItem value="Cabang Jawa Barat">Cabang Jawa Barat</SelectItem>
+                          <SelectItem value="Cabang Jawa Tengah">Cabang Jawa Tengah</SelectItem>
+                          <SelectItem value="Cabang Surakarta">Cabang Surakarta</SelectItem>
+                          <SelectItem value="Cabang Yogyakarta">Cabang Yogyakarta</SelectItem>
+                          <SelectItem value="Cabang Jawa Timur">Cabang Jawa Timur</SelectItem>
+                          <SelectItem value="Cabang Malang">Cabang Malang</SelectItem>
+                          <SelectItem value="Cabang Bali">Cabang Bali</SelectItem>
+                          <SelectItem value="Cabang Nusa Tenggara Barat">Cabang Nusa Tenggara Barat</SelectItem>
+                          <SelectItem value="Cabang Nusa Tenggara Timur">Cabang Nusa Tenggara Timur</SelectItem>
+                          <SelectItem value="Cabang Kalimantan Selatan">Cabang Kalimantan Selatan</SelectItem>
+                          <SelectItem value="Cabang Kalimantan Timur">Cabang Kalimantan Timur</SelectItem>
+                          <SelectItem value="Cabang Kalimantan Barat">Cabang Kalimantan Barat</SelectItem>
+                          <SelectItem value="Cabang Kalimantan Tengah">Cabang Kalimantan Tengah</SelectItem>
+                          <SelectItem value="Cabang Sulawesi">Cabang Sulawesi</SelectItem>
+                          <SelectItem value="Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)">Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)</SelectItem>
+                          <SelectItem value="Cabang Maluku Utara & Maluku">Cabang Maluku Utara & Maluku</SelectItem>
+                          <SelectItem value="Cabang Papua">Cabang Papua</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>

@@ -166,7 +166,7 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <p className="text-medical-body">{member.unitKerja || "-"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">PD/Wilayah</p>
+                <p className="text-sm font-medium text-muted-foreground">Cabang/Wilayah</p>
                 <p className="text-medical-body">{member.pd || "-"}</p>
               </div>
             </div>

@@ -130,13 +130,13 @@ export function MemberFiltersComponent({
           placeholder="Cari provinsi..."
         />
         
-        <FilterPopover
+         <FilterPopover
           open={openPD}
           setOpen={setOpenPD}
-          title="PD/Wilayah"
+          title="Cabang/Wilayah"
           options={pds}
           filterKey="pd"
-          placeholder="Cari PD..."
+          placeholder="Cari cabang..."
         />
         
         <FilterPopover

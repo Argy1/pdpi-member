@@ -63,7 +63,7 @@ export function MemberTable({
                 <TableHead className="font-semibold">Rumah Sakit</TableHead>
                 <TableHead className="font-semibold">Kota</TableHead>
                 <TableHead className="font-semibold">Provinsi</TableHead>
-                <TableHead className="font-semibold">PD/Wilayah</TableHead>
+                <TableHead className="font-semibold">Cabang/Wilayah</TableHead>
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold text-center">Aksi</TableHead>
               </TableRow>
