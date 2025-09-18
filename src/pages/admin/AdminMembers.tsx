@@ -148,10 +148,13 @@ export default function AdminMembers() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case 'AKTIF':
       case 'Aktif':
         return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Aktif</Badge>;
+      case 'PENDING':
       case 'Pending':
         return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
+      case 'TIDAK_AKTIF':
       case 'Nonaktif':
         return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Nonaktif</Badge>;
       default:
@@ -223,13 +226,13 @@ export default function AdminMembers() {
                   <DropdownMenuItem onClick={() => setSelectedStatus('')}>
                     Semua Status
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Aktif')}>
+                  <DropdownMenuItem onClick={() => setSelectedStatus('AKTIF')}>
                     Aktif
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Pending')}>
+                  <DropdownMenuItem onClick={() => setSelectedStatus('PENDING')}>
                     Pending
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Nonaktif')}>
+                  <DropdownMenuItem onClick={() => setSelectedStatus('TIDAK_AKTIF')}>
                     Nonaktif
                   </DropdownMenuItem>
                 </DropdownMenuContent>
