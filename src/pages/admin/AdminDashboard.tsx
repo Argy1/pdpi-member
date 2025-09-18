@@ -1,8 +1,9 @@
 import { useAuth } from '@/contexts/AuthContext';
+import { useMemberContext } from '@/contexts/MemberContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, UserPlus, Building, CheckCircle, Settings, FileText, BarChart3, ArrowRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -15,50 +16,35 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const { profile, isPusatAdmin } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
-    totalMembers: 0,
-    activeMembers: 0,
-    pendingMembers: 0,
-    totalBranches: 0
-  });
-  const [loading, setLoading] = useState(true);
+  const { members } = useMemberContext();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchStats();
-  }, [profile]);
+  // Calculate real-time statistics from member data
+  const stats = useMemo<DashboardStats>(() => {
+    console.log('Calculating dashboard stats from members:', members.length);
+    
+    // Filter members based on user role
+    let filteredMembers = members;
+    
+    // If cabang admin, filter by their branch (for now showing all data)
+    // In real implementation, you would filter by profile.branch_id
+    
+    const totalMembers = filteredMembers.length;
+    const activeMembers = filteredMembers.filter(member => member.status === 'AKTIF').length;
+    const pendingMembers = filteredMembers.filter(member => member.status === 'PENDING').length;
+    
+    // For branches, we'll use a mock value since we don't have branches table data yet
+    const totalBranches = isPusatAdmin ? 34 : 1;
 
-  const fetchStats = async () => {
-    try {
-      setLoading(true);
-      
-      // For demo purposes, using mock data
-      // In real implementation, you would query your members table
-      // with proper filtering based on user role and branch
-      
-      let mockStats = {
-        totalMembers: 1250,
-        activeMembers: 1180,
-        pendingMembers: 70,
-        totalBranches: 34
-      };
+    console.log('Calculated stats:', { totalMembers, activeMembers, pendingMembers, totalBranches });
 
-      // If cabang admin, show limited stats for their branch only
-      if (profile?.role === 'ADMIN_CABANG') {
-        mockStats = {
-          totalMembers: 45,
-          activeMembers: 42,
-          pendingMembers: 3,
-          totalBranches: 1
-        };
-      }
-
-      setStats(mockStats);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return {
+      totalMembers,
+      activeMembers,
+      pendingMembers,
+      totalBranches
+    };
+  }, [members, isPusatAdmin, profile]);
 
   const statCards = [
     {
@@ -178,8 +164,10 @@ export default function AdminDashboard() {
                 <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
               <div className="mt-4">
-                <Button variant="outline" className="w-full" disabled>
-                  Segera Tersedia
+                <Button asChild className="w-full">
+                  <Link to="/admin/laporan">
+                    Lihat Laporan
+                  </Link>
                 </Button>
               </div>
             </CardContent>
