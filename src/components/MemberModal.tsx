@@ -87,16 +87,17 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Tempat Lahir</p>
-                <p className="text-medical-body">{member.tempatLahir || "-"}</p>
+                <p className="text-medical-body">{member.tempatLahir || member.tempat_lahir || "-"}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Tanggal Lahir</p>
-                <p className="text-medical-body">{formatDate(member.tanggalLahir)}</p>
+                <p className="text-medical-body">{formatDate(member.tanggalLahir || member.tgl_lahir)}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Jenis Kelamin</p>
                 <p className="text-medical-body">
-                  {member.jenisKelamin === "L" ? "Laki-laki" : member.jenisKelamin === "P" ? "Perempuan" : "-"}
+                  {member.jenisKelamin === "L" || member.jenis_kelamin === "L" ? "Laki-laki" : 
+                   member.jenisKelamin === "P" || member.jenis_kelamin === "P" ? "Perempuan" : "-"}
                 </p>
               </div>
               <div className="space-y-1">
@@ -106,6 +107,14 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Gelar 2</p>
                 <p className="text-medical-body">{member.gelar2 || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Alumni</p>
+                <p className="text-medical-body">{member.alumni || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">NIK</p>
+                <p className="text-medical-body">{member.nik || "-"}</p>
               </div>
             </div>
           </div>
@@ -131,7 +140,33 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Tahun Lulus</p>
-                <p className="text-medical-body">{member.tahunLulus || "-"}</p>
+                <p className="text-medical-body">{member.tahunLulus || member.thn_lulus || "-"}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Legal Documents */}
+          <div className="space-y-4">
+            <h3 className="flex items-center text-lg font-semibold heading-medical">
+              <GraduationCap className="h-5 w-5 mr-2 text-primary" />
+              Dokumen Legal
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">No. STR</p>
+                <p className="text-medical-body">{member.noSTR || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">STR Berlaku Sampai</p>
+                <p className="text-medical-body">{formatDate(member.strBerlakuSampai)}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">No. SIP</p>
+                <p className="text-medical-body">{member.noSIP || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">SIP Berlaku Sampai</p>
+                <p className="text-medical-body">{formatDate(member.sipBerlakuSampai)}</p>
               </div>
             </div>
           </div>
@@ -144,17 +179,17 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </h3>
             <div className="space-y-3">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Alamat</p>
-                <p className="text-medical-body">{member.alamat || "-"}</p>
+                <p className="text-sm font-medium text-muted-foreground">Alamat Lengkap</p>
+                <p className="text-medical-body">{member.alamat || member.alamat_rumah || "-"}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Kota</p>
-                  <p className="text-medical-body">{member.kota || "-"}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Kota/Kabupaten</p>
+                  <p className="text-medical-body">{member.kota || member.kota_kabupaten || "-"}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Provinsi</p>
-                  <p className="text-medical-body">{member.provinsi || "-"}</p>
+                  <p className="text-medical-body">{member.provinsi || member.provinsi_rumah || "-"}</p>
                 </div>
               </div>
             </div>
@@ -168,42 +203,52 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Rumah Sakit</p>
-                <p className="text-medical-body">{member.rumahSakit || "-"}</p>
+                <p className="text-sm font-medium text-muted-foreground">Rumah Sakit/Tempat Tugas</p>
+                <p className="text-medical-body">{member.rumahSakit || member.tempat_tugas || "-"}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Unit Kerja</p>
                 <p className="text-medical-body">{member.unitKerja || "-"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Cabang/Wilayah</p>
-                <p className="text-medical-body">{member.pd || "-"}</p>
+                <p className="text-sm font-medium text-muted-foreground">Jabatan</p>
+                <p className="text-medical-body">{member.jabatan || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Cabang/PD</p>
+                <p className="text-medical-body">{member.pd || member.cabang || "-"}</p>
               </div>
             </div>
           </div>
 
-          {/* Contact Info (Public only) */}
-          {(member.kontakEmail || member.website) && (
-            <div className="space-y-4">
-              <h3 className="flex items-center text-lg font-semibold heading-medical">
-                <Mail className="h-5 w-5 mr-2 text-primary" />
-                Kontak Publik
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {member.kontakEmail && (
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Email</p>
+          {/* Contact Info */}
+          <div className="space-y-4">
+            <h3 className="flex items-center text-lg font-semibold heading-medical">
+              <Mail className="h-5 w-5 mr-2 text-primary" />
+              Informasi Kontak
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Email</p>
+                <p className="text-medical-body">
+                  {member.kontakEmail || member.email ? (
                     <a 
-                      href={`mailto:${member.kontakEmail}`}
+                      href={`mailto:${member.kontakEmail || member.email}`}
                       className="text-primary hover:underline transition-smooth"
                     >
-                      {member.kontakEmail}
+                      {member.kontakEmail || member.email}
                     </a>
-                  </div>
-                )}
-                {member.website && (
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Website</p>
+                  ) : '-'}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">No. HP</p>
+                <p className="text-medical-body">{member.kontakTelepon || member.no_hp || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Website</p>
+                <p className="text-medical-body">
+                  {member.website ? (
                     <a 
                       href={member.website}
                       target="_blank"
@@ -212,11 +257,15 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                     >
                       {member.website}
                     </a>
-                  </div>
-                )}
+                  ) : '-'}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Media Sosial</p>
+                <p className="text-medical-body">{member.sosialMedia || "-"}</p>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Last Updated */}
           <div className="pt-4 border-t">

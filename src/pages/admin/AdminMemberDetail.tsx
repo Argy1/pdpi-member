@@ -176,7 +176,7 @@ export default function AdminMemberDetail() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Personal Information */}
           <Card>
             <CardHeader>
@@ -206,16 +206,19 @@ export default function AdminMemberDetail() {
                 </p>
               </div>
 
-              {member.alumni && (
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Alumni</label>
-                  <p className="mt-1">{member.alumni}</p>
-                </div>
-              )}
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Alumni</label>
+                <p className="mt-1">{member.alumni || '-'}</p>
+              </div>
               
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tahun Lulus</label>
                 <p className="mt-1">{member.thn_lulus || member.tahunLulus || '-'}</p>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">NIK</label>
+                <p className="mt-1">{member.nik || '-'}</p>
               </div>
             </CardContent>
           </Card>
@@ -292,6 +295,43 @@ export default function AdminMemberDetail() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Cabang/PD</label>
                 <p className="mt-1">{member.cabang || member.pd || '-'}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Legal Documents */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5" />
+                Dokumen Legal
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">No. STR</label>
+                <p className="mt-1">{member.noSTR || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">STR Berlaku Sampai</label>
+                <p className="mt-1">
+                  {member.strBerlakuSampai ? 
+                    new Date(member.strBerlakuSampai).toLocaleDateString('id-ID') : '-'}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">No. SIP</label>
+                <p className="mt-1">{member.noSIP || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">SIP Berlaku Sampai</label>
+                <p className="mt-1">
+                  {member.sipBerlakuSampai ? 
+                    new Date(member.sipBerlakuSampai).toLocaleDateString('id-ID') : '-'}
+                </p>
               </div>
             </CardContent>
           </Card>
