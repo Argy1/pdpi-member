@@ -29,6 +29,87 @@ export type Database = {
         }
         Relationships: []
       }
+      members: {
+        Row: {
+          alamat_rumah: string | null
+          alumni: string | null
+          cabang: string | null
+          created_at: string
+          email: string | null
+          foto: string | null
+          gelar: string | null
+          gelar2: string | null
+          id: string
+          jenis_kelamin: string | null
+          keterangan: string | null
+          kota_kabupaten: string | null
+          kota_kabupaten_rumah: string | null
+          nama: string
+          no_hp: string | null
+          npa: string | null
+          provinsi: string | null
+          provinsi_rumah: string | null
+          status: string | null
+          tempat_lahir: string | null
+          tempat_tugas: string | null
+          tgl_lahir: string | null
+          thn_lulus: number | null
+          updated_at: string
+        }
+        Insert: {
+          alamat_rumah?: string | null
+          alumni?: string | null
+          cabang?: string | null
+          created_at?: string
+          email?: string | null
+          foto?: string | null
+          gelar?: string | null
+          gelar2?: string | null
+          id?: string
+          jenis_kelamin?: string | null
+          keterangan?: string | null
+          kota_kabupaten?: string | null
+          kota_kabupaten_rumah?: string | null
+          nama: string
+          no_hp?: string | null
+          npa?: string | null
+          provinsi?: string | null
+          provinsi_rumah?: string | null
+          status?: string | null
+          tempat_lahir?: string | null
+          tempat_tugas?: string | null
+          tgl_lahir?: string | null
+          thn_lulus?: number | null
+          updated_at?: string
+        }
+        Update: {
+          alamat_rumah?: string | null
+          alumni?: string | null
+          cabang?: string | null
+          created_at?: string
+          email?: string | null
+          foto?: string | null
+          gelar?: string | null
+          gelar2?: string | null
+          id?: string
+          jenis_kelamin?: string | null
+          keterangan?: string | null
+          kota_kabupaten?: string | null
+          kota_kabupaten_rumah?: string | null
+          nama?: string
+          no_hp?: string | null
+          npa?: string | null
+          provinsi?: string | null
+          provinsi_rumah?: string | null
+          status?: string | null
+          tempat_lahir?: string | null
+          tempat_tugas?: string | null
+          tgl_lahir?: string | null
+          thn_lulus?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           branch_id: string | null
