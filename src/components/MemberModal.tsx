@@ -97,6 +97,14 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                   {member.jenisKelamin === "L" ? "Laki-laki" : member.jenisKelamin === "P" ? "Perempuan" : "-"}
                 </p>
               </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Gelar 1</p>
+                <p className="text-medical-body">{member.gelar || "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Gelar 2</p>
+                <p className="text-medical-body">{member.gelar2 || "-"}</p>
+              </div>
             </div>
           </div>
 

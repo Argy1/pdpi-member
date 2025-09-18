@@ -22,6 +22,7 @@ interface MemberFormData {
   // Identitas
   nama: string;
   gelar: string;
+  gelar2: string;
   npa: string;
   spesialis: string;
   subspesialis: string;
@@ -64,6 +65,7 @@ interface MemberFormData {
 const initialFormData: MemberFormData = {
   nama: '',
   gelar: '',
+  gelar2: '',
   npa: '',
   spesialis: '',
   subspesialis: '',
@@ -111,6 +113,7 @@ export default function AdminMemberForm() {
         const memberFormData = {
           nama: existingMember.nama,
           gelar: existingMember.gelar,
+          gelar2: existingMember.gelar2,
           npa: existingMember.npa,
           spesialis: existingMember.spesialis,
           subspesialis: existingMember.subspesialis,
@@ -272,12 +275,22 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="gelar">Gelar</Label>
+                      <Label htmlFor="gelar">Gelar 1</Label>
                       <Input
                         id="gelar"
                         value={formData.gelar}
                         onChange={(e) => handleInputChange('gelar', e.target.value)}
                         placeholder="Sp.P, M.Kes, dll"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gelar2">Gelar 2</Label>
+                      <Input
+                        id="gelar2"
+                        value={formData.gelar2}
+                        onChange={(e) => handleInputChange('gelar2', e.target.value)}
+                        placeholder="Ph.D, Dr., dll"
                       />
                     </div>
 
