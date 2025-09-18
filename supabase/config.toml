@@ -1,1 +1,4 @@
 project_id = "zxlccvozsbjmwrjbwyrr"
+
+[functions.import-anggota]
+verify_jwt = true

@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 import { useImport, ImportError } from '@/contexts/ImportContext';
 import { useMemberContext } from '@/contexts/MemberContext';
 import { useToast } from '@/hooks/use-toast';
@@ -30,7 +31,8 @@ import {
   XCircle, 
   Clock,
   AlertTriangle,
-  FileDown
+  FileDown,
+  Settings
 } from 'lucide-react';
 
 export const ImportProcessStep = () => {
@@ -48,6 +50,10 @@ export const ImportProcessStep = () => {
   const { toast } = useToast();
   const [isStarted, setIsStarted] = useState(false);
   const [importErrors, setImportErrors] = useState<ImportError[]>([]);
+  const [batchSize, setBatchSize] = useState(300);
+  const [batchDelay, setBatchDelay] = useState(150);
+  const [currentChunk, setCurrentChunk] = useState(0);
+  const [totalChunks, setTotalChunks] = useState(0);
 
   const processData = async () => {
     if (!fileData) return { validData: [], errors: [] };
@@ -212,6 +218,11 @@ export const ImportProcessStep = () => {
     
     setImportErrors(errors);
     
+    // Calculate chunks
+    const chunks = Math.ceil(validData.length / batchSize);
+    setTotalChunks(chunks);
+    setCurrentChunk(0);
+    
     setImportProgress({
       total: validData.length + errors.length,
       processed: 0,
@@ -251,98 +262,105 @@ export const ImportProcessStep = () => {
     }
 
     try {
-      // Import data in chunks
-      const chunkSize = 500;
       let totalInserted = 0;
       let totalUpdated = 0;
       let totalSkipped = 0;
       let totalDuplicate = 0;
-      let totalNpaNullUpsertError = 0;
-      let totalErrors = 0;
+      let totalCabangError = 0;
+      let totalSystemError = 0;
+      const allSampleErrors: ImportError[] = [];
 
-      for (let i = 0; i < validData.length; i += chunkSize) {
-        const chunk = validData.slice(i, i + chunkSize);
+      // Process data in chunks
+      for (let i = 0; i < validData.length; i += batchSize) {
+        const chunk = validData.slice(i, i + batchSize);
+        const chunkIndex = Math.floor(i / batchSize) + 1;
+        setCurrentChunk(chunkIndex);
+        
+        console.log(`Processing chunk ${chunkIndex}/${chunks} with ${chunk.length} rows`);
         
         try {
-          // Process each item individually for better error handling
-          for (const item of chunk) {
-            try {
-              // Force admin branch if setting is enabled
-              if (importSettings.forceAdminBranch) {
-                // This would need session info - for now, we'll skip this
-                // item.cabang_id = session.user.cabangId;
-              }
-              
-              if (importSettings.mode === 'upsert') {
-                const whereCondition = item.npa ? 
-                  { npa: item.npa } : 
-                  { 
-                    nama: item.nama, 
-                    tempat_tugas: item.tempat_tugas 
-                  };
-                
-                const { data: existing } = await supabase
-                  .from('members')
-                  .select('id')
-                  .match(whereCondition)
-                  .single();
-                
-                if (existing) {
-                  await supabase
-                    .from('members')
-                    .update(item)
-                    .eq('id', existing.id);
-                  totalUpdated++;
-                } else {
-                  await supabase
-                    .from('members')
-                    .insert(item);
-                  totalInserted++;
-                }
-              } else if (importSettings.mode === 'insert') {
-                const { error } = await supabase
-                  .from('members')
-                  .insert(item);
-                
-                if (error) {
-                  if (error.code === '23505') { // Unique constraint violation
-                    totalDuplicate++;
-                  } else {
-                    totalErrors++;
-                  }
-                } else {
-                  totalInserted++;
-                }
-              }
-            } catch (itemError) {
-              console.error('Item import error:', itemError);
-              totalErrors++;
+          // Get auth token
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            throw new Error('Authentication required');
+          }
+
+          // Call import edge function
+          const { data: result, error } = await supabase.functions.invoke('import-anggota', {
+            body: {
+              rows: chunk,
+              mode: importSettings.mode,
+              createBranchIfMissing: importSettings.createBranchIfMissing,
+              forceAdminBranch: importSettings.forceAdminBranch,
+              chunk: chunkIndex,
+              total: chunks
+            },
+            headers: {
+              Authorization: `Bearer ${session.access_token}`
+            }
+          });
+
+          if (error) {
+            console.error(`Chunk ${chunkIndex} error:`, error);
+            totalSystemError += chunk.length;
+            allSampleErrors.push({
+              row: i + 1,
+              data: { chunk: chunkIndex },
+              reason: 'SYSTEM',
+              details: `Chunk ${chunkIndex} failed: ${error.message}`
+            });
+          } else {
+            totalInserted += result.inserted || 0;
+            totalUpdated += result.updated || 0;
+            totalDuplicate += result.duplicate || 0;
+            totalCabangError += result.cabangError || 0;
+            totalSystemError += result.systemError || 0;
+            
+            // Add sample errors from this chunk
+            if (result.sampleErrors) {
+              allSampleErrors.push(...result.sampleErrors.map((e: any) => ({
+                row: i + e.row,
+                data: e.data,
+                reason: e.reason,
+                details: e.details
+              })));
             }
           }
-        } catch (error) {
-          console.error('Chunk import error:', error);
-          totalErrors += chunk.length;
+        } catch (chunkError) {
+          console.error(`Chunk ${chunkIndex} processing error:`, chunkError);
+          totalSystemError += chunk.length;
+          allSampleErrors.push({
+            row: i + 1,
+            data: { chunk: chunkIndex },
+            reason: 'SYSTEM', 
+            details: `Chunk ${chunkIndex} failed: ${chunkError.message}`
+          });
         }
         
-        // Update progress
+        // Update progress after each chunk
         setImportProgress({
           total: validData.length + errors.length,
-          processed: Math.min(i + chunkSize, validData.length) + errors.length,
+          processed: Math.min(i + batchSize, validData.length) + errors.length,
           inserted: totalInserted,
           updated: totalUpdated,
           skipped: totalSkipped,
           duplicate: totalDuplicate,
           invalid: errors.length,
-          cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
-          npaNullUpsertError: totalNpaNullUpsertError,
-          errors: totalErrors,
+          cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length + totalCabangError,
+          npaNullUpsertError: 0,
+          errors: totalSystemError,
           isProcessing: true,
           isDone: false
         });
         
-        // Small delay to show progress
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Delay between chunks to avoid throttling
+        if (i + batchSize < validData.length) {
+          await new Promise(resolve => setTimeout(resolve, batchDelay));
+        }
       }
+      
+      // Update final progress and merge errors
+      setImportErrors([...errors, ...allSampleErrors]);
       
       setImportProgress({
         total: validData.length + errors.length,
@@ -352,17 +370,25 @@ export const ImportProcessStep = () => {
         skipped: totalSkipped,
         duplicate: totalDuplicate,
         invalid: errors.length,
-        cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length,
-        npaNullUpsertError: totalNpaNullUpsertError,
-        errors: totalErrors,
+        cabangTidakDitemukan: errors.filter(e => e.reason === 'CABANG_TIDAK_DITEMUKAN').length + totalCabangError,
+        npaNullUpsertError: 0,
+        errors: totalSystemError,
         isProcessing: false,
         isDone: true
       });
       
       toast({
         title: 'Import selesai',
-        description: `Berhasil: ${totalInserted} insert, ${totalUpdated} update. Error: ${totalErrors + errors.length}`
+        description: `Berhasil: ${totalInserted} insert, ${totalUpdated} update. Error: ${totalSystemError + errors.length}`
       });
+      
+      // Refresh member data
+      try {
+        // This would trigger a refresh of the member list if using SWR or similar
+        window.dispatchEvent(new CustomEvent('refreshMembers'));
+      } catch (e) {
+        console.log('Member refresh event not available');
+      }
       
     } catch (error) {
       console.error('Import error:', error);
@@ -480,6 +506,46 @@ export const ImportProcessStep = () => {
             
             <Separator />
             
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="batchSize" className="text-sm font-medium">
+                  Ukuran Batch <span className="text-muted-foreground">(baris per chunk)</span>
+                </Label>
+                <Input
+                  id="batchSize"
+                  type="number"
+                  min="50"
+                  max="1000"
+                  value={batchSize}
+                  onChange={(e) => setBatchSize(Number(e.target.value))}
+                  disabled={isStarted}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Default: 300. Turunkan jika ada timeout.
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="batchDelay" className="text-sm font-medium">
+                  Jeda Antar Batch <span className="text-muted-foreground">(ms)</span>
+                </Label>
+                <Input
+                  id="batchDelay"
+                  type="number"
+                  min="0"
+                  max="5000"
+                  value={batchDelay}
+                  onChange={(e) => setBatchDelay(Number(e.target.value))}
+                  disabled={isStarted}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Default: 150ms. Tambah jika ada throttling.
+                </p>
+              </div>
+            </div>
+            
+            <Separator />
+            
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="createBranch"
@@ -534,10 +600,23 @@ export const ImportProcessStep = () => {
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{importProgress.processed} / {importProgress.total} baris</span>
                 <span>
-                  {importProgress.isProcessing ? 'Memproses...' : 
+                  {importProgress.isProcessing ? 
+                    `Chunk ${currentChunk}/${totalChunks} - Memproses...` : 
                    importProgress.isDone ? 'Selesai' : 'Siap'}
                 </span>
               </div>
+              {totalChunks > 0 && (
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Chunk Progress</span>
+                    <span>{currentChunk} / {totalChunks}</span>
+                  </div>
+                  <Progress 
+                    value={totalChunks > 0 ? (currentChunk / totalChunks) * 100 : 0} 
+                    className="w-full h-2" 
+                  />
+                </div>
+              )}
             </div>
 
             {/* Results */}
