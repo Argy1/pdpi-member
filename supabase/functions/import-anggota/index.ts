@@ -106,14 +106,14 @@ Deno.serve(async (req) => {
       const row = rows[i];
       
       try {
-        // Validate only critical required fields (only nama is truly required)
-        if (!row.nama || row.nama.trim() === '') {
+        // Validate required fields
+        if (!row.nama || !row.provinsi || !row.tempat_tugas) {
           invalid++;
           if (sampleErrors.length < 5) {
             sampleErrors.push({
               row: i + 1,
               reason: 'FIELD_REQUIRED',
-              details: 'Missing required field: nama',
+              details: 'Missing required fields: nama, provinsi, or tempat_tugas',
               data: row
             });
           }
@@ -169,30 +169,31 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Prepare data for insert/update with dashes for empty fields
+        // Prepare data for insert/update
         const memberData: any = {
           nama: row.nama,
-          tempat_tugas: row.tempat_tugas || '-',
-          provinsi: row.provinsi || '-',
+          tempat_tugas: row.tempat_tugas,
+          provinsi: row.provinsi,
           status: row.status || 'Biasa',
-          npa: row.npa || '-',
-          kota_kabupaten: row.kota_kabupaten || '-',
-          email: row.email || '-',
-          no_hp: row.no_hp || '-',
-          gelar: row.gelar || '-',
-          gelar2: row.gelar2 || '-',
-          tgl_lahir: row.tgl_lahir || null,
-          jenis_kelamin: row.jenis_kelamin || '-',
-          thn_lulus: row.thn_lulus || null,
-          alumni: row.alumni || '-',
-          alamat_rumah: row.alamat_rumah || '-',
-          kota_kabupaten_rumah: row.kota_kabupaten_rumah || '-',
-          provinsi_rumah: row.provinsi_rumah || '-',
-          tempat_lahir: row.tempat_lahir || '-',
-          keterangan: row.keterangan || '-',
-          foto: row.foto || null,
         };
 
+        // Add optional fields if present
+        if (row.npa) memberData.npa = row.npa;
+        if (row.kota_kabupaten) memberData.kota_kabupaten = row.kota_kabupaten;
+        if (row.email) memberData.email = row.email;
+        if (row.no_hp) memberData.no_hp = row.no_hp;
+        if (row.gelar) memberData.gelar = row.gelar;
+        if (row.gelar2) memberData.gelar2 = row.gelar2;
+        if (row.tgl_lahir) memberData.tgl_lahir = row.tgl_lahir;
+        if (row.jenis_kelamin) memberData.jenis_kelamin = row.jenis_kelamin;
+        if (row.thn_lulus) memberData.thn_lulus = row.thn_lulus;
+        if (row.alumni) memberData.alumni = row.alumni;
+        if (row.alamat_rumah) memberData.alamat_rumah = row.alamat_rumah;
+        if (row.kota_kabupaten_rumah) memberData.kota_kabupaten_rumah = row.kota_kabupaten_rumah;
+        if (row.provinsi_rumah) memberData.provinsi_rumah = row.provinsi_rumah;
+        if (row.tempat_lahir) memberData.tempat_lahir = row.tempat_lahir;
+        if (row.keterangan) memberData.keterangan = row.keterangan;
+        if (row.foto) memberData.foto = row.foto;
         if (cabangId) memberData.cabang = cabangId;
 
         if (mode === 'upsert') {
