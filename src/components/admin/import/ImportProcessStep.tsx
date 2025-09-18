@@ -99,6 +99,10 @@ export const ImportProcessStep = () => {
               const gender = rawValue.toString().toUpperCase();
               processedRow[dbField] = (gender === 'L' || gender === 'P') ? gender : null;
               break;
+            case 'kota':
+              // Map kota to kota_kabupaten for database compatibility
+              processedRow['kota_kabupaten'] = rawValue.toString().trim();
+              break;
             default:
               processedRow[dbField] = rawValue.toString().trim();
           }

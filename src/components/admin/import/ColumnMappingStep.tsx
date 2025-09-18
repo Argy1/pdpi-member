@@ -30,6 +30,7 @@ const dbFields = {
   tempatLahir: { label: 'Tempat Lahir', required: false, type: 'text' },
   tanggalLahir: { label: 'Tanggal Lahir', required: false, type: 'date' },
   alamat: { label: 'Alamat', required: false, type: 'text' },
+  kota: { label: 'Kota/Kabupaten', required: false, type: 'text' },
   unitKerja: { label: 'Unit Kerja', required: false, type: 'text' },
   jabatan: { label: 'Jabatan', required: false, type: 'text' },
   tahunLulus: { label: 'Tahun Lulus', required: false, type: 'number' },

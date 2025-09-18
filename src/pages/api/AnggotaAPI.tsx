@@ -39,7 +39,8 @@ export class AnggotaAPI {
           id, nama, npa, gelar, gelar2, tempat_tugas, 
           kota_kabupaten, provinsi, status, 
           created_at, email, no_hp, cabang,
-          thn_lulus, alumni
+          thn_lulus, alumni, alamat_rumah, 
+          kota_kabupaten_rumah, provinsi_rumah
         `)
 
       // Apply search filter
