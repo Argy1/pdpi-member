@@ -30,6 +30,7 @@ interface MemberFormData {
   tanggalLahir: Date | undefined;
   jenisKelamin: string;
   foto: string;
+  alumni: string;
   
   // Domisili
   alamat: string;
@@ -73,6 +74,7 @@ const initialFormData: MemberFormData = {
   tanggalLahir: undefined,
   jenisKelamin: '',
   foto: '',
+  alumni: '',
   alamat: '',
   kota: '',
   provinsi: '',
@@ -121,6 +123,7 @@ export default function AdminMemberForm() {
           tanggalLahir: existingMember.tanggalLahir ? new Date(existingMember.tanggalLahir) : undefined,
           jenisKelamin: existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan',
           foto: existingMember.fotoUrl,
+          alumni: existingMember.alumni || '',
           alamat: existingMember.alamat,
           kota: existingMember.kota,
           provinsi: existingMember.provinsi,
@@ -188,6 +191,7 @@ export default function AdminMemberForm() {
         tempat_lahir: formData.tempatLahir,
         jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : undefined,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : undefined,
+        alumni: formData.alumni,
         tempat_tugas: formData.rumahSakit,
         kota_kabupaten: formData.kota,
         provinsi: formData.provinsi,
@@ -664,6 +668,16 @@ export default function AdminMemberForm() {
                         type="number"
                         min="1970"
                         max={new Date().getFullYear()}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="alumni">Alumni</Label>
+                      <Input
+                        id="alumni"
+                        value={formData.alumni}
+                        onChange={(e) => handleInputChange('alumni', e.target.value)}
+                        placeholder="Universitas/Institusi Alumni"
                       />
                     </div>
                   </div>

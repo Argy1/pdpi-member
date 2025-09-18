@@ -133,6 +133,10 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <p className="text-sm font-medium text-muted-foreground">Tahun Lulus</p>
                 <p className="text-medical-body">{member.tahunLulus || "-"}</p>
               </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Alumni</p>
+                <p className="text-medical-body">{member.alumni || "-"}</p>
+              </div>
             </div>
           </div>
 
