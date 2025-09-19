@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchBar } from '@/components/SearchBar';
@@ -47,10 +48,11 @@ import { supabase } from '@/integrations/supabase/client';
 // Removed mock data - will use data from MemberContext instead
 
 export default function AdminMembers() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || '');
   const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const { isPusatAdmin, profile } = useAuth();
   const { toast } = useToast();
 
@@ -70,9 +72,19 @@ export default function AdminMembers() {
     scope: 'admin'
   });
 
+  // Update URL when search changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("q", searchTerm);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    setSearchParams(params);
+  }, [searchTerm, currentPage, setSearchParams]);
+
   // Reset page when search or filter changes
   useEffect(() => {
-    setCurrentPage(1);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
   }, [searchTerm, selectedStatus]);
 
   const handleSort = (key: string) => {
@@ -245,8 +257,11 @@ export default function AdminMembers() {
             <div className="flex-1">
               <SearchBar 
                 scope="admin"
-                value={searchTerm}
-                onSearch={setSearchTerm}
+                defaultValue={searchParams.get("q") || ""}
+                onSearch={(query) => {
+                  setSearchTerm(query);
+                  setCurrentPage(1);
+                }}
                 className="w-full"
               />
             </div>

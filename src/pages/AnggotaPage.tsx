@@ -123,8 +123,12 @@ export default function AnggotaPage() {
           <SearchBar 
             scope="public"
             className="max-w-xl"
-            value={filters.query}
-            onSearch={(query) => setFilters(prev => ({ ...prev, query: query || undefined }))}
+            defaultValue={searchParams.get("q") || ""}
+            onSearch={(query) => {
+              const newFilters = { ...filters, query: query || undefined }
+              setFilters(newFilters)
+              setPagination(prev => ({ ...prev, page: 1 }))
+            }}
           />
         </div>
 

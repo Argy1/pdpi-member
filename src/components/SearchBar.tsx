@@ -13,6 +13,7 @@ interface SearchBarProps {
   scope?: "public" | "admin"
   onSearch?: (query: string) => void
   value?: string
+  defaultValue?: string
 }
 
 export function SearchBar({ 
@@ -21,9 +22,10 @@ export function SearchBar({
   className = "",
   scope = "public",
   onSearch,
-  value: controlledValue
+  value: controlledValue,
+  defaultValue = ""
 }: SearchBarProps) {
-  const [query, setQuery] = useState(controlledValue || "")
+  const [query, setQuery] = useState(controlledValue || defaultValue || "")
   const navigate = useNavigate()
 
   // Default placeholders based on scope
@@ -40,6 +42,8 @@ export function SearchBar({
         onSearch(searchQuery.trim())
       } else if (searchQuery.trim()) {
         navigate(`/anggota?q=${encodeURIComponent(searchQuery.trim())}`)
+      } else if (onSearch) {
+        onSearch("")
       }
     }, 300),
     [onSearch, navigate]
@@ -69,6 +73,7 @@ export function SearchBar({
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault()
       handleSearch()
     }
   }
