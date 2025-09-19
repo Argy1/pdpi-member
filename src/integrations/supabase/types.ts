@@ -49,6 +49,7 @@ export type Database = {
           npa: string | null
           provinsi: string | null
           provinsi_rumah: string | null
+          search_text: string | null
           status: string | null
           tempat_lahir: string | null
           tempat_tugas: string | null
@@ -75,6 +76,7 @@ export type Database = {
           npa?: string | null
           provinsi?: string | null
           provinsi_rumah?: string | null
+          search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null
           tempat_tugas?: string | null
@@ -101,6 +103,7 @@ export type Database = {
           npa?: string | null
           provinsi?: string | null
           provinsi_rumah?: string | null
+          search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null
           tempat_tugas?: string | null
@@ -144,9 +147,57 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_search_text: {
+        Args: { member_row: Database["public"]["Tables"]["members"]["Row"] }
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      normalize_text: {
+        Args: { input_text: string }
+        Returns: string
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
+      unaccent: {
+        Args: { "": string }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: { "": unknown }
+        Returns: unknown
       }
     }
     Enums: {
