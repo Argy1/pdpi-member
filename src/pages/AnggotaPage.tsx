@@ -121,8 +121,10 @@ export default function AnggotaPage() {
 
           {/* Search Bar */}
           <SearchBar 
-            placeholder="Cari semua data anggota (nama, NPA, alamat, telepon, dll)..."
+            scope="public"
             className="max-w-xl"
+            value={filters.query}
+            onSearch={(query) => setFilters(prev => ({ ...prev, query: query || undefined }))}
           />
         </div>
 

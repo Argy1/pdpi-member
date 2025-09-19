@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client'
+import { parseSearchQuery, buildSearchConditions } from '@/utils/searchParser'
 
 interface APIResponse<T> {
   data?: T
@@ -9,17 +10,20 @@ interface APIResponse<T> {
   totalPages?: number
 }
 
+interface GetMembersParams {
+  q?: string
+  provinsi?: string
+  pd?: string
+  subspesialis?: string
+  sort?: string
+  limit?: number
+  page?: number
+  status?: string
+  scope?: 'public' | 'admin'
+}
+
 export class AnggotaAPI {
-  static async getMembers(params: {
-    q?: string
-    provinsi?: string
-    pd?: string
-    subspesialis?: string
-    sort?: string
-    limit?: number
-    page?: number
-    status?: string
-  }): Promise<APIResponse<any[]>> {
+  static async getMembers(params: GetMembersParams): Promise<APIResponse<any[]>> {
     try {
       const { 
         q = '', 
@@ -29,31 +33,32 @@ export class AnggotaAPI {
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
-        status 
+        status,
+        scope = 'public'
       } = params
+
+      const isAdmin = scope === 'admin'
+
+      // Define field selection based on scope
+      const publicFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, cabang, thn_lulus, alumni`
+      
+      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, nik, no_str, no_sip, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan`
 
       // Build query conditions
       let query = supabase
         .from('members')
-        .select(`
-          id, nama, npa, gelar, gelar2, tempat_tugas, 
-          kota_kabupaten, provinsi, status, 
-          created_at, email, no_hp, cabang,
-          thn_lulus, alumni, alamat_rumah, 
-          kota_kabupaten_rumah, provinsi_rumah
-        `)
+        .select(isAdmin ? adminFields : publicFields)
 
-      // Apply search filter
+      // Apply advanced search filter
       if (q && q.trim()) {
-        const searchTerm = q.trim()
-        query = query.or(`
-          nama.ilike.%${searchTerm}%,
-          npa.ilike.%${searchTerm}%,
-          tempat_tugas.ilike.%${searchTerm}%,
-          kota_kabupaten.ilike.%${searchTerm}%,
-          provinsi.ilike.%${searchTerm}%,
-          alumni.ilike.%${searchTerm}%
-        `)
+        const parsedQuery = parseSearchQuery(q.trim())
+        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        
+        if (searchConditions.length > 0) {
+          searchConditions.forEach(condition => {
+            query = query.or(condition)
+          })
+        }
       }
 
       // Apply filters
@@ -80,10 +85,37 @@ export class AnggotaAPI {
         ascending: sortDirection === 'asc' 
       })
 
-      // Get total count first
-      const { count } = await supabase
+      // Build count query with same filters
+      let countQuery = supabase
         .from('members')
         .select('*', { count: 'exact', head: true })
+
+      // Apply same filters for count
+      if (q && q.trim()) {
+        const parsedQuery = parseSearchQuery(q.trim())
+        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        
+        if (searchConditions.length > 0) {
+          searchConditions.forEach(condition => {
+            countQuery = countQuery.or(condition)
+          })
+        }
+      }
+
+      if (provinsi) {
+        countQuery = countQuery.ilike('provinsi', `%${provinsi}%`)
+      }
+
+      if (pd) {
+        countQuery = countQuery.ilike('cabang', `%${pd}%`)
+      }
+
+      if (status) {
+        countQuery = countQuery.eq('status', status)
+      }
+
+      // Get total count
+      const { count } = await countQuery
 
       // Apply pagination
       const pageNum = page || 1
@@ -100,7 +132,7 @@ export class AnggotaAPI {
       }
 
       // Transform data for compatibility
-      const transformedData = data?.map(member => ({
+      const transformedData = data?.map((member: any) => ({
         ...member,
         // Add legacy field mappings for compatibility
         kota: member.kota_kabupaten,

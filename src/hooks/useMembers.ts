@@ -11,6 +11,7 @@ interface UseMembersOptions {
   sort?: string
   limit?: number
   page?: number
+  scope?: 'public' | 'admin'
 }
 
 interface UseMembersResult {
@@ -34,7 +35,10 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
       setLoading(true)
       setError(null)
 
-      const result = await AnggotaAPI.getMembers(options)
+      const result = await AnggotaAPI.getMembers({
+        ...options,
+        scope: options.scope || 'public'
+      })
       
       if (result.error) {
         throw new Error(result.error)

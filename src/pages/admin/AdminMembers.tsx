@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { SearchBar } from '@/components/SearchBar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
@@ -66,7 +66,8 @@ export default function AdminMembers() {
     status: selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: 50,
-    page: currentPage
+    page: currentPage,
+    scope: 'admin'
   });
 
   // Reset page when search or filter changes
@@ -241,13 +242,12 @@ export default function AdminMembers() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Cari berdasarkan nama, NPA, rumah sakit, atau kota..."
+            <div className="flex-1">
+              <SearchBar 
+                scope="admin"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                onSearch={setSearchTerm}
+                className="w-full"
               />
             </div>
             <div className="flex gap-2">
