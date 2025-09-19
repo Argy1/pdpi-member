@@ -110,22 +110,20 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
     }
   })
 
-  // Handle phrases and tokens
+  // Handle phrases and tokens - build single OR condition for text search
   const searchTerms = [...parsedQuery.phrases, ...parsedQuery.tokens]
   
   if (searchTerms.length > 0) {
-    const searchConditions = searchTerms.map(term => {
+    const allSearchConditions: string[] = []
+    
+    searchTerms.forEach(term => {
       const normalizedTerm = normalizeText(term)
       
       // Priority search fields (higher relevance)
-      const priorityConditions = [
+      const termConditions = [
         `nama.ilike.%${normalizedTerm}%`,
         `npa.eq.${normalizedTerm}`, // Exact NPA match
-        `npa.ilike.%${normalizedTerm}%`
-      ]
-
-      // Standard search fields
-      const standardConditions = [
+        `npa.ilike.%${normalizedTerm}%`,
         `tempat_tugas.ilike.%${normalizedTerm}%`,
         `kota_kabupaten.ilike.%${normalizedTerm}%`,
         `provinsi.ilike.%${normalizedTerm}%`,
@@ -135,32 +133,25 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
       ]
 
       // Admin-only search fields
-      const adminConditions = isAdmin ? [
-        `email.ilike.%${normalizedTerm}%`,
-        `no_hp.ilike.%${normalizedTerm}%`,
-        `nik.ilike.%${normalizedTerm}%`,
-        `no_str.ilike.%${normalizedTerm}%`,
-        `no_sip.ilike.%${normalizedTerm}%`
-      ] : []
+      if (isAdmin) {
+        termConditions.push(
+          `email.ilike.%${normalizedTerm}%`,
+          `no_hp.ilike.%${normalizedTerm}%`,
+          `nik.ilike.%${normalizedTerm}%`,
+          `no_str.ilike.%${normalizedTerm}%`,
+          `no_sip.ilike.%${normalizedTerm}%`
+        )
+      }
 
       // Fallback to search_text
-      const fallbackCondition = `search_text.ilike.%${normalizedTerm}%`
+      termConditions.push(`search_text.ilike.%${normalizedTerm}%`)
 
-      const allConditions = [
-        ...priorityConditions,
-        ...standardConditions,
-        ...adminConditions,
-        fallbackCondition
-      ]
-
-      return `(${allConditions.join(',')})`
+      allSearchConditions.push(...termConditions)
     })
 
-    if (parsedQuery.isOrQuery) {
-      conditions.push(`(${searchConditions.join(',')})`)
-    } else {
-      // AND logic - each term must match
-      searchConditions.forEach(condition => conditions.push(condition))
+    if (allSearchConditions.length > 0) {
+      // Create single OR condition for all search terms
+      conditions.push(allSearchConditions.join(','))
     }
   }
 

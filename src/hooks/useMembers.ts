@@ -52,6 +52,10 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch members'
       setError(errorMessage)
       console.error('Error fetching members:', err)
+      // Set empty state on error
+      setMembers([])
+      setTotal(0)
+      setTotalPages(0)
     } finally {
       setLoading(false)
     }

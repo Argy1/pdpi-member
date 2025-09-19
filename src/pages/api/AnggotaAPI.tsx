@@ -39,26 +39,42 @@ export class AnggotaAPI {
 
       const isAdmin = scope === 'admin'
 
-      // Define field selection based on scope
+      // Define field selection based on scope - only include existing columns
       const publicFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, cabang, thn_lulus, alumni`
       
-      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, nik, no_str, no_sip, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan`
+      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan`
 
       // Build query conditions
       let query = supabase
         .from('members')
         .select(isAdmin ? adminFields : publicFields)
 
-      // Apply advanced search filter
+      // Apply simple but effective search filter
       if (q && q.trim()) {
-        const parsedQuery = parseSearchQuery(q.trim())
-        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        const searchTerm = q.trim()
         
-        if (searchConditions.length > 0) {
-          searchConditions.forEach(condition => {
-            query = query.or(condition)
-          })
+        // Simple search across key fields
+        const searchConditions = [
+          `nama.ilike.%${searchTerm}%`,
+          `npa.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`,
+          `kota_kabupaten.ilike.%${searchTerm}%`,
+          `provinsi.ilike.%${searchTerm}%`,
+          `cabang.ilike.%${searchTerm}%`,
+          `alumni.ilike.%${searchTerm}%`
+        ]
+
+        // Add admin-only fields if in admin scope (only existing columns)
+        if (isAdmin) {
+          searchConditions.push(
+            `email.ilike.%${searchTerm}%`,
+            `no_hp.ilike.%${searchTerm}%`,
+            `alamat_rumah.ilike.%${searchTerm}%`,
+            `keterangan.ilike.%${searchTerm}%`
+          )
         }
+
+        query = query.or(searchConditions.join(','))
       }
 
       // Apply filters
@@ -90,16 +106,30 @@ export class AnggotaAPI {
         .from('members')
         .select('*', { count: 'exact', head: true })
 
-      // Apply same filters for count
+      // Apply same search filter for count
       if (q && q.trim()) {
-        const parsedQuery = parseSearchQuery(q.trim())
-        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        const searchTerm = q.trim()
         
-        if (searchConditions.length > 0) {
-          searchConditions.forEach(condition => {
-            countQuery = countQuery.or(condition)
-          })
+        const searchConditions = [
+          `nama.ilike.%${searchTerm}%`,
+          `npa.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`,
+          `kota_kabupaten.ilike.%${searchTerm}%`,
+          `provinsi.ilike.%${searchTerm}%`,
+          `cabang.ilike.%${searchTerm}%`,
+          `alumni.ilike.%${searchTerm}%`
+        ]
+
+        if (isAdmin) {
+          searchConditions.push(
+            `email.ilike.%${searchTerm}%`,
+            `no_hp.ilike.%${searchTerm}%`,
+            `alamat_rumah.ilike.%${searchTerm}%`,
+            `keterangan.ilike.%${searchTerm}%`
+          )
         }
+
+        countQuery = countQuery.or(searchConditions.join(','))
       }
 
       if (provinsi) {
@@ -127,9 +157,18 @@ export class AnggotaAPI {
         .range(offset, offset + limitNum - 1)
 
       if (error) {
-        console.error('Database error:', error)
-        return { error: 'Database error' }
+        console.error('Database error details:', error)
+        return { 
+          error: `Database error: ${error.message || 'Unknown error'}`,
+          data: [],
+          total: 0,
+          page: pageNum,
+          limit: limitNum,
+          totalPages: 0
+        }
       }
+
+      console.log('Query successful, returned', data?.length, 'records')
 
       // Transform data for compatibility
       const transformedData = data?.map((member: any) => ({
@@ -156,8 +195,15 @@ export class AnggotaAPI {
       }
 
     } catch (error) {
-      console.error('API error:', error)
-      return { error: 'Internal server error' }
+      console.error('API error details:', error)
+      return { 
+        error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 25,
+        totalPages: 0
+      }
     }
   }
 
