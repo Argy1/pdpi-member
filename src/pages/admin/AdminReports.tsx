@@ -1,5 +1,5 @@
-import { useMemberContext } from '@/contexts/MemberContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMembers } from '@/hooks/useMembers';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,8 +21,13 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--muted))', 'hsl(var(--accent))'];
 
 export default function AdminReports() {
-  const { members } = useMemberContext();
   const { profile, isPusatAdmin } = useAuth();
+  
+  // Fetch all members with admin scope for complete data
+  const { members, loading, error, refresh } = useMembers({
+    scope: 'admin',
+    limit: 10000 // Get all members for reporting
+  });
 
   // Calculate comprehensive statistics
   const reportData = useMemo(() => {
@@ -47,39 +52,44 @@ export default function AdminReports() {
       .slice(0, 10)
       .map(([name, value]) => ({ name, value }));
 
-    // Specialization distribution
-    const spesialisCount = members.reduce((acc, member) => {
-      const spesialis = member.spesialis || 'Tidak Diketahui';
-      acc[spesialis] = (acc[spesialis] || 0) + 1;
+    // Cabang/PD distribution
+    const cabangCount = members.reduce((acc, member) => {
+      const cabang = member.cabang || member.pd || 'Tidak Diketahui';
+      acc[cabang] = (acc[cabang] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const spesialisDistribution = Object.entries(spesialisCount)
+    const cabangDistribution = Object.entries(cabangCount)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 5)
       .map(([name, value]) => ({ name, value }));
 
-    // Gender distribution
+    // Gender distribution - use correct field mapping
     const genderDistribution = [
-      { name: 'Laki-laki', value: members.filter(m => m.jenisKelamin === 'L').length },
-      { name: 'Perempuan', value: members.filter(m => m.jenisKelamin === 'P').length },
-      { name: 'Tidak Diketahui', value: members.filter(m => !m.jenisKelamin).length }
+      { name: 'Laki-laki', value: members.filter(m => m.jenis_kelamin === 'L' || m.jenisKelamin === 'L').length },
+      { name: 'Perempuan', value: members.filter(m => m.jenis_kelamin === 'P' || m.jenisKelamin === 'P').length },
+      { name: 'Tidak Diketahui', value: members.filter(m => !m.jenis_kelamin && !m.jenisKelamin).length }
     ];
 
-    // Registration trend (mock data for demonstration)
-    const registrationTrend = [
-      { month: 'Jan', members: Math.floor(members.length * 0.08) },
-      { month: 'Feb', members: Math.floor(members.length * 0.12) },
-      { month: 'Mar', members: Math.floor(members.length * 0.15) },
-      { month: 'Apr', members: Math.floor(members.length * 0.18) },
-      { month: 'May', members: Math.floor(members.length * 0.22) },
-      { month: 'Jun', members: Math.floor(members.length * 0.25) }
-    ];
+    // Registration trend - real data based on created_at
+    const now = new Date();
+    const registrationTrend = Array.from({ length: 6 }, (_, i) => {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
+      const nextMonth = new Date(now.getFullYear(), now.getMonth() - 5 + i + 1, 1);
+      
+      const monthName = monthDate.toLocaleDateString('id-ID', { month: 'short' });
+      const count = members.filter(m => {
+        const createdAt = new Date(m.created_at || m.createdAt || '');
+        return createdAt >= monthDate && createdAt < nextMonth;
+      }).length;
+      
+      return { month: monthName, members: count };
+    });
 
     return {
       statusDistribution,
       provinceDistribution,
-      spesialisDistribution,
+      cabangDistribution,
       genderDistribution,
       registrationTrend
     };
@@ -89,6 +99,34 @@ export default function AdminReports() {
   const activeMembers = members.filter(m => m.status === 'AKTIF').length;
   const pendingMembers = members.filter(m => m.status === 'PENDING').length;
   const inactiveMembers = members.filter(m => m.status === 'TIDAK_AKTIF').length;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-2 text-muted-foreground">Memuat data laporan...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-destructive">Error: {error}</p>
+            <Button onClick={refresh} className="mt-2">Coba Lagi</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -230,17 +268,17 @@ export default function AdminReports() {
           </CardContent>
         </Card>
 
-        {/* Specialization Distribution */}
+        {/* Cabang/PD Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribusi Spesialisasi</CardTitle>
-            <CardDescription>Top 5 spesialisasi anggota</CardDescription>
+            <CardTitle>Distribusi Cabang/PD</CardTitle>
+            <CardDescription>Top 5 cabang dengan anggota terbanyak</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={reportData.spesialisDistribution}
+                  data={reportData.cabangDistribution}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -249,7 +287,7 @@ export default function AdminReports() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {reportData.spesialisDistribution.map((entry, index) => (
+                  {reportData.cabangDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -264,7 +302,7 @@ export default function AdminReports() {
       <Card>
         <CardHeader>
           <CardTitle>Tren Pendaftaran</CardTitle>
-          <CardDescription>Jumlah anggota baru per bulan (data simulasi)</CardDescription>
+          <CardDescription>Jumlah anggota baru per bulan (6 bulan terakhir)</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -301,9 +339,9 @@ export default function AdminReports() {
               </Badge>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground">Spesialisasi terbanyak</span>
+              <span className="text-sm text-muted-foreground">Cabang terbanyak</span>
               <Badge variant="outline">
-                {reportData.spesialisDistribution[0]?.name || 'N/A'}
+                {reportData.cabangDistribution[0]?.name || 'N/A'}
               </Badge>
             </div>
             <div className="flex justify-between items-center">
