@@ -5,9 +5,41 @@ import { StatCard } from "@/components/StatCard"
 import { SearchBar } from "@/components/SearchBar"
 import { ProvinceChips } from "@/components/ProvinceChips"
 import { HowToUse } from "@/components/HowToUse"
+import { useMembers } from "@/hooks/useMembers"
 import logoImage from "@/assets/logo-pdpi.png"
+import { useMemo } from "react"
 
 export default function Homepage() {
+  // Fetch member data for statistics
+  const { members, loading } = useMembers({
+    scope: 'public',
+    limit: 10000 // Get all members for stats calculation
+  });
+
+  // Calculate real-time statistics
+  const stats = useMemo(() => {
+    const totalMembers = members.length;
+    
+    // Calculate unique provinces
+    const uniqueProvinces = new Set(
+      members
+        .map(m => m.provinsi)
+        .filter(Boolean) // Remove null/undefined values
+    );
+    
+    // Calculate unique branches/cabang
+    const uniqueCabang = new Set(
+      members
+        .map(m => m.cabang || m.pd)
+        .filter(Boolean) // Remove null/undefined values
+    );
+
+    return {
+      totalMembers,
+      totalProvinces: uniqueProvinces.size,
+      totalCabang: uniqueCabang.size
+    };
+  }, [members]);
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -61,20 +93,20 @@ export default function Homepage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title="Total Anggota"
-              value="2,847"
+              value={loading ? "..." : stats.totalMembers.toLocaleString('id-ID')}
               description="Dokter Spesialis Paru"
               icon={Users}
               trend={{ value: 12, isPositive: true }}
             />
             <StatCard
               title="Provinsi"
-              value="34"
+              value={loading ? "..." : stats.totalProvinces.toString()}
               description="Seluruh Indonesia"
               icon={MapPin}
             />
             <StatCard
               title="Cabang/PD"
-              value="42"
+              value={loading ? "..." : stats.totalCabang.toString()}
               description="Pengurus Daerah"
               icon={Building2}
               trend={{ value: 3, isPositive: true }}

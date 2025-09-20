@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { useMemberContext } from '@/contexts/MemberContext';
+import { useMembers } from '@/hooks/useMembers';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, UserPlus, Building, CheckCircle, Settings, FileText, BarChart3, ArrowRight } from 'lucide-react';
@@ -16,8 +16,12 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const { profile, isPusatAdmin } = useAuth();
-  const { members } = useMemberContext();
-  const [loading, setLoading] = useState(false);
+  
+  // Fetch all members with admin scope for complete statistics
+  const { members, loading, error } = useMembers({
+    scope: 'admin',
+    limit: 10000 // Get all members for stats calculation
+  });
 
   // Calculate real-time statistics from member data
   const stats = useMemo<DashboardStats>(() => {
@@ -33,8 +37,13 @@ export default function AdminDashboard() {
     const activeMembers = filteredMembers.filter(member => member.status === 'AKTIF').length;
     const pendingMembers = filteredMembers.filter(member => member.status === 'PENDING').length;
     
-    // For branches, we'll use a mock value since we don't have branches table data yet
-    const totalBranches = isPusatAdmin ? 34 : 1;
+    // Calculate unique branches from actual data
+    const uniqueCabang = new Set(
+      filteredMembers
+        .map(m => m.cabang || m.pd)
+        .filter(Boolean) // Remove null/undefined values
+    );
+    const totalBranches = uniqueCabang.size;
 
     console.log('Calculated stats:', { totalMembers, activeMembers, pendingMembers, totalBranches });
 
@@ -79,6 +88,33 @@ export default function AdminDashboard() {
       icon: Building,
       color: 'text-purple-600'
     });
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-2 text-muted-foreground">Memuat data dashboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-destructive">Error: {error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
