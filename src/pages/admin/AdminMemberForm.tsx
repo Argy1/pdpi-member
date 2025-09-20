@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar } from '@/components/ui/calendar';
+import { EnhancedCalendar } from '@/components/ui/enhanced-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Upload, ArrowLeft, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
@@ -413,7 +413,7 @@ export default function AdminMemberForm() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
+                            <EnhancedCalendar
                               mode="single"
                               selected={formData.tanggalLahir}
                               onSelect={(date) => handleInputChange('tanggalLahir', date)}
@@ -421,7 +421,7 @@ export default function AdminMemberForm() {
                                 date > new Date() || date < new Date("1900-01-01")
                               }
                               initialFocus
-                              className="pointer-events-auto"
+                              enableYearMonthSelect={true}
                             />
                           </PopoverContent>
                         </Popover>
@@ -704,13 +704,13 @@ export default function AdminMemberForm() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
+                          <EnhancedCalendar
                             mode="single"
                             selected={formData.strBerlakuSampai}
                             onSelect={(date) => handleInputChange('strBerlakuSampai', date)}
                             disabled={(date) => date < new Date()}
                             initialFocus
-                            className="pointer-events-auto"
+                            enableYearMonthSelect={true}
                           />
                         </PopoverContent>
                       </Popover>
@@ -748,13 +748,13 @@ export default function AdminMemberForm() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
+                          <EnhancedCalendar
                             mode="single"
                             selected={formData.sipBerlakuSampai}
                             onSelect={(date) => handleInputChange('sipBerlakuSampai', date)}
                             disabled={(date) => date < new Date()}
                             initialFocus
-                            className="pointer-events-auto"
+                            enableYearMonthSelect={true}
                           />
                         </PopoverContent>
                       </Popover>
