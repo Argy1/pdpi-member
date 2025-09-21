@@ -62,6 +62,7 @@ export function MemberTable({
               <TableRow>
                 <TableHead className="font-semibold">Nama</TableHead>
                 <TableHead className="font-semibold">NPA</TableHead>
+                <TableHead className="font-semibold">Alumni</TableHead>
                 <TableHead className="font-semibold">Rumah Sakit</TableHead>
                 <TableHead className="font-semibold">Kota</TableHead>
                 <TableHead className="font-semibold">Provinsi</TableHead>
@@ -91,6 +92,9 @@ export function MemberTable({
                     <code className="text-xs bg-muted px-2 py-1 rounded">
                       {member.npa || "-"}
                     </code>
+                  </TableCell>
+                  <TableCell>
+                    <p className="text-sm">{member.alumni || "-"}</p>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
@@ -123,7 +127,7 @@ export function MemberTable({
               ))}
               {members.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={9} className="text-center py-8">
                     <div className="space-y-2">
                       <p className="text-muted-foreground">Tidak ada data anggota</p>
                       <p className="text-sm text-muted-foreground">

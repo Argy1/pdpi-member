@@ -30,6 +30,7 @@ interface MemberFormData {
   tanggalLahir: Date | undefined;
   jenisKelamin: string;
   foto: string;
+  alumni: string;
   
   // Domisili
   alamat: string;
@@ -73,6 +74,7 @@ const initialFormData: MemberFormData = {
   tanggalLahir: undefined,
   jenisKelamin: '',
   foto: '',
+  alumni: '',
   alamat: '',
   kota: '',
   provinsi: '',
@@ -123,6 +125,7 @@ export default function AdminMemberForm() {
           jenisKelamin: existingMember.jenis_kelamin === 'L' || existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 
                        existingMember.jenis_kelamin === 'P' || existingMember.jenisKelamin === 'P' ? 'Perempuan' : '',
           foto: existingMember.foto || existingMember.fotoUrl || '',
+          alumni: existingMember.alumni || '',
           alamat: existingMember.alamat_rumah || existingMember.alamat || '',
           kota: existingMember.kota_kabupaten || existingMember.kota || '',
           provinsi: existingMember.provinsi || '',
@@ -180,6 +183,7 @@ export default function AdminMemberForm() {
         gelar: formData.gelar || null,
         gelar2: formData.gelar2 || null,
         npa: formData.npa || null,
+        alumni: formData.alumni || null,
         // Map form fields to database fields
         tgl_lahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : null,
         tempat_lahir: formData.tempatLahir || null,
@@ -350,6 +354,17 @@ export default function AdminMemberForm() {
                         value={formData.subspesialis}
                         onChange={(e) => handleInputChange('subspesialis', e.target.value)}
                         placeholder="Sub spesialis (opsional)"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="alumni">Alumni *</Label>
+                      <Input
+                        id="alumni"
+                        value={formData.alumni}
+                        onChange={(e) => handleInputChange('alumni', e.target.value)}
+                        placeholder="Universitas/Kampus asal"
+                        required
                       />
                     </div>
                   </div>
