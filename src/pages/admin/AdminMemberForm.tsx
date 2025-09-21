@@ -111,37 +111,39 @@ export default function AdminMemberForm() {
       const existingMember = members.find(m => m.id === id);
       if (existingMember) {
         const memberFormData = {
-          nama: existingMember.nama,
-          gelar: existingMember.gelar,
-          gelar2: existingMember.gelar2,
-          npa: existingMember.npa,
-          spesialis: existingMember.spesialis,
-          subspesialis: existingMember.subspesialis,
-          tempatLahir: existingMember.tempatLahir,
-          tanggalLahir: existingMember.tanggalLahir ? new Date(existingMember.tanggalLahir) : undefined,
-          jenisKelamin: existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan',
-          foto: existingMember.fotoUrl,
-          alamat: existingMember.alamat,
-          kota: existingMember.kota,
-          provinsi: existingMember.provinsi,
-          pd: existingMember.pd,
-          rumahSakit: existingMember.rumahSakit,
-          unitKerja: existingMember.unitKerja,
-          jabatan: existingMember.jabatan,
-          nik: existingMember.nik,
-          noSTR: existingMember.noSTR,
+          nama: existingMember.nama || '',
+          gelar: existingMember.gelar || '',
+          gelar2: existingMember.gelar2 || '',
+          npa: existingMember.npa || '',
+          spesialis: existingMember.spesialis || '',
+          subspesialis: existingMember.subspesialis || '',
+          tempatLahir: existingMember.tempat_lahir || existingMember.tempatLahir || '',
+          tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : 
+                       existingMember.tanggalLahir ? new Date(existingMember.tanggalLahir) : undefined,
+          jenisKelamin: existingMember.jenis_kelamin === 'L' || existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 
+                       existingMember.jenis_kelamin === 'P' || existingMember.jenisKelamin === 'P' ? 'Perempuan' : '',
+          foto: existingMember.foto || existingMember.fotoUrl || '',
+          alamat: existingMember.alamat_rumah || existingMember.alamat || '',
+          kota: existingMember.kota_kabupaten || existingMember.kota || '',
+          provinsi: existingMember.provinsi || '',
+          pd: existingMember.cabang || existingMember.pd || '',
+          rumahSakit: existingMember.tempat_tugas || existingMember.rumahSakit || '',
+          unitKerja: existingMember.unitKerja || '',
+          jabatan: existingMember.jabatan || '',
+          nik: existingMember.nik || '',
+          noSTR: existingMember.noSTR || '',
           strBerlakuSampai: existingMember.strBerlakuSampai ? new Date(existingMember.strBerlakuSampai) : undefined,
-          noSIP: existingMember.noSIP,
+          noSIP: existingMember.noSIP || '',
           sipBerlakuSampai: existingMember.sipBerlakuSampai ? new Date(existingMember.sipBerlakuSampai) : undefined,
-          tahunLulus: existingMember.tahunLulus?.toString() || '',
-          kontakEmail: existingMember.kontakEmail,
-          kontakTelepon: existingMember.kontakTelepon,
-          website: existingMember.website,
-          sosialMedia: existingMember.sosialMedia,
-          status: existingMember.status || 'Biasa',
+          tahunLulus: existingMember.thn_lulus?.toString() || existingMember.tahunLulus?.toString() || '',
+          kontakEmail: existingMember.email || existingMember.kontakEmail || '',
+          kontakTelepon: existingMember.no_hp || existingMember.kontakTelepon || '',
+          website: existingMember.website || '',
+          sosialMedia: existingMember.sosialMedia || '',
+          status: existingMember.status || 'AKTIF',
         };
         setFormData(memberFormData);
-        setPhotoPreview(existingMember.fotoUrl);
+        setPhotoPreview(existingMember.foto || existingMember.fotoUrl || '');
       }
     }
   }, [id, isEditing, members]);
