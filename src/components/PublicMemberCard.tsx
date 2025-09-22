@@ -50,39 +50,35 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />
-                  {member.cabang || member.provinsi}
+                  {member.cabang || member.provinsi || '-'}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Tempat Praktik 1</span>
+                <span className="font-medium w-32">Kota</span>
+                <span className="mr-2">:</span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  {member.kota_kabupaten || member.kota || '-'}
+                </span>
+              </div>
+
+              <div className="flex">
+                <span className="font-medium w-32">Provinsi</span>
+                <span className="mr-2">:</span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  {member.provinsi || '-'}
+                </span>
+              </div>
+
+              <div className="flex">
+                <span className="font-medium w-32">Tempat Praktik</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <Building className="h-3 w-3 text-muted-foreground" />
-                  {member.tempat_tugas}
-                  {member.kota_kabupaten && (
-                    <span className="text-muted-foreground">
-                      , {member.kota_kabupaten}
-                    </span>
-                  )}
-                  {member.provinsi && (
-                    <span className="text-muted-foreground">
-                      , {member.provinsi}
-                    </span>
-                  )}
+                  {member.tempat_tugas || '-'}
                 </span>
-              </div>
-
-              <div className="flex">
-                <span className="font-medium w-32">Tempat Praktik 2</span>
-                <span className="mr-2">:</span>
-                <span className="text-muted-foreground">-</span>
-              </div>
-
-              <div className="flex">
-                <span className="font-medium w-32">Tempat Praktik 3</span>
-                <span className="mr-2">:</span>
-                <span className="text-muted-foreground">-</span>
               </div>
 
               {member.email && (
