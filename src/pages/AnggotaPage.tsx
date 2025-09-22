@@ -3,18 +3,21 @@ import { useSearchParams } from "react-router-dom"
 import { SearchBar } from "@/components/SearchBar"
 import { MemberFiltersComponent } from "@/components/MemberFilters"
 import { MemberTable } from "@/components/MemberTable"
+import { PublicMemberTable } from "@/components/PublicMemberTable"
 import { MemberModal } from "@/components/MemberModal"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Member, MemberFilters, MemberSort } from "@/types/member"
 import { mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
 import { useMembers } from '@/hooks/useMembers'
+import { supabase } from "@/integrations/supabase/client"
 import { ArrowUpDown, Users, RefreshCw } from "lucide-react"
 
 export default function AnggotaPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => ({
@@ -34,6 +37,21 @@ export default function AnggotaPage() {
     limit: parseInt(searchParams.get("limit") || "25")
   })
 
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsAuthenticated(!!user)
+    }
+    checkAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session?.user)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   // Use the new hook for fetching data
   const { 
     members, 
@@ -49,7 +67,8 @@ export default function AnggotaPage() {
     subspesialis: filters.subspesialis?.[0],
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
-    page: pagination.page
+    page: pagination.page,
+    scope: isAuthenticated ? 'admin' : 'public'
   })
 
   // Update URL when filters change
@@ -105,6 +124,18 @@ export default function AnggotaPage() {
     setSelectedMember(null)
   }
 
+  // Show loading state while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-flex items-center gap-2">
+          <RefreshCw className="h-5 w-5 animate-spin" />
+          <span>Memuat...</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen">
       <div className="container-pdpi section-spacing">
@@ -112,16 +143,19 @@ export default function AnggotaPage() {
         <div className="space-y-6 mb-8">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold heading-medical">
-              Tabel Anggota PDPI
+              {isAuthenticated ? "Manajemen Anggota PDPI" : "Direktori Anggota PDPI"}
             </h1>
             <p className="text-lg text-medical-body">
-              Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia
+              {isAuthenticated 
+                ? "Kelola data anggota Perhimpunan Dokter Paru Indonesia"
+                : "Direktori publik anggota Perhimpunan Dokter Paru Indonesia"
+              }
             </p>
           </div>
 
           {/* Search Bar */}
           <SearchBar 
-            scope="public"
+            scope={isAuthenticated ? "admin" : "public"}
             className="max-w-xl"
             value={filters.query || ""}
             onSearch={(query) => {
@@ -132,63 +166,82 @@ export default function AnggotaPage() {
           />
         </div>
 
-        {/* Toolbar */}
-        <div className="space-y-4 mb-6">
-          {/* Filters */}
-          <MemberFiltersComponent
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            provinces={mockProvinces}
-            pds={mockPDs}
-            subspecialties={mockSubspesialisOptions}
-          />
+        {/* Toolbar - Only show for authenticated users */}
+        {isAuthenticated && (
+          <div className="space-y-4 mb-6">
+            {/* Filters */}
+            <MemberFiltersComponent
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              provinces={mockProvinces}
+              pds={mockPDs}
+              subspecialties={mockSubspesialisOptions}
+            />
 
-          {/* Sort and Results Info */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">
-                  {loading ? 'Memuat...' : `${total} anggota ditemukan`}
-                </span>
-              </div>
-              {error && (
-                <div className="text-sm text-red-600">
-                  Error: {error}
+            {/* Sort and Results Info */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    {loading ? 'Memuat...' : `${total} anggota ditemukan`}
+                  </span>
                 </div>
-              )}
-            </div>
+                {error && (
+                  <div className="text-sm text-red-600">
+                    Error: {error}
+                  </div>
+                )}
+              </div>
 
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={refresh}
-                disabled={loading}
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
-              <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-              <Select
-                value={`${sort.field}-${sort.direction}`}
-                onValueChange={handleSortChange}
-              >
-                <SelectTrigger className="w-48 focus-visible">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="nama-asc">Nama A-Z</SelectItem>
-                  <SelectItem value="nama-desc">Nama Z-A</SelectItem>
-                  <SelectItem value="kota-asc">Kota A-Z</SelectItem>
-                  <SelectItem value="provinsi-asc">Provinsi A-Z</SelectItem>
-                  <SelectItem value="tahunLulus-desc">Tahun Lulus Terbaru</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={refresh}
+                  disabled={loading}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                <Select
+                  value={`${sort.field}-${sort.direction}`}
+                  onValueChange={handleSortChange}
+                >
+                  <SelectTrigger className="w-48 focus-visible">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nama-asc">Nama A-Z</SelectItem>
+                    <SelectItem value="nama-desc">Nama Z-A</SelectItem>
+                    <SelectItem value="kota-asc">Kota A-Z</SelectItem>
+                    <SelectItem value="provinsi-asc">Provinsi A-Z</SelectItem>
+                    <SelectItem value="tahunLulus-desc">Tahun Lulus Terbaru</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Simple Results Info for Public View */}
+        {!isAuthenticated && (
+          <div className="mb-6">
+            <div className="flex items-center space-x-2">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">
+                {loading ? 'Memuat...' : `${total} anggota ditemukan`}
+              </span>
+            </div>
+            {error && (
+              <div className="text-sm text-red-600 mt-2">
+                Error: {error}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Table */}
         {loading ? (
@@ -207,7 +260,7 @@ export default function AnggotaPage() {
               Coba Lagi
             </Button>
           </div>
-        ) : (
+        ) : isAuthenticated ? (
           <MemberTable
             members={members}
             onViewMember={handleViewMember}
@@ -215,14 +268,23 @@ export default function AnggotaPage() {
             onPageChange={handlePageChange}
             onLimitChange={handleLimitChange}
           />
+        ) : (
+          <PublicMemberTable
+            members={members}
+            pagination={paginationInfo}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
         )}
 
-        {/* Member Detail Modal */}
-        <MemberModal
-          member={selectedMember}
-          open={modalOpen}
-          onClose={handleCloseModal}
-        />
+        {/* Member Detail Modal - Only show for authenticated users */}
+        {isAuthenticated && (
+          <MemberModal
+            member={selectedMember}
+            open={modalOpen}
+            onClose={handleCloseModal}
+          />
+        )}
       </div>
     </div>
   )
