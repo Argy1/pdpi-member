@@ -123,7 +123,7 @@ export default function AnggotaPage() {
           <SearchBar 
             scope="public"
             className="max-w-xl"
-            defaultValue={searchParams.get("q") || ""}
+            value={filters.query || ""}
             onSearch={(query) => {
               const newFilters = { ...filters, query: query || undefined }
               setFilters(newFilters)
