@@ -8,53 +8,86 @@ interface IndonesiaMapProps {
   members: Member[];
 }
 
-// Indonesia province coordinates (based on actual geographical positions)
+// Indonesia province coordinates (precisely mapped to the SVG map)
 const PROVINCE_COORDINATES = {
-  'Aceh': { x: 8, y: 12 },
-  'Sumatera Utara': { x: 12, y: 18 },
-  'Sumatera Barat': { x: 10, y: 26 },
-  'Riau': { x: 15, y: 24 },
-  'Kepulauan Riau': { x: 18, y: 28 },
-  'Jambi': { x: 15, y: 32 },
-  'Sumatera Selatan': { x: 16, y: 38 },
-  'Bangka Belitung': { x: 20, y: 35 },
-  'Bengkulu': { x: 12, y: 42 },
-  'Lampung': { x: 16, y: 46 },
-  'DKI Jakarta': { x: 24, y: 50 },
-  'Jawa Barat': { x: 26, y: 52 },
-  'Jawa Tengah': { x: 34, y: 54 },
-  'DI Yogyakarta': { x: 34, y: 56 },
-  'Jawa Timur': { x: 42, y: 54 },
-  'Banten': { x: 22, y: 52 },
-  'Bali': { x: 48, y: 58 },
-  'Nusa Tenggara Barat': { x: 52, y: 58 },
-  'Nusa Tenggara Timur': { x: 60, y: 62 },
-  'Kalimantan Barat': { x: 28, y: 25 },
-  'Kalimantan Tengah': { x: 35, y: 32 },
-  'Kalimantan Selatan': { x: 38, y: 38 },
-  'Kalimantan Timur': { x: 45, y: 28 },
-  'Kalimantan Utara': { x: 42, y: 18 },
-  'Sulawesi Utara': { x: 58, y: 16 },
-  'Sulawesi Tengah': { x: 55, y: 28 },
-  'Sulawesi Selatan': { x: 55, y: 42 },
-  'Sulawesi Tenggara': { x: 62, y: 46 },
-  'Gorontalo': { x: 58, y: 20 },
-  'Sulawesi Barat': { x: 52, y: 38 },
-  'Maluku': { x: 72, y: 42 },
-  'Maluku Utara': { x: 68, y: 28 },
-  'Papua Barat': { x: 76, y: 38 },
-  'Papua': { x: 88, y: 42 },
-  'Papua Tengah': { x: 84, y: 44 },
-  'Papua Pegunungan': { x: 90, y: 40 },
-  'Papua Selatan': { x: 86, y: 48 },
-  'Papua Barat Daya': { x: 78, y: 46 }
+  // Sumatera
+  'Aceh': { x: 13, y: 15 },
+  'Sumatera Utara': { x: 16, y: 22 },
+  'Sumatera Barat': { x: 13, y: 30 },
+  'Riau': { x: 18, y: 28 },
+  'Kepulauan Riau': { x: 22, y: 32 },
+  'Jambi': { x: 17, y: 35 },
+  'Sumatera Selatan': { x: 17, y: 42 },
+  'Bangka Belitung': { x: 23, y: 38 },
+  'Bengkulu': { x: 14, y: 45 },
+  'Lampung': { x: 18, y: 50 },
+  'Bandar Lampung': { x: 18, y: 50 },
+  
+  // Java
+  'DKI Jakarta': { x: 26, y: 53 },
+  'Jawa Barat': { x: 28, y: 55 },
+  'Jawa Tengah': { x: 35, y: 57 },
+  'Yogyakarta': { x: 35, y: 59 },
+  'DI Yogyakarta': { x: 35, y: 59 },
+  'Jawa Timur': { x: 43, y: 57 },
+  'JAWA TIMUR': { x: 43, y: 57 },
+  'Banten': { x: 24, y: 55 },
+  
+  // Bali & Nusa Tenggara
+  'Bali': { x: 49, y: 62 },
+  'Nusa Tenggara Barat': { x: 53, y: 62 },
+  'Nusa Tenggara Timur': { x: 62, y: 65 },
+  
+  // Kalimantan
+  'Kalimantan Barat': { x: 30, y: 28 },
+  'Kalimantan Tengah': { x: 36, y: 35 },
+  'Kalimantan Selatan': { x: 38, y: 42 },
+  'Kalimantan Timur': { x: 46, y: 32 },
+  'Kalimantan Utara': { x: 44, y: 22 },
+  
+  // Sulawesi
+  'Sulawesi Utara': { x: 59, y: 18 },
+  'Gorontalo': { x: 57, y: 22 },
+  'Sulawesi Tengah': { x: 56, y: 32 },
+  'Sulawesi Barat': { x: 53, y: 42 },
+  'Sulawesi Selatan': { x: 56, y: 46 },
+  'Sulawesi Tenggara': { x: 63, y: 48 },
+  
+  // Maluku
+  'Maluku': { x: 73, y: 45 },
+  'Maluku Utara': { x: 69, y: 28 },
+  
+  // Papua
+  'Papua Barat': { x: 77, y: 42 },
+  'Papua Barat Daya': { x: 79, y: 48 },
+  'Papua': { x: 88, y: 45 },
+  'Papua Tengah': { x: 85, y: 47 },
+  'Papua Pegunungan': { x: 91, y: 42 },
+  'Papua Selatan': { x: 87, y: 52 },
+  
+  // Others
+  'Maldives': { x: 5, y: 85 }
 };
 
 export function IndonesiaMap({ members }: IndonesiaMapProps) {
   const mapData = useMemo(() => {
-    // Count members by province
+    // Normalize province names to handle variations
+    const normalizeProvince = (province: string | null | undefined): string => {
+      if (!province) return 'Tidak Diketahui';
+      
+      const normalized = province.trim();
+      
+      // Handle specific variations found in database
+      if (normalized === 'JAWA TIMUR') return 'Jawa Timur';
+      if (normalized === 'DI Yogyakarta') return 'Yogyakarta';
+      if (normalized === 'Bandar Lampung') return 'Lampung';
+      
+      return normalized;
+    };
+
+    // Count members by normalized province
     const provinceCount = members.reduce((acc, member) => {
-      const provinsi = member.provinsi || 'Tidak Diketahui';
+      const provinsi = normalizeProvince(member.provinsi);
       acc[provinsi] = (acc[provinsi] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -71,14 +104,21 @@ export function IndonesiaMap({ members }: IndonesiaMapProps) {
 
     // Create map points for provinces with known coordinates
     const mapPoints = Object.entries(provinceCount)
-      .filter(([province]) => PROVINCE_COORDINATES[province as keyof typeof PROVINCE_COORDINATES])
+      .filter(([province]) => {
+        const hasCoordinates = PROVINCE_COORDINATES[province as keyof typeof PROVINCE_COORDINATES];
+        if (!hasCoordinates && province !== 'Tidak Diketahui') {
+          console.warn(`No coordinates found for province: ${province}`);
+        }
+        return hasCoordinates;
+      })
       .map(([province, count]) => ({
         province,
         count,
         coordinates: PROVINCE_COORDINATES[province as keyof typeof PROVINCE_COORDINATES],
         color: count > 50 ? '#10b981' : count > 10 ? '#f59e0b' : '#ef4444',
         size: Math.max(20, Math.min(60, count * 2))
-      }));
+      }))
+      .sort((a, b) => b.count - a.count); // Sort by count for better visualization
 
     return {
       provinceCount,
