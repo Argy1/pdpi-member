@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { IndonesiaMap } from '@/components/admin/IndonesiaMap';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--muted))', 'hsl(var(--accent))'];
 
@@ -297,6 +298,9 @@ export default function AdminReports() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Indonesia Map */}
+      <IndonesiaMap members={members} />
 
       {/* Registration Trend */}
       <Card>
