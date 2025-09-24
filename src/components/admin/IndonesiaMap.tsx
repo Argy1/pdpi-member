@@ -11,59 +11,59 @@ interface IndonesiaMapProps {
 // Indonesia province coordinates (precisely mapped to the SVG map)
 const PROVINCE_COORDINATES = {
   // Sumatera
-  'Aceh': { x: 13, y: 15 },
-  'Sumatera Utara': { x: 16, y: 22 },
-  'Sumatera Barat': { x: 13, y: 30 },
-  'Riau': { x: 18, y: 28 },
-  'Kepulauan Riau': { x: 22, y: 32 },
-  'Jambi': { x: 17, y: 35 },
-  'Sumatera Selatan': { x: 17, y: 42 },
-  'Bangka Belitung': { x: 23, y: 38 },
-  'Bengkulu': { x: 14, y: 45 },
-  'Lampung': { x: 18, y: 50 },
-  'Bandar Lampung': { x: 18, y: 50 },
+  'Aceh': { x: 15, y: 8 },
+  'Sumatera Utara': { x: 17, y: 15 },
+  'Sumatera Barat': { x: 14, y: 22 },
+  'Riau': { x: 19, y: 20 },
+  'Kepulauan Riau': { x: 23, y: 25 },
+  'Jambi': { x: 18, y: 28 },
+  'Sumatera Selatan': { x: 18, y: 35 },
+  'Bangka Belitung': { x: 25, y: 32 },
+  'Bengkulu': { x: 15, y: 38 },
+  'Lampung': { x: 19, y: 43 },
+  'Bandar Lampung': { x: 19, y: 43 },
   
   // Java
-  'DKI Jakarta': { x: 26, y: 53 },
-  'Jawa Barat': { x: 28, y: 55 },
-  'Jawa Tengah': { x: 35, y: 57 },
-  'Yogyakarta': { x: 35, y: 59 },
-  'DI Yogyakarta': { x: 35, y: 59 },
-  'Jawa Timur': { x: 43, y: 57 },
-  'JAWA TIMUR': { x: 43, y: 57 },
-  'Banten': { x: 24, y: 55 },
+  'DKI Jakarta': { x: 28, y: 47 },
+  'Jawa Barat': { x: 30, y: 49 },
+  'Jawa Tengah': { x: 37, y: 51 },
+  'Yogyakarta': { x: 37, y: 53 },
+  'DI Yogyakarta': { x: 37, y: 53 },
+  'Jawa Timur': { x: 45, y: 51 },
+  'JAWA TIMUR': { x: 45, y: 51 },
+  'Banten': { x: 26, y: 49 },
   
   // Bali & Nusa Tenggara
-  'Bali': { x: 49, y: 62 },
-  'Nusa Tenggara Barat': { x: 53, y: 62 },
-  'Nusa Tenggara Timur': { x: 62, y: 65 },
+  'Bali': { x: 51, y: 56 },
+  'Nusa Tenggara Barat': { x: 55, y: 56 },
+  'Nusa Tenggara Timur': { x: 64, y: 59 },
   
   // Kalimantan
-  'Kalimantan Barat': { x: 30, y: 28 },
-  'Kalimantan Tengah': { x: 36, y: 35 },
-  'Kalimantan Selatan': { x: 38, y: 42 },
-  'Kalimantan Timur': { x: 46, y: 32 },
-  'Kalimantan Utara': { x: 44, y: 22 },
+  'Kalimantan Barat': { x: 32, y: 22 },
+  'Kalimantan Tengah': { x: 38, y: 28 },
+  'Kalimantan Selatan': { x: 40, y: 35 },
+  'Kalimantan Timur': { x: 48, y: 25 },
+  'Kalimantan Utara': { x: 46, y: 15 },
   
   // Sulawesi
-  'Sulawesi Utara': { x: 59, y: 18 },
-  'Gorontalo': { x: 57, y: 22 },
-  'Sulawesi Tengah': { x: 56, y: 32 },
-  'Sulawesi Barat': { x: 53, y: 42 },
-  'Sulawesi Selatan': { x: 56, y: 46 },
-  'Sulawesi Tenggara': { x: 63, y: 48 },
+  'Sulawesi Utara': { x: 61, y: 12 },
+  'Gorontalo': { x: 59, y: 15 },
+  'Sulawesi Tengah': { x: 58, y: 25 },
+  'Sulawesi Barat': { x: 55, y: 35 },
+  'Sulawesi Selatan': { x: 58, y: 39 },
+  'Sulawesi Tenggara': { x: 65, y: 41 },
   
   // Maluku
-  'Maluku': { x: 73, y: 45 },
-  'Maluku Utara': { x: 69, y: 28 },
+  'Maluku': { x: 75, y: 38 },
+  'Maluku Utara': { x: 71, y: 21 },
   
   // Papua
-  'Papua Barat': { x: 77, y: 42 },
-  'Papua Barat Daya': { x: 79, y: 48 },
-  'Papua': { x: 88, y: 45 },
-  'Papua Tengah': { x: 85, y: 47 },
-  'Papua Pegunungan': { x: 91, y: 42 },
-  'Papua Selatan': { x: 87, y: 52 },
+  'Papua Barat': { x: 79, y: 35 },
+  'Papua Barat Daya': { x: 81, y: 41 },
+  'Papua': { x: 90, y: 38 },
+  'Papua Tengah': { x: 87, y: 40 },
+  'Papua Pegunungan': { x: 93, y: 35 },
+  'Papua Selatan': { x: 89, y: 45 },
   
   // Others
   'Maldives': { x: 5, y: 85 }
@@ -129,9 +129,9 @@ export function IndonesiaMap({ members }: IndonesiaMapProps) {
   }, [members]);
 
   const getCircleSize = (count: number) => {
-    if (count > 50) return 'w-8 h-8 text-sm';
-    if (count > 10) return 'w-6 h-6 text-xs';
-    return 'w-5 h-5 text-xs';
+    if (count > 50) return 'w-6 h-6 sm:w-8 sm:h-8 text-xs sm:text-sm';
+    if (count > 10) return 'w-5 h-5 sm:w-6 sm:h-6 text-xs';
+    return 'w-4 h-4 sm:w-5 sm:h-5 text-xs';
   };
 
   const getCircleColor = (count: number) => {
@@ -169,9 +169,9 @@ export function IndonesiaMap({ members }: IndonesiaMapProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="relative w-full h-96 bg-gradient-to-b from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg border overflow-hidden">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[2/1] lg:aspect-[5/2] bg-gradient-to-b from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg border overflow-hidden">
           {/* Indonesia map background */}
-          <div className="absolute inset-0 p-4">
+          <div className="absolute inset-0 p-2 sm:p-4">
             <img 
               src={indonesiaMapSvg}
               alt="Indonesia Map"
