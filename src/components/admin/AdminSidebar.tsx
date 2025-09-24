@@ -5,7 +5,9 @@ import {
   Building, 
   Settings, 
   UserPlus,
-  Upload
+  Upload,
+  User,
+  BarChart3
 } from 'lucide-react';
 import {
   Sidebar,
@@ -45,6 +47,18 @@ const menuItems = [
     title: 'Import Anggota',
     url: '/admin/import',
     icon: Upload,
+    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Laporan & Statistik',
+    url: '/admin/laporan',
+    icon: BarChart3,
+    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Profil Saya',
+    url: '/admin/profil',
+    icon: User,
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {

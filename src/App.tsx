@@ -18,6 +18,7 @@ import AdminMemberForm from "./pages/admin/AdminMemberForm";
 import AdminMemberDetail from "./pages/admin/AdminMemberDetail";
 import AdminImport from "./pages/admin/AdminImport";
 import AdminReports from "./pages/admin/AdminReports";
+import AdminProfile from "./pages/admin/AdminProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
                 <Route path="anggota/:id/edit" element={<AdminMemberForm />} />
                 <Route path="import" element={<AdminImport />} />
                 <Route path="laporan" element={<AdminReports />} />
+                <Route path="profil" element={<AdminProfile />} />
                 {/* Add more admin routes as needed */}
               </Route>
               
