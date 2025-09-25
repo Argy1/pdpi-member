@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { SearchBar } from '@/components/SearchBar';
+import { MemberFiltersComponent } from '@/components/MemberFilters';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
@@ -44,6 +45,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { MemberFilters } from '@/types/member';
 
 // Removed mock data - will use data from MemberContext instead
 
@@ -53,6 +55,16 @@ export default function AdminMembers() {
   const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
+  const [filters, setFilters] = useState<MemberFilters>({
+    query: searchParams.get("q") || '',
+    provinsi: [],
+    pd: [],
+    subspesialis: [],
+    status: []
+  });
+  const [availableProvinces, setAvailableProvinces] = useState<string[]>([]);
+  const [availableBranches, setAvailableBranches] = useState<string[]>([]);
+  const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const { isPusatAdmin, profile } = useAuth();
   const { toast } = useToast();
 
@@ -64,28 +76,59 @@ export default function AdminMembers() {
     error, 
     refresh 
   } = useMembers({
-    query: searchTerm,
-    status: selectedStatus || undefined,
+    query: filters.query,
+    provinsi: filters.provinsi?.join(','),
+    pd: filters.pd?.join(','),
+    subspesialis: filters.subspesialis?.join(','),
+    status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: 50,
     page: currentPage,
     scope: 'admin'
   });
 
+  // Fetch available filter options
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const { data: provinceData } = await supabase
+          .from('members')
+          .select('provinsi')
+          .not('provinsi', 'is', null);
+        
+        const { data: branchData } = await supabase
+          .from('members')
+          .select('cabang')
+          .not('cabang', 'is', null);
+
+        const provinces = [...new Set(provinceData?.map(m => m.provinsi).filter(Boolean))] as string[];
+        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[];
+        
+        setAvailableProvinces(provinces.sort());
+        setAvailableBranches(branches.sort());
+        setAvailableSubspecialties([]); // Add subspecialty logic if needed
+      } catch (error) {
+        console.error('Error fetching filter options:', error);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
+
   // Update URL when search changes
   useEffect(() => {
     const params = new URLSearchParams();
-    if (searchTerm) params.set("q", searchTerm);
+    if (filters.query) params.set("q", filters.query);
     if (currentPage > 1) params.set("page", currentPage.toString());
     setSearchParams(params);
-  }, [searchTerm, currentPage, setSearchParams]);
+  }, [filters.query, currentPage, setSearchParams]);
 
   // Reset page when search or filter changes
   useEffect(() => {
     if (currentPage !== 1) {
       setCurrentPage(1);
     }
-  }, [searchTerm, selectedStatus]);
+  }, [filters, selectedStatus]);
 
   const handleSort = (key: string) => {
     let direction = 'asc';
@@ -253,49 +296,59 @@ export default function AdminMembers() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex-1">
-              <SearchBar 
-                scope="admin"
-                defaultValue={searchParams.get("q") || ""}
-                onSearch={(query) => {
-                  setSearchTerm(query);
-                  setCurrentPage(1);
-                }}
-                className="w-full"
-              />
+          <div className="space-y-4">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center">
+              <div className="flex-1">
+                <SearchBar 
+                  scope="admin"
+                  defaultValue={searchParams.get("q") || ""}
+                  onSearch={(query) => {
+                    setFilters(prev => ({ ...prev, query }));
+                    setCurrentPage(1);
+                  }}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">
+                      <Filter className="mr-2 h-4 w-4" />
+                      Status: {selectedStatus || 'Semua'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => setSelectedStatus('')}>
+                      Semua Status
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSelectedStatus('Biasa')}>
+                      Biasa
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSelectedStatus('Luar Biasa')}>
+                      Luar Biasa
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSelectedStatus('Meninggal')}>
+                      Meninggal
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setSelectedStatus('Muda')}>
+                      Muda
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    <Filter className="mr-2 h-4 w-4" />
-                    Status: {selectedStatus || 'Semua'}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('')}>
-                    Semua Status
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Biasa')}>
-                    Biasa
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Luar Biasa')}>
-                    Luar Biasa
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Meninggal')}>
-                    Meninggal
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSelectedStatus('Muda')}>
-                    Muda
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button variant="outline">
-                <Download className="mr-2 h-4 w-4" />
-                Export
-              </Button>
-            </div>
+            
+            <MemberFiltersComponent
+              filters={filters}
+              onFiltersChange={setFilters}
+              provinces={availableProvinces}
+              pds={availableBranches}
+              subspecialties={availableSubspecialties}
+            />
           </div>
         </CardContent>
       </Card>
