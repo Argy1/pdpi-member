@@ -2,7 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMembers } from '@/hooks/useMembers';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, UserPlus, Building, CheckCircle, Settings, FileText, BarChart3, ArrowRight } from 'lucide-react';
+import { Users, UserPlus, Building, CheckCircle, Settings, FileText, BarChart3, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -119,7 +119,15 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="space-y-1">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Kembali ke Home
+            </Link>
+          </Button>
+        </div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard Admin</h1>
         <p className="text-muted-foreground">
           Selamat datang di panel administrasi PDPI Directory

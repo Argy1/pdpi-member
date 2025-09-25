@@ -13,11 +13,13 @@ import {
   Filter,
   Calendar,
   MapPin,
-  Building2
+  Building2,
+  ArrowLeft
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { IndonesiaMap } from '@/components/admin/IndonesiaMap';
+import { Link } from 'react-router-dom';
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--muted))', 'hsl(var(--accent))'];
 
@@ -132,7 +134,15 @@ export default function AdminReports() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="space-y-1">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Kembali ke Dashboard
+              </Link>
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold tracking-tight">Laporan & Statistik</h1>
           <p className="text-muted-foreground">
             Analisis data keanggotaan PDPI secara komprehensif
