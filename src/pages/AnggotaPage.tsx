@@ -166,34 +166,35 @@ export default function AnggotaPage() {
           />
         </div>
 
-        {/* Toolbar - Only show for authenticated users */}
-        {isAuthenticated && (
-          <div className="space-y-4 mb-6">
-            {/* Filters */}
-            <MemberFiltersComponent
-              filters={filters}
-              onFiltersChange={handleFiltersChange}
-              provinces={mockProvinces}
-              pds={mockPDs}
-              subspecialties={mockSubspesialisOptions}
-            />
+        {/* Filters - Show for all users */}
+        <div className="space-y-4 mb-6">
+          {/* Filters */}
+          <MemberFiltersComponent
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            provinces={mockProvinces}
+            pds={mockPDs}
+            subspecialties={isAuthenticated ? mockSubspesialisOptions : []}
+          />
 
-            {/* Sort and Results Info */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">
-                    {loading ? 'Memuat...' : `${total} anggota ditemukan`}
-                  </span>
-                </div>
-                {error && (
-                  <div className="text-sm text-red-600">
-                    Error: {error}
-                  </div>
-                )}
+          {/* Results Info and Controls */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">
+                  {loading ? 'Memuat...' : `${total} anggota ditemukan`}
+                </span>
               </div>
+              {error && (
+                <div className="text-sm text-red-600">
+                  Error: {error}
+                </div>
+              )}
+            </div>
 
+            {/* Sort and Refresh - Only show for authenticated users */}
+            {isAuthenticated && (
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
@@ -222,26 +223,9 @@ export default function AnggotaPage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Simple Results Info for Public View */}
-        {!isAuthenticated && (
-          <div className="mb-6">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">
-                {loading ? 'Memuat...' : `${total} anggota ditemukan`}
-              </span>
-            </div>
-            {error && (
-              <div className="text-sm text-red-600 mt-2">
-                Error: {error}
-              </div>
             )}
           </div>
-        )}
+        </div>
 
         {/* Table */}
         {loading ? (
