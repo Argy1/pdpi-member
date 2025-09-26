@@ -72,16 +72,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 </span>
               </div>
 
-              <div className="flex">
-                <span className="font-medium w-32">Tempat Praktik</span>
-                <span className="mr-2">:</span>
-                <span className="flex items-center gap-1">
-                  <Building className="h-3 w-3 text-muted-foreground" />
-                  {member.tempat_tugas || '-'}
-                </span>
-              </div>
-
-              {/* Additional Hospital Practice Info */}
+              {/* Hospital Practice Info */}
               {(member.rs_tipe_a || member.rs_tipe_b || member.rs_tipe_c || member.klinik_pribadi) && (
                 <>
                   {member.rs_tipe_a && (

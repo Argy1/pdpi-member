@@ -203,10 +203,6 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Rumah Sakit/Tempat Tugas</p>
-                <p className="text-medical-body">{member.rumahSakit || member.tempat_tugas || "-"}</p>
-              </div>
-              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Unit Kerja</p>
                 <p className="text-medical-body">{member.unitKerja || "-"}</p>
               </div>
@@ -221,8 +217,7 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </div>
             
             {/* Hospital Practice Info */}
-            <div className="space-y-3 mt-4 border-t pt-4">
-              <h4 className="text-md font-semibold text-primary">Tempat Praktik Tambahan</h4>
+            <div className="space-y-3 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe A</p>

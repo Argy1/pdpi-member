@@ -39,7 +39,6 @@ interface MemberFormData {
   pd: string;
   
   // Profesi
-  rumahSakit: string;
   unitKerja: string;
   jabatan: string;
   rsTipeA: string;
@@ -83,7 +82,6 @@ const initialFormData: MemberFormData = {
   kota: '',
   provinsi: '',
   pd: '',
-  rumahSakit: '',
   unitKerja: '',
   jabatan: '',
   rsTipeA: '',
@@ -138,7 +136,6 @@ export default function AdminMemberForm() {
           kota: existingMember.kota_kabupaten || existingMember.kota || '',
           provinsi: existingMember.provinsi || '',
           pd: existingMember.cabang || existingMember.pd || '',
-          rumahSakit: existingMember.tempat_tugas || existingMember.rumahSakit || '',
           unitKerja: existingMember.unitKerja || '',
           jabatan: existingMember.jabatan || '',
           rsTipeA: existingMember.rs_tipe_a || '',
@@ -201,7 +198,7 @@ export default function AdminMemberForm() {
         tempat_lahir: formData.tempatLahir || null,
         jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : null,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : null,
-        tempat_tugas: formData.rumahSakit || null,
+        tempat_tugas: null,
         kota_kabupaten: formData.kota || null,
         provinsi: formData.provinsi || null,
         alamat_rumah: formData.alamat || null,
@@ -634,16 +631,6 @@ export default function AdminMemberForm() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="rumahSakit">Rumah Sakit/Institusi Utama</Label>
-                        <Input
-                          id="rumahSakit"
-                          value={formData.rumahSakit}
-                          onChange={(e) => handleInputChange('rumahSakit', e.target.value)}
-                          placeholder="RSUP Dr. Cipto Mangunkusumo"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
                         <Label htmlFor="unitKerja">Unit Kerja</Label>
                         <Input
                           id="unitKerja"
@@ -652,9 +639,7 @@ export default function AdminMemberForm() {
                           placeholder="Departemen Pulmonologi"
                         />
                       </div>
-                    </div>
 
-                    <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="jabatan">Jabatan</Label>
                         <Input
@@ -664,7 +649,9 @@ export default function AdminMemberForm() {
                           placeholder="Dokter Spesialis"
                         />
                       </div>
+                    </div>
 
+                    <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="tahunLulus">Tahun Lulus</Label>
                         <Input
@@ -681,7 +668,7 @@ export default function AdminMemberForm() {
                   </div>
 
                   <div className="border-t pt-6">
-                    <h4 className="text-lg font-semibold mb-4">Tempat Praktik Tambahan</h4>
+                    <h4 className="text-lg font-semibold mb-4">Institusi Tempat Praktik</h4>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div className="space-y-2">

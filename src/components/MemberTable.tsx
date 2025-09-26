@@ -63,7 +63,6 @@ export function MemberTable({
                 <TableHead className="font-semibold">Nama</TableHead>
                 <TableHead className="font-semibold">NPA</TableHead>
                 <TableHead className="font-semibold">Alumni</TableHead>
-                <TableHead className="font-semibold">Rumah Sakit</TableHead>
                 <TableHead className="font-semibold">Kota</TableHead>
                 <TableHead className="font-semibold">Provinsi</TableHead>
                 <TableHead className="font-semibold">Cabang/Wilayah</TableHead>
@@ -96,16 +95,6 @@ export function MemberTable({
                   <TableCell>
                     <p className="text-sm">{member.alumni || "-"}</p>
                   </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <p className="text-sm">{member.rumahSakit || "-"}</p>
-                      {member.unitKerja && (
-                        <p className="text-xs text-muted-foreground">
-                          {member.unitKerja}
-                        </p>
-                      )}
-                    </div>
-                  </TableCell>
                   <TableCell>{member.kota || "-"}</TableCell>
                   <TableCell>{member.provinsi || "-"}</TableCell>
                   <TableCell>{member.pd || "-"}</TableCell>
@@ -127,7 +116,7 @@ export function MemberTable({
               ))}
               {members.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     <div className="space-y-2">
                       <p className="text-muted-foreground">Tidak ada data anggota</p>
                       <p className="text-sm text-muted-foreground">
