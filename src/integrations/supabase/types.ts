@@ -42,6 +42,7 @@ export type Database = {
           id: string
           jenis_kelamin: string | null
           keterangan: string | null
+          klinik_pribadi: string | null
           kota_kabupaten: string | null
           kota_kabupaten_rumah: string | null
           nama: string
@@ -49,6 +50,9 @@ export type Database = {
           npa: string | null
           provinsi: string | null
           provinsi_rumah: string | null
+          rs_tipe_a: string | null
+          rs_tipe_b: string | null
+          rs_tipe_c: string | null
           search_text: string | null
           status: string | null
           tempat_lahir: string | null
@@ -69,6 +73,7 @@ export type Database = {
           id?: string
           jenis_kelamin?: string | null
           keterangan?: string | null
+          klinik_pribadi?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_rumah?: string | null
           nama: string
@@ -76,6 +81,9 @@ export type Database = {
           npa?: string | null
           provinsi?: string | null
           provinsi_rumah?: string | null
+          rs_tipe_a?: string | null
+          rs_tipe_b?: string | null
+          rs_tipe_c?: string | null
           search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null
@@ -96,6 +104,7 @@ export type Database = {
           id?: string
           jenis_kelamin?: string | null
           keterangan?: string | null
+          klinik_pribadi?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_rumah?: string | null
           nama?: string
@@ -103,6 +112,9 @@ export type Database = {
           npa?: string | null
           provinsi?: string | null
           provinsi_rumah?: string | null
+          rs_tipe_a?: string | null
+          rs_tipe_b?: string | null
+          rs_tipe_c?: string | null
           search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null

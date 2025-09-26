@@ -21,6 +21,10 @@ export interface Member {
   email?: string
   foto?: string
   keterangan?: string
+  rs_tipe_a?: string
+  rs_tipe_b?: string
+  rs_tipe_c?: string
+  klinik_pribadi?: string
   created_at: string
   updated_at: string
   

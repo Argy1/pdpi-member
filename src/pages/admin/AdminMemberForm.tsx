@@ -42,6 +42,10 @@ interface MemberFormData {
   rumahSakit: string;
   unitKerja: string;
   jabatan: string;
+  rsTipeA: string;
+  rsTipeB: string;
+  rsTipeC: string;
+  klinikPribadi: string;
   
   // Legal
   nik: string;
@@ -82,6 +86,10 @@ const initialFormData: MemberFormData = {
   rumahSakit: '',
   unitKerja: '',
   jabatan: '',
+  rsTipeA: '',
+  rsTipeB: '',
+  rsTipeC: '',
+  klinikPribadi: '',
   nik: '',
   noSTR: '',
   strBerlakuSampai: undefined,
@@ -133,6 +141,10 @@ export default function AdminMemberForm() {
           rumahSakit: existingMember.tempat_tugas || existingMember.rumahSakit || '',
           unitKerja: existingMember.unitKerja || '',
           jabatan: existingMember.jabatan || '',
+          rsTipeA: existingMember.rs_tipe_a || '',
+          rsTipeB: existingMember.rs_tipe_b || '',
+          rsTipeC: existingMember.rs_tipe_c || '',
+          klinikPribadi: existingMember.klinik_pribadi || '',
           nik: existingMember.nik || '',
           noSTR: existingMember.noSTR || '',
           strBerlakuSampai: existingMember.strBerlakuSampai ? new Date(existingMember.strBerlakuSampai) : undefined,
@@ -198,6 +210,10 @@ export default function AdminMemberForm() {
         foto: formData.foto || null,
         status: formData.status || 'Biasa',
         cabang: formData.pd || null,
+        rs_tipe_a: formData.rsTipeA || null,
+        rs_tipe_b: formData.rsTipeB || null,
+        rs_tipe_c: formData.rsTipeC || null,
+        klinik_pribadi: formData.klinikPribadi || null,
         keterangan: null
       }
 
@@ -610,55 +626,106 @@ export default function AdminMemberForm() {
               <CardHeader>
                 <CardTitle>Informasi Profesi</CardTitle>
                 <CardDescription>
-                  Data tempat kerja dan jabatan profesional
+                  Data tempat kerja dan praktik profesional
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="rumahSakit">Rumah Sakit/Institusi</Label>
-                      <Input
-                        id="rumahSakit"
-                        value={formData.rumahSakit}
-                        onChange={(e) => handleInputChange('rumahSakit', e.target.value)}
-                        placeholder="RSUP Dr. Cipto Mangunkusumo"
-                      />
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="rumahSakit">Rumah Sakit/Institusi Utama</Label>
+                        <Input
+                          id="rumahSakit"
+                          value={formData.rumahSakit}
+                          onChange={(e) => handleInputChange('rumahSakit', e.target.value)}
+                          placeholder="RSUP Dr. Cipto Mangunkusumo"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="unitKerja">Unit Kerja</Label>
+                        <Input
+                          id="unitKerja"
+                          value={formData.unitKerja}
+                          onChange={(e) => handleInputChange('unitKerja', e.target.value)}
+                          placeholder="Departemen Pulmonologi"
+                        />
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="unitKerja">Unit Kerja</Label>
-                      <Input
-                        id="unitKerja"
-                        value={formData.unitKerja}
-                        onChange={(e) => handleInputChange('unitKerja', e.target.value)}
-                        placeholder="Departemen Pulmonologi"
-                      />
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="jabatan">Jabatan</Label>
+                        <Input
+                          id="jabatan"
+                          value={formData.jabatan}
+                          onChange={(e) => handleInputChange('jabatan', e.target.value)}
+                          placeholder="Dokter Spesialis"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tahunLulus">Tahun Lulus</Label>
+                        <Input
+                          id="tahunLulus"
+                          value={formData.tahunLulus}
+                          onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
+                          placeholder="2010"
+                          type="number"
+                          min="1970"
+                          max={new Date().getFullYear()}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="jabatan">Jabatan</Label>
-                      <Input
-                        id="jabatan"
-                        value={formData.jabatan}
-                        onChange={(e) => handleInputChange('jabatan', e.target.value)}
-                        placeholder="Dokter Spesialis"
-                      />
-                    </div>
+                  <div className="border-t pt-6">
+                    <h4 className="text-lg font-semibold mb-4">Tempat Praktik Tambahan</h4>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="rsTipeA">Rumah Sakit Tipe A</Label>
+                          <Input
+                            id="rsTipeA"
+                            value={formData.rsTipeA}
+                            onChange={(e) => handleInputChange('rsTipeA', e.target.value)}
+                            placeholder="Daftar RS Tipe A (pisahkan dengan koma)"
+                          />
+                        </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
-                      <Input
-                        id="tahunLulus"
-                        value={formData.tahunLulus}
-                        onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
-                        placeholder="2010"
-                        type="number"
-                        min="1970"
-                        max={new Date().getFullYear()}
-                      />
+                        <div className="space-y-2">
+                          <Label htmlFor="rsTipeB">Rumah Sakit Tipe B</Label>
+                          <Input
+                            id="rsTipeB"
+                            value={formData.rsTipeB}
+                            onChange={(e) => handleInputChange('rsTipeB', e.target.value)}
+                            placeholder="Daftar RS Tipe B (pisahkan dengan koma)"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="rsTipeC">Rumah Sakit Tipe C</Label>
+                          <Input
+                            id="rsTipeC"
+                            value={formData.rsTipeC}
+                            onChange={(e) => handleInputChange('rsTipeC', e.target.value)}
+                            placeholder="Daftar RS Tipe C (pisahkan dengan koma)"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="klinikPribadi">Klinik Pribadi</Label>
+                          <Input
+                            id="klinikPribadi"
+                            value={formData.klinikPribadi}
+                            onChange={(e) => handleInputChange('klinikPribadi', e.target.value)}
+                            placeholder="Daftar Klinik Pribadi (pisahkan dengan koma)"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

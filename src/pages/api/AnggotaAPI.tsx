@@ -42,9 +42,9 @@ export class AnggotaAPI {
       const isAdmin = scope === 'admin'
 
       // Define field selection based on scope - only include existing columns
-      const publicFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, cabang, thn_lulus, alumni`
+      const publicFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi`
       
-      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan`
+      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi`
 
       // Build query conditions
       let query = supabase

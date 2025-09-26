@@ -219,6 +219,29 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <p className="text-medical-body">{member.pd || member.cabang || "-"}</p>
               </div>
             </div>
+            
+            {/* Hospital Practice Info */}
+            <div className="space-y-3 mt-4 border-t pt-4">
+              <h4 className="text-md font-semibold text-primary">Tempat Praktik Tambahan</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe A</p>
+                  <p className="text-medical-body">{member.rs_tipe_a || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe B</p>
+                  <p className="text-medical-body">{member.rs_tipe_b || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe C</p>
+                  <p className="text-medical-body">{member.rs_tipe_c || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Klinik Pribadi</p>
+                  <p className="text-medical-body">{member.klinik_pribadi || "-"}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Contact Info */}

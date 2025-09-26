@@ -81,6 +81,52 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 </span>
               </div>
 
+              {/* Additional Hospital Practice Info */}
+              {(member.rs_tipe_a || member.rs_tipe_b || member.rs_tipe_c || member.klinik_pribadi) && (
+                <>
+                  {member.rs_tipe_a && (
+                    <div className="flex">
+                      <span className="font-medium w-32">RS Tipe A</span>
+                      <span className="mr-2">:</span>
+                      <span className="flex items-center gap-1">
+                        <Building className="h-3 w-3 text-muted-foreground" />
+                        {member.rs_tipe_a}
+                      </span>
+                    </div>
+                  )}
+                  {member.rs_tipe_b && (
+                    <div className="flex">
+                      <span className="font-medium w-32">RS Tipe B</span>
+                      <span className="mr-2">:</span>
+                      <span className="flex items-center gap-1">
+                        <Building className="h-3 w-3 text-muted-foreground" />
+                        {member.rs_tipe_b}
+                      </span>
+                    </div>
+                  )}
+                  {member.rs_tipe_c && (
+                    <div className="flex">
+                      <span className="font-medium w-32">RS Tipe C</span>
+                      <span className="mr-2">:</span>
+                      <span className="flex items-center gap-1">
+                        <Building className="h-3 w-3 text-muted-foreground" />
+                        {member.rs_tipe_c}
+                      </span>
+                    </div>
+                  )}
+                  {member.klinik_pribadi && (
+                    <div className="flex">
+                      <span className="font-medium w-32">Klinik Pribadi</span>
+                      <span className="mr-2">:</span>
+                      <span className="flex items-center gap-1">
+                        <Building className="h-3 w-3 text-muted-foreground" />
+                        {member.klinik_pribadi}
+                      </span>
+                    </div>
+                  )}
+                </>
+              )}
+
               {member.email && (
                 <div className="flex">
                   <span className="font-medium w-32">Email</span>
