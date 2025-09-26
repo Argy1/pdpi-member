@@ -5,13 +5,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Badge } from "@/components/ui/badge"
 import { MemberFilters } from "@/types/member"
+import { AlphabeticalFilter } from "@/components/AlphabeticalFilter"
 
 interface MemberFiltersProps {
   filters: MemberFilters
   onFiltersChange: (filters: MemberFilters) => void
   provinces: string[]
   pds: string[]
-  subspecialties: string[]
   className?: string
 }
 
@@ -19,13 +19,11 @@ export function MemberFiltersComponent({
   filters, 
   onFiltersChange, 
   provinces, 
-  pds, 
-  subspecialties,
+  pds,
   className = ""
 }: MemberFiltersProps) {
   const [openProvinsi, setOpenProvinsi] = useState(false)
   const [openPD, setOpenPD] = useState(false)
-  const [openSubspesialis, setOpenSubspesialis] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
     const currentValues = filters[type] as string[] || []
@@ -39,6 +37,13 @@ export function MemberFiltersComponent({
     })
   }
 
+  const handleAlphabetChange = (letters: string[]) => {
+    onFiltersChange({
+      ...filters,
+      namaHurufDepan: letters.length > 0 ? letters : undefined
+    })
+  }
+
   const clearFilter = (type: keyof MemberFilters) => {
     onFiltersChange({
       ...filters,
@@ -47,12 +52,10 @@ export function MemberFiltersComponent({
   }
 
   const clearAllFilters = () => {
-    onFiltersChange({
-      query: filters.query // Keep search query
-    })
+    onFiltersChange({})
   }
 
-  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.subspesialis?.length)
+  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -138,15 +141,6 @@ export function MemberFiltersComponent({
           filterKey="pd"
           placeholder="Cari cabang..."
         />
-        
-        <FilterPopover
-          open={openSubspesialis}
-          setOpen={setOpenSubspesialis}
-          title="Subspesialis"
-          options={subspecialties}
-          filterKey="subspesialis"
-          placeholder="Cari subspesialis..."
-        />
 
         {hasActiveFilters && (
           <Button
@@ -161,8 +155,14 @@ export function MemberFiltersComponent({
         )}
       </div>
 
+      {/* Alphabetical Filter */}
+      <AlphabeticalFilter
+        selectedLetters={filters.namaHurufDepan || []}
+        onLettersChange={handleAlphabetChange}
+      />
+
       {/* Active Filter Tags */}
-      {hasActiveFilters && (
+      {(filters.provinsi?.length || filters.pd?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi?.map((province) => (
             <Badge 
@@ -183,17 +183,6 @@ export function MemberFiltersComponent({
               onClick={() => handleFilterChange("pd", pd)}
             >
               {pd}
-              <X className="h-3 w-3 ml-1" />
-            </Badge>
-          ))}
-          {filters.subspesialis?.map((subspecialty) => (
-            <Badge 
-              key={subspecialty} 
-              variant="secondary" 
-              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => handleFilterChange("subspesialis", subspecialty)}
-            >
-              {subspecialty}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}

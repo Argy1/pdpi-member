@@ -65,6 +65,7 @@ export default function AnggotaPage() {
     provinsi: filters.provinsi?.[0],
     pd: filters.pd?.[0],
     subspesialis: filters.subspesialis?.[0],
+    namaHurufDepan: filters.namaHurufDepan,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
     page: pagination.page,
@@ -153,17 +154,7 @@ export default function AnggotaPage() {
             </p>
           </div>
 
-          {/* Search Bar */}
-          <SearchBar 
-            scope={isAuthenticated ? "admin" : "public"}
-            className="max-w-xl"
-            value={filters.query || ""}
-            onSearch={(query) => {
-              const newFilters = { ...filters, query: query || undefined }
-              setFilters(newFilters)
-              setPagination(prev => ({ ...prev, page: 1 }))
-            }}
-          />
+          {/* Search removed as per user request */}
         </div>
 
         {/* Filters - Show for all users */}
@@ -174,7 +165,6 @@ export default function AnggotaPage() {
             onFiltersChange={handleFiltersChange}
             provinces={mockProvinces}
             pds={mockPDs}
-            subspecialties={isAuthenticated ? mockSubspesialisOptions : []}
           />
 
           {/* Results Info and Controls */}

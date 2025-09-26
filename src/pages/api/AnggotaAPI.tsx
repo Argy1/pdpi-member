@@ -15,6 +15,7 @@ interface GetMembersParams {
   provinsi?: string
   pd?: string
   subspesialis?: string
+  namaHurufDepan?: string
   sort?: string
   limit?: number
   page?: number
@@ -30,6 +31,7 @@ export class AnggotaAPI {
         provinsi, 
         pd, 
         subspesialis, 
+        namaHurufDepan,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
@@ -90,6 +92,17 @@ export class AnggotaAPI {
         query = query.eq('status', status)
       }
 
+      // Apply alphabetical filter for first letter of name
+      if (namaHurufDepan) {
+        const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
+        if (letters.length > 0) {
+          const letterConditions = letters.map(letter => 
+            `nama.ilike.${letter}%`
+          ).join(',')
+          query = query.or(letterConditions)
+        }
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -142,6 +155,17 @@ export class AnggotaAPI {
 
       if (status) {
         countQuery = countQuery.eq('status', status)
+      }
+
+      // Apply alphabetical filter for count query too
+      if (namaHurufDepan) {
+        const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
+        if (letters.length > 0) {
+          const letterConditions = letters.map(letter => 
+            `nama.ilike.${letter}%`
+          ).join(',')
+          countQuery = countQuery.or(letterConditions)
+        }
       }
 
       // Get total count

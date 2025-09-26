@@ -63,6 +63,7 @@ export interface MemberFilters {
   pd?: string[]
   subspesialis?: string[]
   status?: string[]
+  namaHurufDepan?: string[]
 }
 
 export interface MemberSort {

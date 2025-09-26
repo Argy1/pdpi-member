@@ -7,6 +7,7 @@ interface UseMembersOptions {
   provinsi?: string
   pd?: string
   subspesialis?: string
+  namaHurufDepan?: string[]
   status?: string
   sort?: string
   limit?: number
@@ -37,6 +38,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
 
       const result = await AnggotaAPI.getMembers({
         ...options,
+        namaHurufDepan: options.namaHurufDepan?.join(','),
         scope: options.scope || 'public'
       })
       

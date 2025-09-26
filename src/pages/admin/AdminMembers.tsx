@@ -80,6 +80,7 @@ export default function AdminMembers() {
     provinsi: filters.provinsi?.join(','),
     pd: filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
+    namaHurufDepan: filters.namaHurufDepan,
     status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: 50,
@@ -298,17 +299,7 @@ export default function AdminMembers() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              <div className="flex-1">
-                <SearchBar 
-                  scope="admin"
-                  defaultValue={searchParams.get("q") || ""}
-                  onSearch={(query) => {
-                    setFilters(prev => ({ ...prev, query }));
-                    setCurrentPage(1);
-                  }}
-                  className="w-full"
-                />
-              </div>
+              {/* Search removed as per user request */}
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -347,7 +338,6 @@ export default function AdminMembers() {
               onFiltersChange={setFilters}
               provinces={availableProvinces}
               pds={availableBranches}
-              subspecialties={availableSubspecialties}
             />
           </div>
         </CardContent>
