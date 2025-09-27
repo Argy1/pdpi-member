@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import { Eye, EyeOff, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { supabase } from "@/integrations/supabase/client"
@@ -66,42 +66,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
-
-    try {
-      const redirectUrl = `${window.location.origin}/`
-      
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: redirectUrl
-        }
-      })
-
-      if (error) {
-        if (error.message === "User already registered") {
-          setError("Email sudah terdaftar. Silakan login atau gunakan email lain")
-        } else if (error.message.includes("Password")) {
-          setError("Password minimal 6 karakter")
-        } else {
-          setError(error.message)
-        }
-      } else {
-        toast({
-          title: "Registrasi berhasil",
-          description: "Silakan cek email Anda untuk konfirmasi",
-        })
-      }
-    } catch (err) {
-      setError("Terjadi kesalahan yang tidak terduga")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -143,137 +107,68 @@ export default function LoginPage() {
                 </Alert>
               )}
 
-              <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login">Masuk</TabsTrigger>
-                  <TabsTrigger value="signup">Daftar</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="login" className="space-y-4 mt-6">
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium">
-                        Email
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="admin@pdpi.org"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="focus-visible"
-                      />
-                    </div>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="admin@pdpi.org"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="focus-visible"
+                  />
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium">
-                        Password
-                      </Label>
-                      <div className="relative">
-                        <Input
-                          id="password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Masukkan password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                          className="pr-10 focus-visible"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Masukkan password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      className="pr-10 focus-visible"
+                    />
                     <Button
-                      type="submit"
-                      className="w-full h-11 font-semibold focus-visible"
-                      disabled={isLoading}
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
                     >
-                      {isLoading ? "Memproses..." : "Masuk"}
-                    </Button>
-                  </form>
-
-                  <div className="text-center">
-                    <Button variant="link" size="sm" className="text-muted-foreground">
-                      Lupa password?
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-muted-foreground" />
+                      )}
                     </Button>
                   </div>
-                </TabsContent>
+                </div>
 
-                <TabsContent value="signup" className="space-y-4 mt-6">
-                  <form onSubmit={handleSignUp} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-sm font-medium">
-                        Email
-                      </Label>
-                      <Input
-                        id="signup-email"
-                        name="email"
-                        type="email"
-                        placeholder="email@domain.com"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="focus-visible"
-                      />
-                    </div>
+                <Button
+                  type="submit"
+                  className="w-full h-11 font-semibold focus-visible"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Memproses..." : "Masuk"}
+                </Button>
+              </form>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-sm font-medium">
-                        Password
-                      </Label>
-                      <div className="relative">
-                        <Input
-                          id="signup-password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Minimal 6 karakter"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                          minLength={6}
-                          className="pr-10 focus-visible"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full h-11 font-semibold focus-visible"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Memproses..." : "Daftar"}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+              <div className="text-center">
+                <Button variant="link" size="sm" className="text-muted-foreground">
+                  Lupa password?
+                </Button>
+              </div>
 
               <div className="text-center">
                 <Button variant="ghost" size="sm" asChild>
