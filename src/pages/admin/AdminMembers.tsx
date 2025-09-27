@@ -46,6 +46,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { MemberFilters } from '@/types/member';
+import { AnggotaAPI } from '@/pages/api/AnggotaAPI';
 
 // Removed mock data - will use data from MemberContext instead
 
@@ -65,6 +66,7 @@ export default function AdminMembers() {
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([]);
   const [availableBranches, setAvailableBranches] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
+  const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
   const { isPusatAdmin, profile } = useAuth();
   const { toast } = useToast();
 
@@ -108,6 +110,12 @@ export default function AdminMembers() {
         setAvailableProvinces(provinces.sort());
         setAvailableBranches(branches.sort());
         setAvailableSubspecialties([]); // Add subspecialty logic if needed
+
+        // Fetch hospital types
+        const hospitalTypesResult = await AnggotaAPI.getHospitalTypes();
+        if (hospitalTypesResult.data) {
+          setHospitalTypes(hospitalTypesResult.data);
+        }
       } catch (error) {
         console.error('Error fetching filter options:', error);
       }
@@ -338,6 +346,7 @@ export default function AdminMembers() {
               onFiltersChange={setFilters}
               provinces={availableProvinces}
               pds={availableBranches}
+              hospitalTypes={hospitalTypes}
             />
           </div>
         </CardContent>

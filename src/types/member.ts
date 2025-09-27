@@ -68,6 +68,7 @@ export interface MemberFilters {
   subspesialis?: string[]
   status?: string[]
   namaHurufDepan?: string[]
+  hospitalType?: string[]
 }
 
 export interface MemberSort {

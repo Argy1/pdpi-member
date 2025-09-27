@@ -16,6 +16,7 @@ interface GetMembersParams {
   pd?: string
   subspesialis?: string
   namaHurufDepan?: string
+  hospitalType?: string
   sort?: string
   limit?: number
   page?: number
@@ -32,6 +33,7 @@ export class AnggotaAPI {
         pd, 
         subspesialis, 
         namaHurufDepan,
+        hospitalType,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
@@ -103,6 +105,28 @@ export class AnggotaAPI {
         }
       }
 
+      // Apply hospital type filter
+      if (hospitalType) {
+        const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
+        if (types.length > 0) {
+          const hospitalConditions = []
+          types.forEach(type => {
+            if (type === 'Rumah Sakit Tipe A') {
+              hospitalConditions.push('rs_tipe_a.neq.')
+            } else if (type === 'Rumah Sakit Tipe B') {
+              hospitalConditions.push('rs_tipe_b.neq.')
+            } else if (type === 'Rumah Sakit Tipe C') {
+              hospitalConditions.push('rs_tipe_c.neq.')
+            } else if (type === 'Klinik Pribadi') {
+              hospitalConditions.push('klinik_pribadi.neq.')
+            }
+          })
+          if (hospitalConditions.length > 0) {
+            query = query.or(hospitalConditions.join(','))
+          }
+        }
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -165,6 +189,28 @@ export class AnggotaAPI {
             `nama.ilike.${letter}%`
           ).join(',')
           countQuery = countQuery.or(letterConditions)
+        }
+      }
+
+      // Apply hospital type filter for count query too
+      if (hospitalType) {
+        const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
+        if (types.length > 0) {
+          const hospitalConditions = []
+          types.forEach(type => {
+            if (type === 'Rumah Sakit Tipe A') {
+              hospitalConditions.push('rs_tipe_a.neq.')
+            } else if (type === 'Rumah Sakit Tipe B') {
+              hospitalConditions.push('rs_tipe_b.neq.')
+            } else if (type === 'Rumah Sakit Tipe C') {
+              hospitalConditions.push('rs_tipe_c.neq.')
+            } else if (type === 'Klinik Pribadi') {
+              hospitalConditions.push('klinik_pribadi.neq.')
+            }
+          })
+          if (hospitalConditions.length > 0) {
+            countQuery = countQuery.or(hospitalConditions.join(','))
+          }
         }
       }
 
@@ -271,6 +317,38 @@ export class AnggotaAPI {
       }
 
       return { data: transformedData }
+
+    } catch (error) {
+      console.error('API error:', error)
+      return { error: 'Internal server error' }
+    }
+  }
+
+  static async getHospitalTypes(): Promise<APIResponse<string[]>> {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi')
+
+      if (error) {
+        console.error('Database error:', error)
+        return { error: 'Database error' }
+      }
+
+      const hospitalTypes: string[] = []
+      
+      // Check if any members have data for each hospital type
+      const hasRsTipeA = data?.some(member => member.rs_tipe_a && member.rs_tipe_a.trim() !== '')
+      const hasRsTipeB = data?.some(member => member.rs_tipe_b && member.rs_tipe_b.trim() !== '')
+      const hasRsTipeC = data?.some(member => member.rs_tipe_c && member.rs_tipe_c.trim() !== '')
+      const hasKlinikPribadi = data?.some(member => member.klinik_pribadi && member.klinik_pribadi.trim() !== '')
+
+      if (hasRsTipeA) hospitalTypes.push('Rumah Sakit Tipe A')
+      if (hasRsTipeB) hospitalTypes.push('Rumah Sakit Tipe B')
+      if (hasRsTipeC) hospitalTypes.push('Rumah Sakit Tipe C')
+      if (hasKlinikPribadi) hospitalTypes.push('Klinik Pribadi')
+
+      return { data: hospitalTypes }
 
     } catch (error) {
       console.error('API error:', error)

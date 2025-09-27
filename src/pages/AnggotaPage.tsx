@@ -11,6 +11,7 @@ import { Member, MemberFilters, MemberSort } from "@/types/member"
 import { mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
 import { useMembers } from '@/hooks/useMembers'
 import { supabase } from "@/integrations/supabase/client"
+import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
 import { ArrowUpDown, Users, RefreshCw } from "lucide-react"
 
 export default function AnggotaPage() {
@@ -18,6 +19,7 @@ export default function AnggotaPage() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  const [hospitalTypes, setHospitalTypes] = useState<string[]>([])
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => ({
@@ -37,13 +39,21 @@ export default function AnggotaPage() {
     limit: parseInt(searchParams.get("limit") || "25")
   })
 
-  // Check authentication status
+  // Check authentication status and fetch hospital types
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setIsAuthenticated(!!user)
     }
     checkAuth()
+
+    const fetchHospitalTypes = async () => {
+      const result = await AnggotaAPI.getHospitalTypes()
+      if (result.data) {
+        setHospitalTypes(result.data)
+      }
+    }
+    fetchHospitalTypes()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session?.user)
@@ -66,6 +76,7 @@ export default function AnggotaPage() {
     pd: filters.pd?.[0],
     subspesialis: filters.subspesialis?.[0],
     namaHurufDepan: filters.namaHurufDepan,
+    hospitalType: filters.hospitalType,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
     page: pagination.page,
@@ -80,6 +91,7 @@ export default function AnggotaPage() {
     if (filters.provinsi?.length) params.set("provinsi", filters.provinsi.join(","))
     if (filters.pd?.length) params.set("pd", filters.pd.join(","))
     if (filters.subspesialis?.length) params.set("subspesialis", filters.subspesialis.join(","))
+    if (filters.hospitalType?.length) params.set("hospitalType", filters.hospitalType.join(","))
     if (pagination.page > 1) params.set("page", pagination.page.toString())
     if (pagination.limit !== 25) params.set("limit", pagination.limit.toString())
     if (sort.field !== "nama" || sort.direction !== "asc") {
@@ -165,6 +177,7 @@ export default function AnggotaPage() {
             onFiltersChange={handleFiltersChange}
             provinces={mockProvinces}
             pds={mockPDs}
+            hospitalTypes={hospitalTypes}
           />
 
           {/* Results Info and Controls */}

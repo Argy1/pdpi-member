@@ -12,6 +12,7 @@ interface MemberFiltersProps {
   onFiltersChange: (filters: MemberFilters) => void
   provinces: string[]
   pds: string[]
+  hospitalTypes: string[]
   className?: string
 }
 
@@ -20,10 +21,12 @@ export function MemberFiltersComponent({
   onFiltersChange, 
   provinces, 
   pds,
+  hospitalTypes,
   className = ""
 }: MemberFiltersProps) {
   const [openProvinsi, setOpenProvinsi] = useState(false)
   const [openPD, setOpenPD] = useState(false)
+  const [openHospitalType, setOpenHospitalType] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
     const currentValues = filters[type] as string[] || []
@@ -55,7 +58,7 @@ export function MemberFiltersComponent({
     onFiltersChange({})
   }
 
-  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length)
+  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -142,6 +145,15 @@ export function MemberFiltersComponent({
           placeholder="Cari cabang..."
         />
 
+        <FilterPopover
+          open={openHospitalType}
+          setOpen={setOpenHospitalType}
+          title="Jenis Institusi"
+          options={hospitalTypes}
+          filterKey="hospitalType"
+          placeholder="Cari jenis institusi..."
+        />
+
         {hasActiveFilters && (
           <Button
             variant="ghost"
@@ -162,7 +174,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi?.length || filters.pd?.length) && (
+      {(filters.provinsi?.length || filters.pd?.length || filters.hospitalType?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi?.map((province) => (
             <Badge 
@@ -183,6 +195,17 @@ export function MemberFiltersComponent({
               onClick={() => handleFilterChange("pd", pd)}
             >
               {pd}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          ))}
+          {filters.hospitalType?.map((type) => (
+            <Badge 
+              key={type} 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleFilterChange("hospitalType", type)}
+            >
+              {type}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}

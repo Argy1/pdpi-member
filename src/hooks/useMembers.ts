@@ -8,6 +8,7 @@ interface UseMembersOptions {
   pd?: string
   subspesialis?: string
   namaHurufDepan?: string[]
+  hospitalType?: string[]
   status?: string
   sort?: string
   limit?: number
@@ -39,6 +40,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
       const result = await AnggotaAPI.getMembers({
         ...options,
         namaHurufDepan: options.namaHurufDepan?.join(','),
+        hospitalType: options.hospitalType?.join(','),
         scope: options.scope || 'public'
       })
       
