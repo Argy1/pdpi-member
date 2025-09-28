@@ -52,28 +52,18 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <DialogTitle className="text-xl font-bold heading-medical">
-                {member.nama}
-              </DialogTitle>
-              <div className="flex items-center space-x-2">
-                {getStatusBadge(member.status)}
-                {member.npa && (
-                  <code className="text-xs bg-muted px-2 py-1 rounded">
-                    NPA: {member.npa}
-                  </code>
-                )}
-              </div>
+          <div className="space-y-2">
+            <DialogTitle className="text-xl font-bold heading-medical">
+              {member.nama}
+            </DialogTitle>
+            <div className="flex items-center space-x-2">
+              {getStatusBadge(member.status)}
+              {member.npa && (
+                <code className="text-xs bg-muted px-2 py-1 rounded">
+                  NPA: {member.npa}
+                </code>
+              )}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="focus-visible"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </DialogHeader>
 
