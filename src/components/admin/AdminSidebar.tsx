@@ -93,13 +93,13 @@ export const AdminSidebar = () => {
   return (
     <Sidebar className={isCollapsed ? 'w-14' : 'w-64'} collapsible="icon">
       <SidebarContent>
-        <div className="p-4 border-b">
+        <div className={`border-b ${isCollapsed ? 'p-2' : 'p-4'}`}>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden bg-white shadow-sm border">
+            <div className={`flex items-center justify-center rounded-full overflow-hidden bg-white shadow-sm border flex-shrink-0 ${isCollapsed ? 'h-8 w-8' : 'h-10 w-10'}`}>
               <img 
                 src={logoImage} 
                 alt="PDPI Logo" 
-                className="h-8 w-8 object-contain"
+                className={`object-cover ${isCollapsed ? 'h-6 w-6' : 'h-8 w-8'}`}
               />
             </div>
             {!isCollapsed && (
