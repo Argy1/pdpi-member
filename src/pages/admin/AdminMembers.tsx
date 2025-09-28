@@ -39,7 +39,9 @@ import {
   SortAsc,
   SortDesc,
   ArrowLeft,
-  RefreshCw
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -497,6 +499,84 @@ export default function AdminMembers() {
               </TableBody>
             </Table>
           </div>
+          
+          {/* Pagination Controls */}
+          {total > 0 && (
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                Menampilkan {((currentPage - 1) * 50) + 1} - {Math.min(currentPage * 50, total)} dari {total} anggota
+              </div>
+              
+              <div className="flex items-center space-x-6">
+                <label className="flex items-center space-x-2">
+                  <span className="text-sm">Tampilkan</span>
+                  <select 
+                    className="border border-border rounded px-2 py-1 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                    value={50}
+                    onChange={(e) => {
+                      // For now we'll keep 50 as default, but this can be made dynamic later
+                      console.log('Items per page:', e.target.value);
+                    }}
+                  >
+                    <option value={10}>10 per halaman</option>
+                    <option value={25}>25 per halaman</option>
+                    <option value={50}>50 per halaman</option>
+                    <option value={100}>100 per halaman</option>
+                  </select>
+                </label>
+
+                <div className="flex items-center space-x-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage <= 1}
+                    className="focus-visible"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.min(5, Math.ceil(total / 50)) }, (_, i) => {
+                      const totalPages = Math.ceil(total / 50);
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+
+                      return (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className="w-9 h-9 focus-visible"
+                        >
+                          {pageNum}
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage >= Math.ceil(total / 50)}
+                    className="focus-visible"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
