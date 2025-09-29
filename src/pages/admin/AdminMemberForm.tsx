@@ -708,7 +708,9 @@ export default function AdminMemberForm() {
                           <SelectItem value="Cabang Kalimantan Tengah">Cabang Kalimantan Tengah</SelectItem>
                           <SelectItem value="Cabang Sulawesi">Cabang Sulawesi</SelectItem>
                           <SelectItem value="Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)">Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)</SelectItem>
+                          <SelectItem value="Cabang Sulselbarra">Cabang Sulselbarra</SelectItem>
                           <SelectItem value="Cabang Maluku Utara & Maluku">Cabang Maluku Utara & Maluku</SelectItem>
+                          <SelectItem value="Cabang Maluku Selatan dan Utara">Cabang Maluku Selatan dan Utara</SelectItem>
                           <SelectItem value="Cabang Papua">Cabang Papua</SelectItem>
                         </SelectContent>
                       </Select>
