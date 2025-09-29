@@ -1,6 +1,9 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Check, ChevronDown, X } from "lucide-react"
 
 interface AlphabeticalFilterProps {
   selectedLetters: string[]
@@ -13,6 +16,7 @@ export function AlphabeticalFilter({
   onLettersChange, 
   className = "" 
 }: AlphabeticalFilterProps) {
+  const [open, setOpen] = useState(false)
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
   const handleLetterToggle = (letter: string) => {
@@ -27,9 +31,55 @@ export function AlphabeticalFilter({
   }
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Filter Berdasarkan Huruf Depan Nama</h3>
+    <div className={`space-y-3 ${className}`}>
+      <div className="flex items-center gap-3">
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="justify-between focus-visible bg-background border-input hover:bg-accent hover:text-accent-foreground"
+            >
+              <div className="flex items-center space-x-2">
+                <span>Filter Huruf Nama</span>
+                {selectedLetters.length > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {selectedLetters.length}
+                  </Badge>
+                )}
+              </div>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 p-0 bg-popover border-border shadow-lg" align="start">
+            <Command className="bg-popover">
+              <CommandInput placeholder="Cari huruf..." className="border-0" />
+              <CommandList className="max-h-60">
+                <CommandEmpty>Tidak ada huruf ditemukan.</CommandEmpty>
+                <CommandGroup className="p-2">
+                  <div className="grid grid-cols-6 gap-1">
+                    {alphabet.map((letter) => (
+                      <CommandItem
+                        key={letter}
+                        onSelect={() => handleLetterToggle(letter)}
+                        className="cursor-pointer justify-center p-2 h-8"
+                      >
+                        <div className="flex items-center justify-center w-full">
+                          <Check
+                            className={`h-3 w-3 mr-1 ${
+                              selectedLetters.includes(letter) ? "opacity-100" : "opacity-0"
+                            }`}
+                          />
+                          {letter}
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </div>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+
         {selectedLetters.length > 0 && (
           <Button
             variant="ghost"
@@ -38,30 +88,15 @@ export function AlphabeticalFilter({
             className="text-muted-foreground hover:text-foreground focus-visible"
           >
             <X className="h-4 w-4 mr-1" />
-            Reset
+            Reset Huruf
           </Button>
         )}
-      </div>
-      
-      {/* Alphabet Grid */}
-      <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-13 gap-1">
-        {alphabet.map((letter) => (
-          <Button
-            key={letter}
-            variant={selectedLetters.includes(letter) ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleLetterToggle(letter)}
-            className="h-8 w-8 p-0 text-xs focus-visible"
-          >
-            {letter}
-          </Button>
-        ))}
       </div>
 
       {/* Selected Letters Display */}
       {selectedLetters.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          <span className="text-sm text-muted-foreground">Dipilih:</span>
+          <span className="text-sm text-muted-foreground">Huruf dipilih:</span>
           {selectedLetters.map((letter) => (
             <Badge 
               key={letter} 
