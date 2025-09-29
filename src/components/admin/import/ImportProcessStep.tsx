@@ -113,7 +113,7 @@ export const ImportProcessStep = () => {
       
       // Set default status if empty
       if (!processedRow.status) {
-        processedRow.status = 'Aktif';
+        processedRow.status = 'Biasa';
       }
       
       // Fill tempat_tugas from rumahSakit if tempat_tugas is empty but rumahSakit exists

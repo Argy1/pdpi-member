@@ -181,7 +181,7 @@ export default function AdminMemberForm() {
             kontakTelepon: existingMember.no_hp || '',
             website: '', // Field doesn't exist in database, set to empty
             sosialMedia: '', // Field doesn't exist in database, set to empty
-            status: existingMember.status || 'AKTIF',
+            status: existingMember.status || 'Biasa',
           };
           setFormData(memberFormData);
           setPhotoPreview(existingMember.foto || '');
@@ -269,7 +269,7 @@ export default function AdminMemberForm() {
         no_hp: formData.kontakTelepon || null,
         email: formData.kontakEmail || null,
         foto: formData.foto || null,
-        status: formData.status || 'AKTIF',
+        status: formData.status || 'Biasa',
         cabang: formData.pd || null,
         rs_tipe_a: formData.rsTipeA || null,
         rs_tipe_b: formData.rsTipeB || null,

@@ -138,8 +138,14 @@ export const ExcelImport: React.FC = () => {
       kontakTelepon: telepon.toString().trim(),
       kontakEmail: email.toString().trim(),
       pd: cabang.toString().trim(),
-      status: status.toString().toLowerCase().includes('biasa') ? 'AKTIF' : 
-              status.toString().toLowerCase().includes('luar biasa') ? 'TIDAK_AKTIF' : 'AKTIF',
+      status: (() => {
+        const statusStr = status.toString().toLowerCase().trim();
+        if (statusStr.includes('luar biasa') || statusStr.includes('luarbiasa')) return 'Luar Biasa';
+        if (statusStr.includes('meninggal')) return 'Meninggal';
+        if (statusStr.includes('muda')) return 'Muda';
+        if (statusStr.includes('biasa')) return 'Biasa';
+        return 'Biasa'; // default
+      })(),
       keteranganStatus: keterangan.toString().trim()
     };
   };
