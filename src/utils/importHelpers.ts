@@ -48,11 +48,20 @@ export const normalizeDate = (dateStr: string): string | null => {
 };
 
 export const normalizeStatus = (status: string): string => {
-  if (!status) return 'Aktif';
-  const normalized = status.toString().toLowerCase();
-  if (normalized.includes('aktif') || normalized.includes('active')) return 'Aktif';
-  if (normalized.includes('nonaktif') || normalized.includes('inactive')) return 'Tidak Aktif';
-  return 'Aktif';
+  if (!status) return 'Biasa';
+  
+  const normalized = status.toString().toLowerCase().trim();
+  
+  if (normalized.includes('luar biasa') || normalized.includes('luarbiasa')) return 'Luar Biasa';
+  if (normalized.includes('meninggal')) return 'Meninggal';
+  if (normalized.includes('muda')) return 'Muda';
+  if (normalized.includes('biasa')) return 'Biasa';
+  
+  // Fallback for old format compatibility
+  if (normalized.includes('aktif') || normalized.includes('active')) return 'Biasa';
+  if (normalized.includes('nonaktif') || normalized.includes('inactive')) return 'Meninggal';
+  
+  return 'Biasa';
 };
 
 export const validateEmail = (email: string): string | null => {
