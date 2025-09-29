@@ -9,7 +9,7 @@ import { useImport } from '@/contexts/ImportContext';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Wand2, Eye, AlertTriangle } from 'lucide-react';
 
-// Database field definitions
+// Database field definitions - using actual database column names
 const dbFields = {
   // Required fields
   nama: { label: 'Nama Lengkap', required: true, type: 'text' },
@@ -18,32 +18,30 @@ const dbFields = {
   
   // Optional fields (but important)
   rumahSakit: { label: 'Rumah Sakit (alternatif)', required: false, type: 'text' },
-  pd: { label: 'PD/Wilayah/Cabang', required: false, type: 'text' },
+  cabang: { label: 'Cabang/PD/Wilayah', required: false, type: 'text' },
   
-  // Other optional fields
+  // Other optional fields - using actual database column names
   npa: { label: 'NPA (Nomor Peserta Anggota)', required: false, type: 'text' },
   gelar: { label: 'Gelar 1', required: false, type: 'text' },
   gelar2: { label: 'Gelar 2', required: false, type: 'text' },
-  spesialis: { label: 'Spesialis', required: false, type: 'text' },
-  subspesialis: { label: 'Subspesialis', required: false, type: 'text' },
-  jenisKelamin: { label: 'Jenis Kelamin (L/P)', required: false, type: 'text' },
-  tempatLahir: { label: 'Tempat Lahir', required: false, type: 'text' },
-  tanggalLahir: { label: 'Tanggal Lahir', required: false, type: 'date' },
-  alamat: { label: 'Alamat', required: false, type: 'text' },
-  kota: { label: 'Kota/Kabupaten', required: false, type: 'text' },
-  unitKerja: { label: 'Unit Kerja', required: false, type: 'text' },
-  jabatan: { label: 'Jabatan', required: false, type: 'text' },
-  tahunLulus: { label: 'Tahun Lulus', required: false, type: 'number' },
+  alumni: { label: 'Alumni', required: false, type: 'text' },
+  jenis_kelamin: { label: 'Jenis Kelamin (L/P)', required: false, type: 'text' },
+  tempat_lahir: { label: 'Tempat Lahir', required: false, type: 'text' },
+  tgl_lahir: { label: 'Tanggal Lahir', required: false, type: 'date' },
+  alamat_rumah: { label: 'Alamat Rumah', required: false, type: 'text' },
+  kota_kabupaten: { label: 'Kota/Kabupaten', required: false, type: 'text' },
+  kota_kabupaten_rumah: { label: 'Kota/Kabupaten Rumah', required: false, type: 'text' },
+  provinsi_rumah: { label: 'Provinsi Rumah', required: false, type: 'text' },
+  thn_lulus: { label: 'Tahun Lulus', required: false, type: 'number' },
   status: { label: 'Status (Aktif/Nonaktif)', required: false, type: 'text' },
-  kontakEmail: { label: 'Email', required: false, type: 'email' },
-  kontakTelepon: { label: 'Telepon/HP', required: false, type: 'text' },
-  nik: { label: 'NIK', required: false, type: 'text' },
-  noSTR: { label: 'No STR', required: false, type: 'text' },
-  strBerlakuSampai: { label: 'STR Berlaku Sampai', required: false, type: 'date' },
-  noSIP: { label: 'No SIP', required: false, type: 'text' },
-  sipBerlakuSampai: { label: 'SIP Berlaku Sampai', required: false, type: 'date' },
-  website: { label: 'Website', required: false, type: 'text' },
-  sosialMedia: { label: 'Media Sosial', required: false, type: 'text' }
+  email: { label: 'Email', required: false, type: 'email' },
+  no_hp: { label: 'Nomor HP/Telepon', required: false, type: 'text' },
+  foto: { label: 'Foto URL', required: false, type: 'text' },
+  keterangan: { label: 'Keterangan', required: false, type: 'text' },
+  rs_tipe_a: { label: 'RS Tipe A', required: false, type: 'text' },
+  rs_tipe_b: { label: 'RS Tipe B', required: false, type: 'text' },
+  rs_tipe_c: { label: 'RS Tipe C', required: false, type: 'text' },
+  klinik_pribadi: { label: 'Klinik Pribadi', required: false, type: 'text' }
 };
 
 export const ColumnMappingStep = () => {
@@ -65,32 +63,34 @@ export const ColumnMappingStep = () => {
     const normalizeHeader = (header: string) => 
       header.toLowerCase().replace(/[^a-z0-9]/g, '');
     
-    // Mapping rules based on common header names
+    // Mapping rules based on common header names - updated to match database columns
     const mappingRules: { [key: string]: string[] } = {
       nama: ['nama', 'namalengkap', 'name', 'fullname'],
       npa: ['npa', 'nomoranggota', 'memberid', 'id'],
       gelar: ['gelar', 'gelar1', 'title', 'degree'],
       gelar2: ['gelar2', 'title2', 'degree2', 'gelardua'],
-      spesialis: ['spesialis', 'speciality', 'specialty', 'bidang'],
-      subspesialis: ['subspesialis', 'subspecialty', 'subbidang'],
+      alumni: ['alumni', 'almamater', 'sekolah'],
       tempat_tugas: ['tempattugas', 'rumahsakit', 'rs', 'fasyankes', 'instansi', 'tempatpraktik', 'hospital', 'tempatkerja', 'workplace'],
       rumahSakit: ['rumahsakit', 'rs', 'hospital', 'tempatkerja', 'workplace'],
-      kota: ['kota', 'kabupaten', 'kotakabupaten', 'city'],
+      kota_kabupaten: ['kota', 'kabupaten', 'kotakabupaten', 'city', 'kotakab'],
+      kota_kabupaten_rumah: ['kotarumah', 'kabupatanrumah', 'kotakabupatanrumah', 'cityhome'],
       provinsi: ['provinsi', 'province', 'prop'],
-      pd: ['pd', 'wilayah', 'cabang', 'branch', 'region'],
-      jenisKelamin: ['jeniskelamin', 'kelamin', 'gender', 'jk'],
-      tempatLahir: ['tempatlahir', 'birthplace'],
-      tanggalLahir: ['tanggallahir', 'tgllahir', 'birthdate', 'dob'],
-      alamat: ['alamat', 'address'],
-      unitKerja: ['unitkerja', 'unit', 'department'],
-      jabatan: ['jabatan', 'position', 'job'],
-      tahunLulus: ['tahunlulus', 'thnlulus', 'graduate', 'graduation'],
+      provinsi_rumah: ['provinsirumah', 'provincehome', 'prophome'],
+      cabang: ['cabang', 'pd', 'wilayah', 'branch', 'region'],
+      jenis_kelamin: ['jeniskelamin', 'kelamin', 'gender', 'jk'],
+      tempat_lahir: ['tempatlahir', 'birthplace'],
+      tgl_lahir: ['tanggallahir', 'tgllahir', 'birthdate', 'dob'],
+      alamat_rumah: ['alamat', 'alamatrumah', 'address', 'addresshome'],
+      thn_lulus: ['tahunlulus', 'thnlulus', 'graduate', 'graduation'],
       status: ['status'],
-      kontakEmail: ['email', 'mail', 'emailaddress'],
-      kontakTelepon: ['telepon', 'telp', 'hp', 'phone', 'mobile'],
-      nik: ['nik', 'identitas'],
-      noSTR: ['str', 'nostr', 'nomorsurat'],
-      noSIP: ['sip', 'nosip', 'nomorsipn']
+      email: ['email', 'mail', 'emailaddress', 'kontakemail'],
+      no_hp: ['nohp', 'telepon', 'telp', 'hp', 'phone', 'mobile', 'kontaktelepon'],
+      foto: ['foto', 'photo', 'picture', 'image'],
+      keterangan: ['keterangan', 'notes', 'catatan', 'remarks'],
+      rs_tipe_a: ['rstipea', 'rumahsakittipea', 'hospitala'],
+      rs_tipe_b: ['rstipeb', 'rumahsakittipeb', 'hospitalb'],
+      rs_tipe_c: ['rstipec', 'rumahsakittipec', 'hospitalc'],
+      klinik_pribadi: ['klinikpribadi', 'privateclinic', 'klinik']
     };
 
     fileData.headers.forEach((header, index) => {
