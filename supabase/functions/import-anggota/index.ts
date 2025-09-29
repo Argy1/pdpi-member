@@ -194,7 +194,7 @@ Deno.serve(async (req) => {
         if (row.tempat_lahir) memberData.tempat_lahir = row.tempat_lahir;
         if (row.keterangan) memberData.keterangan = row.keterangan;
         if (row.foto) memberData.foto = row.foto;
-        if (cabangId) memberData.cabang = cabangId;
+        if (row.cabang) memberData.cabang = row.cabang;
 
         if (mode === 'upsert') {
           // Check if member exists
