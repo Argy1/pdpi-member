@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useMemberContext } from '@/contexts/MemberContext';
 import { ExcelImport } from '@/components/admin/ExcelImport';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MemberFormData {
   // Identitas
@@ -114,51 +115,92 @@ export default function AdminMemberForm() {
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
 
   useEffect(() => {
-    if (isEditing && id) {
-      // Find member by ID from context
-      const existingMember = members.find(m => m.id === id);
-      if (existingMember) {
-        const memberFormData = {
-          nama: existingMember.nama || '',
-          gelar: existingMember.gelar || '',
-          gelar2: existingMember.gelar2 || '',
-          npa: existingMember.npa || '',
-          spesialis: existingMember.spesialis || '',
-          subspesialis: existingMember.subspesialis || '',
-          tempatLahir: existingMember.tempat_lahir || existingMember.tempatLahir || '',
-          tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : 
-                       existingMember.tanggalLahir ? new Date(existingMember.tanggalLahir) : undefined,
-          jenisKelamin: existingMember.jenis_kelamin === 'L' || existingMember.jenisKelamin === 'L' ? 'Laki-laki' : 
-                       existingMember.jenis_kelamin === 'P' || existingMember.jenisKelamin === 'P' ? 'Perempuan' : '',
-          foto: existingMember.foto || existingMember.fotoUrl || '',
-          alumni: existingMember.alumni || '',
-          alamat: existingMember.alamat_rumah || existingMember.alamat || '',
-          kota: existingMember.kota_kabupaten || existingMember.kota || '',
-          provinsi: existingMember.provinsi || '',
-          pd: existingMember.cabang || existingMember.pd || '',
-          unitKerja: existingMember.unitKerja || '',
-          jabatan: existingMember.jabatan || '',
-          rsTipeA: existingMember.rs_tipe_a || '',
-          rsTipeB: existingMember.rs_tipe_b || '',
-          rsTipeC: existingMember.rs_tipe_c || '',
-          klinikPribadi: existingMember.klinik_pribadi || '',
-          nik: existingMember.nik || '',
-          noSTR: existingMember.noSTR || '',
-          strBerlakuSampai: existingMember.strBerlakuSampai ? new Date(existingMember.strBerlakuSampai) : undefined,
-          noSIP: existingMember.noSIP || '',
-          sipBerlakuSampai: existingMember.sipBerlakuSampai ? new Date(existingMember.sipBerlakuSampai) : undefined,
-          tahunLulus: existingMember.thn_lulus?.toString() || existingMember.tahunLulus?.toString() || '',
-          kontakEmail: existingMember.email || existingMember.kontakEmail || '',
-          kontakTelepon: existingMember.no_hp || existingMember.kontakTelepon || '',
-          website: existingMember.website || '',
-          sosialMedia: existingMember.sosialMedia || '',
-          status: existingMember.status || 'AKTIF',
-        };
-        setFormData(memberFormData);
-        setPhotoPreview(existingMember.foto || existingMember.fotoUrl || '');
+    const fetchMemberForEdit = async () => {
+      if (isEditing && id) {
+        try {
+          setLoading(true);
+          
+          // Fetch member directly from database to ensure we have latest data
+          const { data, error } = await supabase
+            .from('members')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+          
+          if (error) {
+            console.error('Error fetching member for edit:', error);
+            toast({
+              title: 'Error',
+              description: 'Gagal memuat data anggota untuk diedit.',
+              variant: 'destructive',
+            });
+            return;
+          }
+          
+          if (!data) {
+            toast({
+              title: 'Error',
+              description: 'Data anggota tidak ditemukan.',
+              variant: 'destructive',
+            });
+            navigate('/admin/anggota');
+            return;
+          }
+
+          const existingMember = data;
+          const memberFormData = {
+            nama: existingMember.nama || '',
+            gelar: existingMember.gelar || '',
+            gelar2: existingMember.gelar2 || '',
+            npa: existingMember.npa || '',
+            spesialis: '', // Field doesn't exist in database, set to empty
+            subspesialis: '', // Field doesn't exist in database, set to empty
+            tempatLahir: existingMember.tempat_lahir || '',
+            tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : undefined,
+            jenisKelamin: existingMember.jenis_kelamin === 'L' ? 'Laki-laki' : 
+                         existingMember.jenis_kelamin === 'P' ? 'Perempuan' : '',
+            foto: existingMember.foto || '',
+            alumni: existingMember.alumni || '',
+            alamat: existingMember.alamat_rumah || '',
+            kota: existingMember.kota_kabupaten || '',
+            provinsi: existingMember.provinsi || '',
+            pd: existingMember.cabang || '',
+            unitKerja: existingMember.tempat_tugas || '', // Map tempat_tugas to unitKerja
+            jabatan: '', // Field doesn't exist in database, set to empty
+            rsTipeA: existingMember.rs_tipe_a || '',
+            rsTipeB: existingMember.rs_tipe_b || '',
+            rsTipeC: existingMember.rs_tipe_c || '',
+            klinikPribadi: existingMember.klinik_pribadi || '',
+            nik: '', // Field doesn't exist in database, set to empty
+            noSTR: '', // Field doesn't exist in database, set to empty
+            strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
+            noSIP: '', // Field doesn't exist in database, set to empty
+            sipBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
+            tahunLulus: existingMember.thn_lulus?.toString() || '',
+            kontakEmail: existingMember.email || '',
+            kontakTelepon: existingMember.no_hp || '',
+            website: '', // Field doesn't exist in database, set to empty
+            sosialMedia: '', // Field doesn't exist in database, set to empty
+            status: existingMember.status || 'AKTIF',
+          };
+          setFormData(memberFormData);
+          setPhotoPreview(existingMember.foto || '');
+          
+        } catch (error) {
+          console.error('Error in fetchMemberForEdit:', error);
+          toast({
+            title: 'Error',
+            description: 'Terjadi kesalahan saat memuat data anggota.',
+            variant: 'destructive',
+          });
+        } finally {
+          setLoading(false);
+        }
       }
-    }
-  }, [id, isEditing, members]);
+    };
+
+    fetchMemberForEdit();
+  }, [id, isEditing, navigate, toast]);
 
   const handleInputChange = (field: keyof MemberFormData, value: any) => {
     setFormData(prev => ({
@@ -182,6 +224,26 @@ export default function AdminMemberForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.nama.trim()) {
+      toast({
+        title: 'Validasi Error',
+        description: 'Nama lengkap wajib diisi.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!formData.npa.trim()) {
+      toast({
+        title: 'Validasi Error',
+        description: 'NPA (Nomor Peserta Anggota) wajib diisi.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -198,26 +260,55 @@ export default function AdminMemberForm() {
         tempat_lahir: formData.tempatLahir || null,
         jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : null,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : null,
-        tempat_tugas: null,
+        tempat_tugas: formData.unitKerja || null, // Save unitKerja as tempat_tugas
         kota_kabupaten: formData.kota || null,
         provinsi: formData.provinsi || null,
         alamat_rumah: formData.alamat || null,
+        kota_kabupaten_rumah: null, // Will be added in additional tabs
+        provinsi_rumah: null, // Will be added in additional tabs
         no_hp: formData.kontakTelepon || null,
         email: formData.kontakEmail || null,
         foto: formData.foto || null,
-        status: formData.status || 'Biasa',
+        status: formData.status || 'AKTIF',
         cabang: formData.pd || null,
         rs_tipe_a: formData.rsTipeA || null,
         rs_tipe_b: formData.rsTipeB || null,
         rs_tipe_c: formData.rsTipeC || null,
         klinik_pribadi: formData.klinikPribadi || null,
-        keterangan: null
+        keterangan: null // Can be added later if needed
       }
 
-      if (isEditing) {
-        await updateMember(id!, memberData);
+      console.log('Mapped member data:', memberData);
+      
+      if (isEditing && id) {
+        // Direct Supabase update for better control and error handling
+        const { data, error } = await supabase
+          .from('members')
+          .update(memberData)
+          .eq('id', id)
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Supabase update error:', error);
+          throw new Error(`Database error: ${error.message}`);
+        }
+
+        console.log('Update successful:', data);
       } else {
-        await addMember(memberData);
+        // Direct Supabase insert for new members
+        const { data, error } = await supabase
+          .from('members')
+          .insert([memberData])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Supabase insert error:', error);
+          throw new Error(`Database error: ${error.message}`);
+        }
+
+        console.log('Insert successful:', data);
       }
       
       toast({
@@ -227,9 +318,10 @@ export default function AdminMemberForm() {
       
       navigate('/admin/anggota');
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: 'Error',
-        description: 'Gagal menyimpan data anggota.',
+        description: error instanceof Error ? error.message : 'Gagal menyimpan data anggota.',
         variant: 'destructive',
       });
     } finally {
@@ -272,13 +364,26 @@ export default function AdminMemberForm() {
         </div>
       </div>
 
-      {!isEditing && (
-        <div className="mb-6">
-          <ExcelImport />
+      {/* Show loading state when fetching data for edit */}
+      {isEditing && loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Memuat data anggota...</p>
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Show form only when not loading or when adding new member */}
+      {(!isEditing || !loading) && (
+        <>
+          {!isEditing && (
+            <div className="mb-6">
+              <ExcelImport />
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
         <Tabs defaultValue="identitas" className="space-y-6">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="identitas">Identitas</TabsTrigger>
@@ -970,6 +1075,8 @@ export default function AdminMemberForm() {
           </TabsContent>
         </Tabs>
       </form>
+        </>
+      )}
     </div>
   );
 }
