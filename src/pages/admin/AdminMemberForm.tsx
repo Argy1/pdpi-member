@@ -476,13 +476,12 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="alumni">Alumni *</Label>
+                      <Label htmlFor="alumni">Alumni</Label>
                       <Input
                         id="alumni"
                         value={formData.alumni}
                         onChange={(e) => handleInputChange('alumni', e.target.value)}
                         placeholder="Universitas/Kampus asal"
-                        required
                       />
                     </div>
                   </div>
