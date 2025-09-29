@@ -385,7 +385,6 @@ export default function AdminMembers() {
                     </div>
                   </TableHead>
                   <TableHead>Alumni</TableHead>
-                  <TableHead>Spesialis</TableHead>
                   <TableHead>Rumah Sakit</TableHead>
                   <TableHead>Lokasi</TableHead>
                   <TableHead>Status</TableHead>
@@ -413,7 +412,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-12">
+                    <TableCell colSpan={8} className="text-center py-12">
                       <div className="text-red-600 mb-4">
                         Gagal memuat data: {error}
                       </div>
@@ -424,7 +423,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : members.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-12">
+                    <TableCell colSpan={8} className="text-center py-12">
                       <p className="text-muted-foreground">
                         Tidak ada anggota yang ditemukan.
                       </p>
@@ -436,7 +435,6 @@ export default function AdminMembers() {
                       <TableCell className="font-medium">{member.nama}</TableCell>
                       <TableCell>{member.npa}</TableCell>
                       <TableCell>{member.alumni || '-'}</TableCell>
-                      <TableCell>{member.spesialis}</TableCell>
                       <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
                       <TableCell>{member.kota || member.kota_kabupaten}, {member.provinsi}</TableCell>
                       <TableCell>{getStatusBadge(member.status)}</TableCell>

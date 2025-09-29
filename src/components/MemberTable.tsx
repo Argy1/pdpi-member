@@ -80,11 +80,6 @@ export function MemberTable({
                   <TableCell>
                     <div className="space-y-1">
                       <p className="font-medium">{member.nama}</p>
-                      {member.subspesialis && (
-                        <p className="text-xs text-muted-foreground">
-                          {member.subspesialis}
-                        </p>
-                      )}
                     </div>
                   </TableCell>
                   <TableCell>

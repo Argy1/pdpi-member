@@ -117,14 +117,6 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Spesialis</p>
-                <p className="text-medical-body">{member.spesialis || "-"}</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Subspesialis</p>
-                <p className="text-medical-body">{member.subspesialis || "-"}</p>
-              </div>
-              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Jabatan</p>
                 <p className="text-medical-body">{member.jabatan || "-"}</p>
               </div>
