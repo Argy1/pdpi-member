@@ -9,6 +9,7 @@ interface UseMembersOptions {
   subspesialis?: string
   namaHurufDepan?: string[]
   hospitalType?: string[]
+  kota?: string[]
   status?: string
   sort?: string
   limit?: number
@@ -41,6 +42,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         ...options,
         namaHurufDepan: options.namaHurufDepan?.join(','),
         hospitalType: options.hospitalType?.join(','),
+        kota: options.kota?.join(','),
         scope: options.scope || 'public'
       })
       

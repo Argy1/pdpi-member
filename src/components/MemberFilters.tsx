@@ -13,6 +13,7 @@ interface MemberFiltersProps {
   provinces: string[]
   pds: string[]
   hospitalTypes: string[]
+  cities: string[]
   className?: string
 }
 
@@ -22,10 +23,12 @@ export function MemberFiltersComponent({
   provinces, 
   pds,
   hospitalTypes,
+  cities,
   className = ""
 }: MemberFiltersProps) {
   const [openProvinsi, setOpenProvinsi] = useState(false)
   const [openPD, setOpenPD] = useState(false)
+  const [openKota, setOpenKota] = useState(false)
   const [openHospitalType, setOpenHospitalType] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
@@ -58,7 +61,7 @@ export function MemberFiltersComponent({
     onFiltersChange({})
   }
 
-  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length)
+  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -146,6 +149,15 @@ export function MemberFiltersComponent({
         />
 
         <FilterPopover
+          open={openKota}
+          setOpen={setOpenKota}
+          title="Kota/Kabupaten"
+          options={cities}
+          filterKey="kota"
+          placeholder="Cari kota/kabupaten..."
+        />
+
+        <FilterPopover
           open={openHospitalType}
           setOpen={setOpenHospitalType}
           title="Jenis Institusi"
@@ -174,7 +186,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi?.length || filters.pd?.length || filters.hospitalType?.length) && (
+      {(filters.provinsi?.length || filters.pd?.length || filters.kota?.length || filters.hospitalType?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi?.map((province) => (
             <Badge 
@@ -195,6 +207,17 @@ export function MemberFiltersComponent({
               onClick={() => handleFilterChange("pd", pd)}
             >
               {pd}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          ))}
+          {filters.kota?.map((city) => (
+            <Badge 
+              key={city} 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleFilterChange("kota", city)}
+            >
+              {city}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}

@@ -69,6 +69,7 @@ export interface MemberFilters {
   status?: string[]
   namaHurufDepan?: string[]
   hospitalType?: string[]
+  kota?: string[]
 }
 
 export interface MemberSort {

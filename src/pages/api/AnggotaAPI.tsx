@@ -17,6 +17,7 @@ interface GetMembersParams {
   subspesialis?: string
   namaHurufDepan?: string
   hospitalType?: string
+  kota?: string
   sort?: string
   limit?: number
   page?: number
@@ -34,6 +35,7 @@ export class AnggotaAPI {
         subspesialis, 
         namaHurufDepan,
         hospitalType,
+        kota,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
@@ -88,6 +90,16 @@ export class AnggotaAPI {
 
       if (pd) {
         query = query.ilike('cabang', `%${pd}%`)
+      }
+
+      if (kota) {
+        const cities = kota.split(',').map(c => c.trim()).filter(c => c)
+        if (cities.length > 0) {
+          const cityConditions = cities.map(city => 
+            `kota_kabupaten.ilike.%${city}%`
+          ).join(',')
+          query = query.or(cityConditions)
+        }
       }
 
       if (status) {

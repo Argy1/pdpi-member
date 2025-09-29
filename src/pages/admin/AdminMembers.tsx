@@ -67,6 +67,7 @@ export default function AdminMembers() {
   });
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([]);
   const [availableBranches, setAvailableBranches] = useState<string[]>([]);
+  const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
   const { isPusatAdmin, profile } = useAuth();
@@ -85,6 +86,7 @@ export default function AdminMembers() {
     pd: filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
     namaHurufDepan: filters.namaHurufDepan,
+    kota: filters.kota,
     status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: 50,
@@ -106,11 +108,18 @@ export default function AdminMembers() {
           .select('cabang')
           .not('cabang', 'is', null);
 
+        const { data: cityData } = await supabase
+          .from('members')
+          .select('kota_kabupaten')
+          .not('kota_kabupaten', 'is', null);
+
         const provinces = [...new Set(provinceData?.map(m => m.provinsi).filter(Boolean))] as string[];
         const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[];
+        const cities = [...new Set(cityData?.map(m => m.kota_kabupaten).filter(Boolean))] as string[];
         
         setAvailableProvinces(provinces.sort());
         setAvailableBranches(branches.sort());
+        setAvailableCities(cities.sort());
         setAvailableSubspecialties([]); // Add subspecialty logic if needed
 
         // Fetch hospital types
@@ -348,6 +357,7 @@ export default function AdminMembers() {
               onFiltersChange={setFilters}
               provinces={availableProvinces}
               pds={availableBranches}
+              cities={availableCities}
               hospitalTypes={hospitalTypes}
             />
           </div>

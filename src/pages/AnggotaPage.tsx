@@ -8,7 +8,7 @@ import { MemberModal } from "@/components/MemberModal"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Member, MemberFilters, MemberSort } from "@/types/member"
-import { mockProvinces, mockPDs, mockSubspesialisOptions } from "@/data/mockMembers"
+import { mockProvinces, mockPDs, mockSubspesialisOptions, mockCities } from "@/data/mockMembers"
 import { useMembers } from '@/hooks/useMembers'
 import { supabase } from "@/integrations/supabase/client"
 import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
@@ -77,6 +77,7 @@ export default function AnggotaPage() {
     subspesialis: filters.subspesialis?.[0],
     namaHurufDepan: filters.namaHurufDepan,
     hospitalType: filters.hospitalType,
+    kota: filters.kota,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
     page: pagination.page,
@@ -177,6 +178,7 @@ export default function AnggotaPage() {
             onFiltersChange={handleFiltersChange}
             provinces={mockProvinces}
             pds={mockPDs}
+            cities={mockCities}
             hospitalTypes={hospitalTypes}
           />
 
