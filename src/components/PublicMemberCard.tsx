@@ -55,20 +55,20 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Kota</span>
+                <span className="font-medium w-32">Kota/Kabupaten Kantor</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />
-                  {member.kota_kabupaten || member.kota || '-'}
+                  {member.kota_kabupaten_kantor || '-'}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Provinsi</span>
+                <span className="font-medium w-32">Provinsi Kantor</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />
-                  {member.provinsi || '-'}
+                  {member.provinsi_kantor || '-'}
                 </span>
               </div>
 
