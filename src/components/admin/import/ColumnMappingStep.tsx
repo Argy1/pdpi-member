@@ -13,7 +13,7 @@ import { ArrowLeft, Wand2, Eye, AlertTriangle } from 'lucide-react';
 const dbFields = {
   // Required fields
   nama: { label: 'Nama Lengkap', required: true, type: 'text' },
-  tempat_tugas: { label: 'Tempat Tugas/RS/Fasyankes', required: true, type: 'text' },
+  tempat_tugas: { label: 'Tempat Tugas/RS/Fasyankes', required: false, type: 'text' },
   
   
   // Optional fields (but important)
@@ -115,22 +115,10 @@ export const ColumnMappingStep = () => {
 
   // Validate mapping
   const validateMapping = () => {
-    const requiredFields = ['nama', 'provinsi_kantor']; // Base required fields
+    const requiredFields = ['nama']; // Only nama is required now
     const mappedFields = Object.values(columnMapping);
     
-    // Check if either tempat_tugas OR rumahSakit is mapped
-    const hasTempatTugas = mappedFields.includes('tempat_tugas');
-    const hasRumahSakit = mappedFields.includes('rumahSakit');
-    
-    if (!hasTempatTugas && !hasRumahSakit) {
-      setValidationErrors([{
-        type: 'missing_required',
-        message: 'Wajib mapping: nama, provinsi kantor, dan tempat_tugas (atau rumahSakit sebagai alternatif)'
-      }]);
-      return false;
-    }
-    
-    // Check other required fields
+    // Check required fields
     const missingRequired = requiredFields.filter(field => !mappedFields.includes(field));
     
     if (missingRequired.length > 0) {
@@ -175,17 +163,12 @@ export const ColumnMappingStep = () => {
   // Calculate required fields mapping status
   const mappedFields = Object.values(columnMapping);
   const hasNama = mappedFields.includes('nama');
-  const hasProvinsi = mappedFields.includes('provinsi_kantor');
-  const hasTempatTugas = mappedFields.includes('tempat_tugas');
-  const hasRumahSakit = mappedFields.includes('rumahSakit');
   
   const requiredFieldsMapped = [
-    hasNama,
-    hasProvinsi,
-    hasTempatTugas || hasRumahSakit
+    hasNama
   ].filter(Boolean).length;
   
-  const totalRequiredFields = 3; // nama, provinsi, tempat_tugas/rumahSakit
+  const totalRequiredFields = 1; // Only nama is required
   
   // Check tempat_tugas empty percentage for preview warning
   const getTempatTugasEmptyPercentage = () => {
@@ -243,12 +226,6 @@ export const ColumnMappingStep = () => {
           <Badge variant={hasNama ? "default" : "outline"} className="text-xs">
             Nama {hasNama ? '✓' : '✗'}
           </Badge>
-          <Badge variant={hasProvinsi ? "default" : "outline"} className="text-xs">
-            Provinsi Kantor {hasProvinsi ? '✓' : '✗'}
-          </Badge>
-          <Badge variant={hasTempatTugas || hasRumahSakit ? "default" : "outline"} className="text-xs">
-            Tempat Tugas {hasTempatTugas || hasRumahSakit ? '✓' : '✗'}
-          </Badge>
         </div>
       </div>
 
@@ -260,8 +237,6 @@ export const ColumnMappingStep = () => {
             <strong>Field wajib belum lengkap:</strong>
             <ul className="mt-1 ml-4 list-disc text-sm">
               {!hasNama && <li>Nama Lengkap harus dimapping</li>}
-              {!hasProvinsi && <li>Provinsi Kantor harus dimapping</li>}
-              {!hasTempatTugas && !hasRumahSakit && <li>Tempat Tugas/RS/Fasyankes atau Rumah Sakit harus dimapping</li>}
             </ul>
           </AlertDescription>
         </Alert>
