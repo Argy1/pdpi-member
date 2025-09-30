@@ -89,7 +89,13 @@ export class AnggotaAPI {
 
       // Apply filters
       if (provinsi_kantor) {
-        query = query.ilike('provinsi_kantor', `%${provinsi_kantor}%`)
+        const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
+        if (provinces.length > 0) {
+          const provinceConditions = provinces.map(province => 
+            `provinsi_kantor.ilike.%${province}%`
+          ).join(',')
+          query = query.or(provinceConditions)
+        }
       }
 
       if (pd) {
@@ -186,7 +192,13 @@ export class AnggotaAPI {
       }
 
       if (provinsi_kantor) {
-        countQuery = countQuery.ilike('provinsi_kantor', `%${provinsi_kantor}%`)
+        const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
+        if (provinces.length > 0) {
+          const provinceConditions = provinces.map(province => 
+            `provinsi_kantor.ilike.%${province}%`
+          ).join(',')
+          countQuery = countQuery.or(provinceConditions)
+        }
       }
 
       if (pd) {
