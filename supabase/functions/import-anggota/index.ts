@@ -202,16 +202,30 @@ Deno.serve(async (req) => {
         if (row.cabang) memberData.cabang = row.cabang;
 
         if (mode === 'upsert') {
-          // Check if member exists
-          const whereCondition = row.npa ? 
-            { npa: row.npa } : 
-            { nama: row.nama, tempat_tugas: row.tempat_tugas };
+          // Check if member exists - use more comprehensive matching
+          let existing = null;
           
-          const { data: existing } = await supabase
-            .from('members')
-            .select('id')
-            .match(whereCondition)
-            .maybeSingle();
+          if (row.npa && row.npa.trim()) {
+            // First try to match by NPA if available
+            const { data } = await supabase
+              .from('members')
+              .select('id')
+              .eq('npa', row.npa.trim())
+              .limit(1);
+            existing = data?.[0];
+          }
+          
+          if (!existing) {
+            // If no NPA match or NPA not provided, try name + tempat_tugas + provinsi_kantor
+            const { data } = await supabase
+              .from('members')
+              .select('id')
+              .eq('nama', row.nama)
+              .eq('tempat_tugas', row.tempat_tugas)
+              .eq('provinsi_kantor', row.provinsi_kantor)
+              .limit(1);
+            existing = data?.[0];
+          }
           
           if (existing) {
             const { error } = await supabase
@@ -256,16 +270,28 @@ Deno.serve(async (req) => {
             inserted++;
           }
         } else if (mode === 'skip') {
-          // Check if member exists
-          const whereCondition = row.npa ? 
-            { npa: row.npa } : 
-            { nama: row.nama, tempat_tugas: row.tempat_tugas };
+          // Check if member exists - use same logic as upsert
+          let existing = null;
           
-          const { data: existing } = await supabase
-            .from('members')
-            .select('id')
-            .match(whereCondition)
-            .maybeSingle();
+          if (row.npa && row.npa.trim()) {
+            const { data } = await supabase
+              .from('members')
+              .select('id')
+              .eq('npa', row.npa.trim())
+              .limit(1);
+            existing = data?.[0];
+          }
+          
+          if (!existing) {
+            const { data } = await supabase
+              .from('members')
+              .select('id')
+              .eq('nama', row.nama)
+              .eq('tempat_tugas', row.tempat_tugas)
+              .eq('provinsi_kantor', row.provinsi_kantor)
+              .limit(1);
+            existing = data?.[0];
+          }
           
           if (existing) {
             duplicate++;
