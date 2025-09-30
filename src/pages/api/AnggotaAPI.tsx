@@ -13,11 +13,13 @@ interface APIResponse<T> {
 interface GetMembersParams {
   q?: string
   provinsi?: string
+  provinsi_kantor?: string
   pd?: string
   subspesialis?: string
   namaHurufDepan?: string
   hospitalType?: string
   kota?: string
+  kota_kabupaten_kantor?: string
   sort?: string
   limit?: number
   page?: number
@@ -26,16 +28,18 @@ interface GetMembersParams {
 }
 
 export class AnggotaAPI {
-  static async getMembers(params: GetMembersParams): Promise<APIResponse<any[]>> {
+  static async getMembers(params: GetMembersParams = {}): Promise<APIResponse<any[]>> {
     try {
       const { 
         q = '', 
         provinsi, 
+        provinsi_kantor,
         pd, 
         subspesialis, 
         namaHurufDepan,
         hospitalType,
         kota,
+        kota_kabupaten_kantor,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
@@ -46,9 +50,9 @@ export class AnggotaAPI {
       const isAdmin = scope === 'admin'
 
       // Define field selection based on scope - only include existing columns
-      const publicFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi, email`
-      
-      const adminFields = `id, nama, npa, gelar, gelar2, tempat_tugas, kota_kabupaten, provinsi, status, created_at, email, no_hp, cabang, thn_lulus, alumni, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi`
+      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi, email'
+      const publicFields = `${baseFields}, kota_kabupaten_kantor, provinsi_kantor`
+      const adminFields = `${baseFields}, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor`
 
       // Build query conditions
       let query = supabase
@@ -64,8 +68,8 @@ export class AnggotaAPI {
           `nama.ilike.%${searchTerm}%`,
           `npa.ilike.%${searchTerm}%`,
           `tempat_tugas.ilike.%${searchTerm}%`,
-          `kota_kabupaten.ilike.%${searchTerm}%`,
-          `provinsi.ilike.%${searchTerm}%`,
+          `kota_kabupaten_kantor.ilike.%${searchTerm}%`,
+          `provinsi_kantor.ilike.%${searchTerm}%`,
           `cabang.ilike.%${searchTerm}%`,
           `alumni.ilike.%${searchTerm}%`
         ]
@@ -84,19 +88,19 @@ export class AnggotaAPI {
       }
 
       // Apply filters
-      if (provinsi) {
-        query = query.ilike('provinsi', `%${provinsi}%`)
+      if (provinsi_kantor) {
+        query = query.ilike('provinsi_kantor', `%${provinsi_kantor}%`)
       }
 
       if (pd) {
         query = query.ilike('cabang', `%${pd}%`)
       }
 
-      if (kota) {
-        const cities = kota.split(',').map(c => c.trim()).filter(c => c)
+      if (kota_kabupaten_kantor) {
+        const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
         if (cities.length > 0) {
           const cityConditions = cities.map(city => 
-            `kota_kabupaten.ilike.%${city}%`
+            `kota_kabupaten_kantor.ilike.%${city}%`
           ).join(',')
           query = query.or(cityConditions)
         }
@@ -163,8 +167,8 @@ export class AnggotaAPI {
           `nama.ilike.%${searchTerm}%`,
           `npa.ilike.%${searchTerm}%`,
           `tempat_tugas.ilike.%${searchTerm}%`,
-          `kota_kabupaten.ilike.%${searchTerm}%`,
-          `provinsi.ilike.%${searchTerm}%`,
+          `kota_kabupaten_kantor.ilike.%${searchTerm}%`,
+          `provinsi_kantor.ilike.%${searchTerm}%`,
           `cabang.ilike.%${searchTerm}%`,
           `alumni.ilike.%${searchTerm}%`
         ]
@@ -181,12 +185,22 @@ export class AnggotaAPI {
         countQuery = countQuery.or(searchConditions.join(','))
       }
 
-      if (provinsi) {
-        countQuery = countQuery.ilike('provinsi', `%${provinsi}%`)
+      if (provinsi_kantor) {
+        countQuery = countQuery.ilike('provinsi_kantor', `%${provinsi_kantor}%`)
       }
 
       if (pd) {
         countQuery = countQuery.ilike('cabang', `%${pd}%`)
+      }
+
+      if (kota_kabupaten_kantor) {
+        const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
+        if (cities.length > 0) {
+          const cityConditions = cities.map(city => 
+            `kota_kabupaten_kantor.ilike.%${city}%`
+          ).join(',')
+          countQuery = countQuery.or(cityConditions)
+        }
       }
 
       if (status) {
@@ -419,6 +433,52 @@ export class AnggotaAPI {
 
     } catch (error) {
       console.error('Debug API error:', error)
+      return { error: 'Internal server error' }
+    }
+  }
+
+  static async getAvailableProvinces(): Promise<APIResponse<string[]>> {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('provinsi_kantor')
+        .not('provinsi_kantor', 'is', null)
+
+      if (error) {
+        console.error('Database error:', error)
+        return { error: 'Database error' }
+      }
+
+      const provinces = [...new Set(data.map(item => item.provinsi_kantor).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b))
+
+      return { data: provinces }
+
+    } catch (error) {
+      console.error('API error:', error)
+      return { error: 'Internal server error' }
+    }
+  }
+
+  static async getAvailableCities(): Promise<APIResponse<string[]>> {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .select('kota_kabupaten_kantor')
+        .not('kota_kabupaten_kantor', 'is', null)
+
+      if (error) {
+        console.error('Database error:', error)
+        return { error: 'Database error' }
+      }
+
+      const cities = [...new Set(data.map(item => item.kota_kabupaten_kantor).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b))
+
+      return { data: cities }
+
+    } catch (error) {
+      console.error('API error:', error)
       return { error: 'Internal server error' }
     }
   }

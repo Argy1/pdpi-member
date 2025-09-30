@@ -26,9 +26,9 @@ export function MemberFiltersComponent({
   cities,
   className = ""
 }: MemberFiltersProps) {
-  const [openProvinsi, setOpenProvinsi] = useState(false)
+  const [openProvinsiKantor, setOpenProvinsiKantor] = useState(false)
   const [openPD, setOpenPD] = useState(false)
-  const [openKota, setOpenKota] = useState(false)
+  const [openKotaKantor, setOpenKotaKantor] = useState(false)
   const [openHospitalType, setOpenHospitalType] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
@@ -61,7 +61,7 @@ export function MemberFiltersComponent({
     onFiltersChange({})
   }
 
-  const hasActiveFilters = !!(filters.provinsi?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota?.length)
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -131,12 +131,12 @@ export function MemberFiltersComponent({
       {/* Filter Controls */}
       <div className="flex flex-wrap gap-3">
         <FilterPopover
-          open={openProvinsi}
-          setOpen={setOpenProvinsi}
-          title="Provinsi"
+          open={openProvinsiKantor}
+          setOpen={setOpenProvinsiKantor}
+          title="Provinsi Kantor"
           options={provinces}
-          filterKey="provinsi"
-          placeholder="Cari provinsi..."
+          filterKey="provinsi_kantor"
+          placeholder="Cari provinsi kantor..."
         />
         
          <FilterPopover
@@ -149,12 +149,12 @@ export function MemberFiltersComponent({
         />
 
         <FilterPopover
-          open={openKota}
-          setOpen={setOpenKota}
-          title="Kota/Kabupaten"
+          open={openKotaKantor}
+          setOpen={setOpenKotaKantor}
+          title="Kota/Kabupaten Kantor"
           options={cities}
-          filterKey="kota"
-          placeholder="Cari kota/kabupaten..."
+          filterKey="kota_kabupaten_kantor"
+          placeholder="Cari kota/kabupaten kantor..."
         />
 
         <FilterPopover
@@ -186,14 +186,14 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi?.length || filters.pd?.length || filters.kota?.length || filters.hospitalType?.length) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length) && (
         <div className="flex flex-wrap gap-2">
-          {filters.provinsi?.map((province) => (
+          {filters.provinsi_kantor?.map((province) => (
             <Badge 
               key={province} 
               variant="secondary" 
               className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => handleFilterChange("provinsi", province)}
+              onClick={() => handleFilterChange("provinsi_kantor", province)}
             >
               {province}
               <X className="h-3 w-3 ml-1" />
@@ -210,12 +210,12 @@ export function MemberFiltersComponent({
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}
-          {filters.kota?.map((city) => (
+          {filters.kota_kabupaten_kantor?.map((city) => (
             <Badge 
               key={city} 
               variant="secondary" 
               className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => handleFilterChange("kota", city)}
+              onClick={() => handleFilterChange("kota_kabupaten_kantor", city)}
             >
               {city}
               <X className="h-3 w-3 ml-1" />

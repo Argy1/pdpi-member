@@ -60,7 +60,7 @@ export default function AdminMembers() {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [filters, setFilters] = useState<MemberFilters>({
     query: searchParams.get("q") || '',
-    provinsi: [],
+    provinsi_kantor: [],
     pd: [],
     subspesialis: [],
     status: []
@@ -98,28 +98,19 @@ export default function AdminMembers() {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const { data: provinceData } = await supabase
-          .from('members')
-          .select('provinsi')
-          .not('provinsi', 'is', null);
+        const provinceResult = await AnggotaAPI.getAvailableProvinces();
+        const cityResult = await AnggotaAPI.getAvailableCities();
         
         const { data: branchData } = await supabase
           .from('members')
           .select('cabang')
           .not('cabang', 'is', null);
 
-        const { data: cityData } = await supabase
-          .from('members')
-          .select('kota_kabupaten')
-          .not('kota_kabupaten', 'is', null);
-
-        const provinces = [...new Set(provinceData?.map(m => m.provinsi).filter(Boolean))] as string[];
         const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[];
-        const cities = [...new Set(cityData?.map(m => m.kota_kabupaten).filter(Boolean))] as string[];
         
-        setAvailableProvinces(provinces.sort());
+        setAvailableProvinces(provinceResult.data || []);
         setAvailableBranches(branches.sort());
-        setAvailableCities(cities.sort());
+        setAvailableCities(cityResult.data || []);
         setAvailableSubspecialties([]); // Add subspecialty logic if needed
 
         // Fetch hospital types

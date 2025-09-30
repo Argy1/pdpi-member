@@ -20,11 +20,14 @@ export default function AnggotaPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([])
+  const [availableProvinces, setAvailableProvinces] = useState<string[]>([])
+  const [availableBranches, setAvailableBranches] = useState<string[]>([])
+  const [availableCities, setAvailableCities] = useState<string[]>([])
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => ({
     query: searchParams.get("q") || undefined,
-    provinsi: searchParams.get("provinsi") ? [searchParams.get("provinsi")!] : undefined,
+    provinsi_kantor: searchParams.get("provinsi_kantor") ? [searchParams.get("provinsi_kantor")!] : undefined,
     pd: searchParams.get("pd") ? [searchParams.get("pd")!] : undefined,
     subspesialis: searchParams.get("subspesialis") ? [searchParams.get("subspesialis")!] : undefined,
   }))
@@ -47,13 +50,24 @@ export default function AnggotaPage() {
     }
     checkAuth()
 
-    const fetchHospitalTypes = async () => {
-      const result = await AnggotaAPI.getHospitalTypes()
-      if (result.data) {
-        setHospitalTypes(result.data)
+    const fetchData = async () => {
+      const [hospitalTypesResult, provincesResult, citiesResult] = await Promise.all([
+        AnggotaAPI.getHospitalTypes(),
+        AnggotaAPI.getAvailableProvinces(),
+        AnggotaAPI.getAvailableCities()
+      ])
+      
+      if (hospitalTypesResult.data) {
+        setHospitalTypes(hospitalTypesResult.data)
+      }
+      if (provincesResult.data) {
+        setAvailableProvinces(provincesResult.data)
+      }
+      if (citiesResult.data) {
+        setAvailableCities(citiesResult.data)
       }
     }
-    fetchHospitalTypes()
+    fetchData()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session?.user)
@@ -72,12 +86,12 @@ export default function AnggotaPage() {
     refresh 
   } = useMembers({
     query: filters.query,
-    provinsi: filters.provinsi?.[0],
+    provinsi_kantor: filters.provinsi_kantor,
     pd: filters.pd?.[0],
     subspesialis: filters.subspesialis?.[0],
     namaHurufDepan: filters.namaHurufDepan,
     hospitalType: filters.hospitalType,
-    kota: filters.kota,
+    kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
     page: pagination.page,
@@ -89,7 +103,7 @@ export default function AnggotaPage() {
     const params = new URLSearchParams()
     
     if (filters.query) params.set("q", filters.query)
-    if (filters.provinsi?.length) params.set("provinsi", filters.provinsi.join(","))
+    if (filters.provinsi_kantor?.length) params.set("provinsi_kantor", filters.provinsi_kantor.join(","))
     if (filters.pd?.length) params.set("pd", filters.pd.join(","))
     if (filters.subspesialis?.length) params.set("subspesialis", filters.subspesialis.join(","))
     if (filters.hospitalType?.length) params.set("hospitalType", filters.hospitalType.join(","))
@@ -176,9 +190,9 @@ export default function AnggotaPage() {
           <MemberFiltersComponent
             filters={filters}
             onFiltersChange={handleFiltersChange}
-            provinces={mockProvinces}
-            pds={mockPDs}
-            cities={mockCities}
+            provinces={availableProvinces}
+            pds={availableBranches}
+            cities={availableCities}
             hospitalTypes={hospitalTypes}
           />
 

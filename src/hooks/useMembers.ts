@@ -5,11 +5,13 @@ import { AnggotaAPI } from '@/pages/api/AnggotaAPI'
 interface UseMembersOptions {
   query?: string
   provinsi?: string
+  provinsi_kantor?: string[]
   pd?: string
   subspesialis?: string
   namaHurufDepan?: string[]
   hospitalType?: string[]
   kota?: string[]
+  kota_kabupaten_kantor?: string[]
   status?: string
   sort?: string
   limit?: number
@@ -43,6 +45,8 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         namaHurufDepan: options.namaHurufDepan?.join(','),
         hospitalType: options.hospitalType?.join(','),
         kota: options.kota?.join(','),
+        provinsi_kantor: options.provinsi_kantor?.join(','),
+        kota_kabupaten_kantor: options.kota_kabupaten_kantor?.join(','),
         scope: options.scope || 'public'
       })
       
