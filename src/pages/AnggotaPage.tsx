@@ -207,6 +207,7 @@ export default function AnggotaPage() {
             pds={availableBranches}
             cities={availableCities}
             hospitalTypes={hospitalTypes}
+            isPublicView={!isAuthenticated}
           />
 
           {/* Results Info and Controls */}

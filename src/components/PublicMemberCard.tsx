@@ -58,7 +58,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Kota/Kabupaten Kantor</span>
+                <span className="font-medium w-32">Kota/Kabupaten</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />
@@ -67,7 +67,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Provinsi Kantor</span>
+                <span className="font-medium w-32">Provinsi</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />

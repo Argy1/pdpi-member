@@ -15,6 +15,7 @@ interface MemberFiltersProps {
   hospitalTypes: string[]
   cities: string[]
   className?: string
+  isPublicView?: boolean
 }
 
 export function MemberFiltersComponent({ 
@@ -24,7 +25,8 @@ export function MemberFiltersComponent({
   pds,
   hospitalTypes,
   cities,
-  className = ""
+  className = "",
+  isPublicView = false
 }: MemberFiltersProps) {
   const [openProvinsiKantor, setOpenProvinsiKantor] = useState(false)
   const [openPD, setOpenPD] = useState(false)
@@ -133,10 +135,10 @@ export function MemberFiltersComponent({
         <FilterPopover
           open={openProvinsiKantor}
           setOpen={setOpenProvinsiKantor}
-          title="Provinsi Kantor"
+          title={isPublicView ? "Provinsi" : "Provinsi Kantor"}
           options={provinces}
           filterKey="provinsi_kantor"
-          placeholder="Cari provinsi kantor..."
+          placeholder={isPublicView ? "Cari provinsi..." : "Cari provinsi kantor..."}
         />
         
          <FilterPopover
@@ -151,10 +153,10 @@ export function MemberFiltersComponent({
         <FilterPopover
           open={openKotaKantor}
           setOpen={setOpenKotaKantor}
-          title="Kota/Kabupaten Kantor"
+          title={isPublicView ? "Kota/Kabupaten" : "Kota/Kabupaten Kantor"}
           options={cities}
           filterKey="kota_kabupaten_kantor"
-          placeholder="Cari kota/kabupaten kantor..."
+          placeholder={isPublicView ? "Cari kota/kabupaten..." : "Cari kota/kabupaten kantor..."}
         />
 
         <FilterPopover
