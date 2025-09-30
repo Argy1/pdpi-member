@@ -61,6 +61,7 @@ export default function AdminMembers() {
   const [filters, setFilters] = useState<MemberFilters>({
     query: searchParams.get("q") || '',
     provinsi_kantor: [],
+    kota_kabupaten_kantor: [],
     pd: [],
     subspesialis: [],
     status: []
@@ -82,11 +83,11 @@ export default function AdminMembers() {
     refresh 
   } = useMembers({
     query: filters.query,
-    provinsi: filters.provinsi?.join(','),
+    provinsi_kantor: filters.provinsi_kantor,
     pd: filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
     namaHurufDepan: filters.namaHurufDepan,
-    kota: filters.kota,
+    kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: 50,
