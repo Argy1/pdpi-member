@@ -396,7 +396,8 @@ export default function AdminMembers() {
                   </TableHead>
                   <TableHead>Alumni</TableHead>
                   <TableHead>Rumah Sakit</TableHead>
-                  <TableHead>Lokasi</TableHead>
+                  <TableHead>Lokasi Kerja</TableHead>
+                  <TableHead>Lokasi Rumah</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead 
                     className="cursor-pointer"
@@ -413,7 +414,7 @@ export default function AdminMembers() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-12">
+                    <TableCell colSpan={9} className="text-center py-12">
                       <div className="inline-flex items-center gap-2">
                         <RefreshCw className="h-5 w-5 animate-spin" />
                         <span>Memuat data anggota...</span>
@@ -422,7 +423,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-12">
+                    <TableCell colSpan={9} className="text-center py-12">
                       <div className="text-red-600 mb-4">
                         Gagal memuat data: {error}
                       </div>
@@ -433,7 +434,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : members.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-12">
+                    <TableCell colSpan={9} className="text-center py-12">
                       <p className="text-muted-foreground">
                         Tidak ada anggota yang ditemukan.
                       </p>
@@ -447,6 +448,11 @@ export default function AdminMembers() {
                       <TableCell>{member.alumni || '-'}</TableCell>
                       <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
                       <TableCell>{member.kota || member.kota_kabupaten}, {member.provinsi}</TableCell>
+                      <TableCell>
+                        {member.kota_kabupaten_rumah && member.provinsi_rumah 
+                          ? `${member.kota_kabupaten_rumah}, ${member.provinsi_rumah}`
+                          : '-'}
+                      </TableCell>
                       <TableCell>{getStatusBadge(member.status)}</TableCell>
                       <TableCell>{new Date(member.createdAt || member.created_at).toLocaleDateString('id-ID')}</TableCell>
                       <TableCell className="text-right">

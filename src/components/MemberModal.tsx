@@ -171,7 +171,15 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Provinsi</p>
-                  <p className="text-medical-body">{member.provinsi || member.provinsi_rumah || "-"}</p>
+                  <p className="text-medical-body">{member.provinsi || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Kota/Kabupaten Rumah</p>
+                  <p className="text-medical-body">{member.kota_kabupaten_rumah || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Provinsi Rumah</p>
+                  <p className="text-medical-body">{member.provinsi_rumah || "-"}</p>
                 </div>
               </div>
             </div>

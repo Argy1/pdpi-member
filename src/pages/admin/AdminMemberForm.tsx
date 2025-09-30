@@ -37,6 +37,8 @@ interface MemberFormData {
   alamat: string;
   kota: string;
   provinsi: string;
+  kotaRumah: string;
+  provinsiRumah: string;
   pd: string;
   
   // Profesi
@@ -82,6 +84,8 @@ const initialFormData: MemberFormData = {
   alamat: '',
   kota: '',
   provinsi: '',
+  kotaRumah: '',
+  provinsiRumah: '',
   pd: '',
   unitKerja: '',
   jabatan: '',
@@ -164,6 +168,8 @@ export default function AdminMemberForm() {
             alamat: existingMember.alamat_rumah || '',
             kota: existingMember.kota_kabupaten || '',
             provinsi: existingMember.provinsi || '',
+            kotaRumah: existingMember.kota_kabupaten_rumah || '',
+            provinsiRumah: existingMember.provinsi_rumah || '',
             pd: existingMember.cabang || '',
             unitKerja: existingMember.tempat_tugas || '', // Map tempat_tugas to unitKerja
             jabatan: '', // Field doesn't exist in database, set to empty
@@ -264,8 +270,8 @@ export default function AdminMemberForm() {
         kota_kabupaten: formData.kota || null,
         provinsi: formData.provinsi || null,
         alamat_rumah: formData.alamat || null,
-        kota_kabupaten_rumah: null, // Will be added in additional tabs
-        provinsi_rumah: null, // Will be added in additional tabs
+        kota_kabupaten_rumah: formData.kotaRumah || null,
+        provinsi_rumah: formData.provinsiRumah || null,
         no_hp: formData.kontakTelepon || null,
         email: formData.kontakEmail || null,
         foto: formData.foto || null,
@@ -607,7 +613,7 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="kota">Kota/Kabupaten</Label>
+                      <Label htmlFor="kota">Kota/Kabupaten Kerja</Label>
                       <Input
                         id="kota"
                         value={formData.kota}
@@ -615,17 +621,79 @@ export default function AdminMemberForm() {
                         placeholder="Jakarta"
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="kotaRumah">Kota/Kabupaten Rumah</Label>
+                      <Input
+                        id="kotaRumah"
+                        value={formData.kotaRumah}
+                        onChange={(e) => handleInputChange('kotaRumah', e.target.value)}
+                        placeholder="Bandung"
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="provinsi">Provinsi</Label>
+                      <Label htmlFor="provinsi">Provinsi Kerja</Label>
                       <Select 
                         value={formData.provinsi} 
                         onValueChange={(value) => handleInputChange('provinsi', value)}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih provinsi" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Aceh">Aceh</SelectItem>
+                          <SelectItem value="Sumatera Utara">Sumatera Utara</SelectItem>
+                          <SelectItem value="Sumatera Barat">Sumatera Barat</SelectItem>
+                          <SelectItem value="Riau">Riau</SelectItem>
+                          <SelectItem value="Kepulauan Riau">Kepulauan Riau</SelectItem>
+                          <SelectItem value="Jambi">Jambi</SelectItem>
+                          <SelectItem value="Sumatera Selatan">Sumatera Selatan</SelectItem>
+                          <SelectItem value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</SelectItem>
+                          <SelectItem value="Bengkulu">Bengkulu</SelectItem>
+                          <SelectItem value="Lampung">Lampung</SelectItem>
+                          <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
+                          <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
+                          <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
+                          <SelectItem value="DI Yogyakarta">DI Yogyakarta</SelectItem>
+                          <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
+                          <SelectItem value="Banten">Banten</SelectItem>
+                          <SelectItem value="Bali">Bali</SelectItem>
+                          <SelectItem value="Nusa Tenggara Barat (NTB)">Nusa Tenggara Barat (NTB)</SelectItem>
+                          <SelectItem value="Nusa Tenggara Timur (NTT)">Nusa Tenggara Timur (NTT)</SelectItem>
+                          <SelectItem value="Kalimantan Barat">Kalimantan Barat</SelectItem>
+                          <SelectItem value="Kalimantan Tengah">Kalimantan Tengah</SelectItem>
+                          <SelectItem value="Kalimantan Selatan">Kalimantan Selatan</SelectItem>
+                          <SelectItem value="Kalimantan Timur">Kalimantan Timur</SelectItem>
+                          <SelectItem value="Kalimantan Utara">Kalimantan Utara</SelectItem>
+                          <SelectItem value="Sulawesi Utara">Sulawesi Utara</SelectItem>
+                          <SelectItem value="Gorontalo">Gorontalo</SelectItem>
+                          <SelectItem value="Sulawesi Tengah">Sulawesi Tengah</SelectItem>
+                          <SelectItem value="Sulawesi Barat">Sulawesi Barat</SelectItem>
+                          <SelectItem value="Sulawesi Selatan">Sulawesi Selatan</SelectItem>
+                          <SelectItem value="Sulawesi Tenggara">Sulawesi Tenggara</SelectItem>
+                          <SelectItem value="Maluku">Maluku</SelectItem>
+                          <SelectItem value="Maluku Utara">Maluku Utara</SelectItem>
+                          <SelectItem value="Papua">Papua</SelectItem>
+                          <SelectItem value="Papua Barat">Papua Barat</SelectItem>
+                          <SelectItem value="Papua Selatan">Papua Selatan</SelectItem>
+                          <SelectItem value="Papua Tengah">Papua Tengah</SelectItem>
+                          <SelectItem value="Papua Pegunungan">Papua Pegunungan</SelectItem>
+                          <SelectItem value="Papua Barat Daya">Papua Barat Daya</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="provinsiRumah">Provinsi Rumah</Label>
+                      <Select 
+                        value={formData.provinsiRumah} 
+                        onValueChange={(value) => handleInputChange('provinsiRumah', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih provinsi rumah" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Aceh">Aceh</SelectItem>

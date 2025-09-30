@@ -364,12 +364,12 @@ export default function AdminMemberDetail() {
               
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Kota/Kabupaten Rumah</label>
-                <p className="mt-1">
-                  {[
-                    member.kota_kabupaten_rumah || member.kotaRumah,
-                    member.provinsi_rumah || member.provinsiRumah
-                  ].filter(Boolean).join(', ') || '-'}
-                </p>
+                <p className="mt-1">{member.kota_kabupaten_rumah || member.kotaRumah || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Provinsi Rumah</label>
+                <p className="mt-1">{member.provinsi_rumah || member.provinsiRumah || '-'}</p>
               </div>
             </CardContent>
           </Card>
