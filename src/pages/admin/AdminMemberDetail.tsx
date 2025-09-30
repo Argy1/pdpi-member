@@ -283,6 +283,16 @@ export default function AdminMemberDetail() {
               </div>
               
               <div>
+                <label className="text-sm font-medium text-muted-foreground">Kota/Kabupaten Kantor</label>
+                <p className="mt-1">{member.kota_kabupaten_kantor || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Provinsi Kantor</label>
+                <p className="mt-1">{member.provinsi_kantor || '-'}</p>
+              </div>
+              
+              <div>
                 <label className="text-sm font-medium text-muted-foreground">Unit Kerja</label>
                 <p className="mt-1">{member.unitKerja || '-'}</p>
               </div>

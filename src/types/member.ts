@@ -12,8 +12,8 @@ export interface Member {
   alumni?: string
   thn_lulus?: number
   tempat_tugas?: string
-  kota_kabupaten?: string
-  provinsi?: string
+  kota_kabupaten_kantor?: string
+  provinsi_kantor?: string
   alamat_rumah?: string
   kota_kabupaten_rumah?: string
   provinsi_rumah?: string
@@ -38,6 +38,8 @@ export interface Member {
   tempatTugas?: string
   alamat?: string
   kota?: string
+  kota_kabupaten?: string // Keep for backward compatibility
+  provinsi?: string // Keep for backward compatibility
   alamatRumah?: string
   kotaRumah?: string
   provinsiRumah?: string

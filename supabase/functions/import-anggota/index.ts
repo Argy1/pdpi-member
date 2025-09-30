@@ -9,8 +9,8 @@ interface ImportRow {
   nama: string;
   npa?: string;
   tempat_tugas: string;
-  kota_kabupaten?: string;
-  provinsi: string;
+  kota_kabupaten_kantor?: string;
+  provinsi_kantor: string;
   cabang?: string;
   status?: string;
   email?: string;
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
       
       try {
         // Validate required fields
-        if (!row.nama || !row.provinsi || !row.tempat_tugas) {
+        if (!row.nama || !row.provinsi_kantor || !row.tempat_tugas) {
           invalid++;
           if (sampleErrors.length < 5) {
             sampleErrors.push({
@@ -173,13 +173,14 @@ Deno.serve(async (req) => {
         const memberData: any = {
           nama: row.nama,
           tempat_tugas: row.tempat_tugas,
-          provinsi: row.provinsi,
+          provinsi_kantor: row.provinsi_kantor,
           status: row.status || 'Biasa',
         };
 
         // Add optional fields if present
         if (row.npa) memberData.npa = row.npa;
-        if (row.kota_kabupaten) memberData.kota_kabupaten = row.kota_kabupaten;
+        if (row.kota_kabupaten_kantor) memberData.kota_kabupaten_kantor = row.kota_kabupaten_kantor;
+        if (row.provinsi_kantor) memberData.provinsi_kantor = row.provinsi_kantor;
         if (row.email) memberData.email = row.email;
         if (row.no_hp) memberData.no_hp = row.no_hp;
         if (row.gelar) memberData.gelar = row.gelar;

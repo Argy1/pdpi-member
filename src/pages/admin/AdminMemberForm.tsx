@@ -35,8 +35,8 @@ interface MemberFormData {
   
   // Domisili
   alamat: string;
-  kota: string;
-  provinsi: string;
+  kotaKantor: string;
+  provinsiKantor: string;
   kotaRumah: string;
   provinsiRumah: string;
   pd: string;
@@ -82,8 +82,8 @@ const initialFormData: MemberFormData = {
   foto: '',
   alumni: '',
   alamat: '',
-  kota: '',
-  provinsi: '',
+  kotaKantor: '',
+  provinsiKantor: '',
   kotaRumah: '',
   provinsiRumah: '',
   pd: '',
@@ -166,8 +166,8 @@ export default function AdminMemberForm() {
             foto: existingMember.foto || '',
             alumni: existingMember.alumni || '',
             alamat: existingMember.alamat_rumah || '',
-            kota: existingMember.kota_kabupaten || '',
-            provinsi: existingMember.provinsi || '',
+            kotaKantor: existingMember.kota_kabupaten_kantor || '',
+            provinsiKantor: existingMember.provinsi_kantor || '',
             kotaRumah: existingMember.kota_kabupaten_rumah || '',
             provinsiRumah: existingMember.provinsi_rumah || '',
             pd: existingMember.cabang || '',
@@ -267,8 +267,8 @@ export default function AdminMemberForm() {
         jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : null,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : null,
         tempat_tugas: formData.unitKerja || null, // Save unitKerja as tempat_tugas
-        kota_kabupaten: formData.kota || null,
-        provinsi: formData.provinsi || null,
+        kota_kabupaten_kantor: formData.kotaKantor || null,
+        provinsi_kantor: formData.provinsiKantor || null,
         alamat_rumah: formData.alamat || null,
         kota_kabupaten_rumah: formData.kotaRumah || null,
         provinsi_rumah: formData.provinsiRumah || null,
@@ -613,11 +613,11 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="kota">Kota/Kabupaten Kerja</Label>
+                      <Label htmlFor="kotaKantor">Kota/Kabupaten Kantor</Label>
                       <Input
-                        id="kota"
-                        value={formData.kota}
-                        onChange={(e) => handleInputChange('kota', e.target.value)}
+                        id="kotaKantor"
+                        value={formData.kotaKantor}
+                        onChange={(e) => handleInputChange('kotaKantor', e.target.value)}
                         placeholder="Jakarta"
                       />
                     </div>
@@ -635,10 +635,10 @@ export default function AdminMemberForm() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="provinsi">Provinsi Kerja</Label>
+                      <Label htmlFor="provinsiKantor">Provinsi Kantor</Label>
                       <Select 
-                        value={formData.provinsi} 
-                        onValueChange={(value) => handleInputChange('provinsi', value)}
+                        value={formData.provinsiKantor} 
+                        onValueChange={(value) => handleInputChange('provinsiKantor', value)}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih provinsi" />

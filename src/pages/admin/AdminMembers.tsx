@@ -396,7 +396,7 @@ export default function AdminMembers() {
                   </TableHead>
                   <TableHead>Alumni</TableHead>
                   <TableHead>Rumah Sakit</TableHead>
-                  <TableHead>Lokasi Kerja</TableHead>
+                  <TableHead>Lokasi Kantor</TableHead>
                   <TableHead>Lokasi Rumah</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead 
@@ -447,7 +447,11 @@ export default function AdminMembers() {
                       <TableCell>{member.npa}</TableCell>
                       <TableCell>{member.alumni || '-'}</TableCell>
                       <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
-                      <TableCell>{member.kota || member.kota_kabupaten}, {member.provinsi}</TableCell>
+                      <TableCell>
+                        {member.kota_kabupaten_kantor && member.provinsi_kantor 
+                          ? `${member.kota_kabupaten_kantor}, ${member.provinsi_kantor}`
+                          : '-'}
+                      </TableCell>
                       <TableCell>
                         {member.kota_kabupaten_rumah && member.provinsi_rumah 
                           ? `${member.kota_kabupaten_rumah}, ${member.provinsi_rumah}`

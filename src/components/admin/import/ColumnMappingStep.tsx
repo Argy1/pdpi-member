@@ -14,7 +14,7 @@ const dbFields = {
   // Required fields
   nama: { label: 'Nama Lengkap', required: true, type: 'text' },
   tempat_tugas: { label: 'Tempat Tugas/RS/Fasyankes', required: true, type: 'text' },
-  provinsi: { label: 'Provinsi', required: true, type: 'text' },
+  
   
   // Optional fields (but important)
   rumahSakit: { label: 'Rumah Sakit (alternatif)', required: false, type: 'text' },
@@ -29,7 +29,8 @@ const dbFields = {
   tempat_lahir: { label: 'Tempat Lahir', required: false, type: 'text' },
   tgl_lahir: { label: 'Tanggal Lahir', required: false, type: 'date' },
   alamat_rumah: { label: 'Alamat Rumah', required: false, type: 'text' },
-  kota_kabupaten: { label: 'Kota/Kabupaten', required: false, type: 'text' },
+  kota_kabupaten_kantor: { label: 'Kota/Kabupaten Kantor', required: false, type: 'text' },
+  provinsi_kantor: { label: 'Provinsi Kantor', required: false, type: 'text' },
   kota_kabupaten_rumah: { label: 'Kota/Kabupaten Rumah', required: false, type: 'text' },
   provinsi_rumah: { label: 'Provinsi Rumah', required: false, type: 'text' },
   thn_lulus: { label: 'Tahun Lulus', required: false, type: 'number' },
@@ -72,9 +73,9 @@ export const ColumnMappingStep = () => {
       alumni: ['alumni', 'almamater', 'sekolah'],
       tempat_tugas: ['tempattugas', 'rumahsakit', 'rs', 'fasyankes', 'instansi', 'tempatpraktik', 'hospital', 'tempatkerja', 'workplace'],
       rumahSakit: ['rumahsakit', 'rs', 'hospital', 'tempatkerja', 'workplace'],
-      kota_kabupaten: ['kota', 'kabupaten', 'kotakabupaten', 'city', 'kotakab'],
+      kota_kabupaten_kantor: ['kota', 'kabupaten', 'kotakabupaten', 'city', 'kotakab', 'kotakantor', 'kabupatenkantor'],
       kota_kabupaten_rumah: ['kotarumah', 'kabupatanrumah', 'kotakabupatanrumah', 'cityhome'],
-      provinsi: ['provinsi', 'province', 'prop'],
+      provinsi_kantor: ['provinsi', 'province', 'prop', 'provinsikantor'],
       provinsi_rumah: ['provinsirumah', 'provincehome', 'prophome'],
       cabang: ['cabang', 'pd', 'wilayah', 'branch', 'region'],
       jenis_kelamin: ['jeniskelamin', 'kelamin', 'gender', 'jk'],
@@ -114,7 +115,7 @@ export const ColumnMappingStep = () => {
 
   // Validate mapping
   const validateMapping = () => {
-    const requiredFields = ['nama', 'provinsi']; // Base required fields
+    const requiredFields = ['nama', 'provinsi_kantor']; // Base required fields
     const mappedFields = Object.values(columnMapping);
     
     // Check if either tempat_tugas OR rumahSakit is mapped
@@ -124,7 +125,7 @@ export const ColumnMappingStep = () => {
     if (!hasTempatTugas && !hasRumahSakit) {
       setValidationErrors([{
         type: 'missing_required',
-        message: 'Wajib mapping: nama, provinsi, dan tempat_tugas (atau rumahSakit sebagai alternatif)'
+        message: 'Wajib mapping: nama, provinsi kantor, dan tempat_tugas (atau rumahSakit sebagai alternatif)'
       }]);
       return false;
     }
@@ -174,7 +175,7 @@ export const ColumnMappingStep = () => {
   // Calculate required fields mapping status
   const mappedFields = Object.values(columnMapping);
   const hasNama = mappedFields.includes('nama');
-  const hasProvinsi = mappedFields.includes('provinsi');
+  const hasProvinsi = mappedFields.includes('provinsi_kantor');
   const hasTempatTugas = mappedFields.includes('tempat_tugas');
   const hasRumahSakit = mappedFields.includes('rumahSakit');
   
@@ -243,7 +244,7 @@ export const ColumnMappingStep = () => {
             Nama {hasNama ? '✓' : '✗'}
           </Badge>
           <Badge variant={hasProvinsi ? "default" : "outline"} className="text-xs">
-            Provinsi {hasProvinsi ? '✓' : '✗'}
+            Provinsi Kantor {hasProvinsi ? '✓' : '✗'}
           </Badge>
           <Badge variant={hasTempatTugas || hasRumahSakit ? "default" : "outline"} className="text-xs">
             Tempat Tugas {hasTempatTugas || hasRumahSakit ? '✓' : '✗'}
@@ -259,7 +260,7 @@ export const ColumnMappingStep = () => {
             <strong>Field wajib belum lengkap:</strong>
             <ul className="mt-1 ml-4 list-disc text-sm">
               {!hasNama && <li>Nama Lengkap harus dimapping</li>}
-              {!hasProvinsi && <li>Provinsi harus dimapping</li>}
+              {!hasProvinsi && <li>Provinsi Kantor harus dimapping</li>}
               {!hasTempatTugas && !hasRumahSakit && <li>Tempat Tugas/RS/Fasyankes atau Rumah Sakit harus dimapping</li>}
             </ul>
           </AlertDescription>

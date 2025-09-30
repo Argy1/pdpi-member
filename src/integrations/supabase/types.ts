@@ -44,11 +44,13 @@ export type Database = {
           keterangan: string | null
           klinik_pribadi: string | null
           kota_kabupaten: string | null
+          kota_kabupaten_kantor: string | null
           kota_kabupaten_rumah: string | null
           nama: string
           no_hp: string | null
           npa: string | null
           provinsi: string | null
+          provinsi_kantor: string | null
           provinsi_rumah: string | null
           rs_tipe_a: string | null
           rs_tipe_b: string | null
@@ -75,11 +77,13 @@ export type Database = {
           keterangan?: string | null
           klinik_pribadi?: string | null
           kota_kabupaten?: string | null
+          kota_kabupaten_kantor?: string | null
           kota_kabupaten_rumah?: string | null
           nama: string
           no_hp?: string | null
           npa?: string | null
           provinsi?: string | null
+          provinsi_kantor?: string | null
           provinsi_rumah?: string | null
           rs_tipe_a?: string | null
           rs_tipe_b?: string | null
@@ -106,11 +110,13 @@ export type Database = {
           keterangan?: string | null
           klinik_pribadi?: string | null
           kota_kabupaten?: string | null
+          kota_kabupaten_kantor?: string | null
           kota_kabupaten_rumah?: string | null
           nama?: string
           no_hp?: string | null
           npa?: string | null
           provinsi?: string | null
+          provinsi_kantor?: string | null
           provinsi_rumah?: string | null
           rs_tipe_a?: string | null
           rs_tipe_b?: string | null

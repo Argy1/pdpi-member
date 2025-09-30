@@ -166,12 +166,12 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Kota/Kabupaten</p>
-                  <p className="text-medical-body">{member.kota || member.kota_kabupaten || "-"}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Kota/Kabupaten Kantor</p>
+                  <p className="text-medical-body">{member.kota_kabupaten_kantor || "-"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Provinsi</p>
-                  <p className="text-medical-body">{member.provinsi || "-"}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Provinsi Kantor</p>
+                  <p className="text-medical-body">{member.provinsi_kantor || "-"}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Kota/Kabupaten Rumah</p>
