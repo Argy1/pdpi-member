@@ -122,12 +122,12 @@ export const ImportProcessStep = () => {
       }
       
       // Validate required fields
-      if (!processedRow.nama || !processedRow.tempat_tugas || !processedRow.provinsi) {
+      if (!processedRow.nama || !processedRow.tempat_tugas || !processedRow.provinsi_kantor) {
         errors.push({
           row: i + 2, // +2 for header row and 1-based indexing
           data: processedRow,
           reason: 'FIELD_REQUIRED',
-          details: 'Missing required fields: nama, tempat_tugas, or provinsi'
+          details: 'Missing required fields: nama, tempat_tugas, or provinsi_kantor'
         });
         continue;
       }
