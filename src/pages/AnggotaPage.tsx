@@ -51,20 +51,33 @@ export default function AnggotaPage() {
     checkAuth()
 
     const fetchData = async () => {
-      const [hospitalTypesResult, provincesResult, citiesResult] = await Promise.all([
-        AnggotaAPI.getHospitalTypes(),
-        AnggotaAPI.getAvailableProvinces(),
-        AnggotaAPI.getAvailableCities()
-      ])
-      
-      if (hospitalTypesResult.data) {
-        setHospitalTypes(hospitalTypesResult.data)
-      }
-      if (provincesResult.data) {
-        setAvailableProvinces(provincesResult.data)
-      }
-      if (citiesResult.data) {
-        setAvailableCities(citiesResult.data)
+      try {
+        const [hospitalTypesResult, provincesResult, citiesResult] = await Promise.all([
+          AnggotaAPI.getHospitalTypes(),
+          AnggotaAPI.getAvailableProvinces(),
+          AnggotaAPI.getAvailableCities()
+        ])
+        
+        // Fetch branches separately since we don't have a dedicated API method for it yet
+        const { data: branchData } = await supabase
+          .from('members')
+          .select('cabang')
+          .not('cabang', 'is', null)
+        
+        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
+        
+        if (hospitalTypesResult.data) {
+          setHospitalTypes(hospitalTypesResult.data)
+        }
+        if (provincesResult.data) {
+          setAvailableProvinces(provincesResult.data)
+        }
+        if (citiesResult.data) {
+          setAvailableCities(citiesResult.data)
+        }
+        setAvailableBranches(branches.sort())
+      } catch (error) {
+        console.error('Error fetching filter data:', error)
       }
     }
     fetchData()
