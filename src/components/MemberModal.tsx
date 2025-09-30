@@ -2,6 +2,7 @@ import { Member } from "@/types/member"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   User, 
   MapPin, 
@@ -52,17 +53,33 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
-          <div className="space-y-2">
-            <DialogTitle className="text-xl font-bold heading-medical">
-              {member.nama}
-            </DialogTitle>
-            <div className="flex items-center space-x-2">
-              {getStatusBadge(member.status)}
-              {member.npa && (
-                <code className="text-xs bg-muted px-2 py-1 rounded">
-                  NPA: {member.npa}
-                </code>
-              )}
+          <div className="flex gap-4">
+            {/* Member Photo */}
+            <div className="flex-shrink-0">
+              <Avatar className="h-20 w-20">
+                <AvatarImage 
+                  src={member.foto || member.fotoUrl} 
+                  alt={`Foto ${member.nama}`}
+                  className="object-cover"
+                />
+                <AvatarFallback className="text-lg font-semibold bg-medical-primary/10 text-medical-primary">
+                  {member.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            {/* Member Info */}
+            <div className="flex-1 space-y-2">
+              <DialogTitle className="text-xl font-bold heading-medical">
+                {member.nama}
+              </DialogTitle>
+              <div className="flex items-center space-x-2">
+                {getStatusBadge(member.status)}
+                {member.npa && (
+                  <code className="text-xs bg-muted px-2 py-1 rounded">
+                    NPA: {member.npa}
+                  </code>
+                )}
+              </div>
             </div>
           </div>
         </DialogHeader>

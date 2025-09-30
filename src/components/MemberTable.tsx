@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Member } from "@/types/member"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
   Table, 
   TableBody, 
@@ -60,6 +61,7 @@ export function MemberTable({
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow>
+                <TableHead className="font-semibold">Foto</TableHead>
                 <TableHead className="font-semibold">Nama</TableHead>
                 <TableHead className="font-semibold">NPA</TableHead>
                 <TableHead className="font-semibold">Alumni</TableHead>
@@ -77,6 +79,18 @@ export function MemberTable({
                   className="hover:bg-muted/30 transition-smooth cursor-pointer"
                   onClick={() => onViewMember(member)}
                 >
+                  <TableCell>
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage 
+                        src={member.foto || member.fotoUrl} 
+                        alt={`Foto ${member.nama}`}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="text-xs font-semibold bg-medical-primary/10 text-medical-primary">
+                        {member.nama.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell>
                     <div className="space-y-1">
                       <p className="font-medium">{member.nama}</p>
@@ -111,7 +125,7 @@ export function MemberTable({
               ))}
               {members.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={9} className="text-center py-8">
                     <div className="space-y-2">
                       <p className="text-muted-foreground">Tidak ada data anggota</p>
                       <p className="text-sm text-muted-foreground">

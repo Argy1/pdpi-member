@@ -215,16 +215,48 @@ export default function AdminMemberForm() {
     }));
   };
 
-  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPhotoPreview(result);
-        handleInputChange('foto', result);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setLoading(true);
+        
+        // Create a unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('member-photos')
+          .upload(fileName, file);
+
+        if (error) {
+          throw error;
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('member-photos')
+          .getPublicUrl(fileName);
+
+        // Set preview and form data
+        setPhotoPreview(publicUrl);
+        handleInputChange('foto', publicUrl);
+
+        toast({
+          title: 'Foto berhasil diupload',
+          description: 'Foto anggota telah diupload ke server.',
+        });
+      } catch (error) {
+        console.error('Error uploading photo:', error);
+        toast({
+          title: 'Error upload foto',
+          description: 'Gagal mengupload foto. Silakan coba lagi.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
