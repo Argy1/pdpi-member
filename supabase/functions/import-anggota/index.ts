@@ -27,6 +27,10 @@ interface ImportRow {
   tempat_lahir?: string;
   keterangan?: string;
   foto?: string;
+  rs_tipe_a?: string;
+  rs_tipe_b?: string;
+  rs_tipe_c?: string;
+  klinik_pribadi?: string;
 }
 
 interface ImportRequest {
@@ -200,6 +204,12 @@ Deno.serve(async (req) => {
         if (row.keterangan) memberData.keterangan = row.keterangan;
         if (row.foto) memberData.foto = row.foto;
         if (row.cabang) memberData.cabang = row.cabang;
+        
+        // Add hospital type fields
+        if (row.rs_tipe_a) memberData.rs_tipe_a = row.rs_tipe_a;
+        if (row.rs_tipe_b) memberData.rs_tipe_b = row.rs_tipe_b;
+        if (row.rs_tipe_c) memberData.rs_tipe_c = row.rs_tipe_c;
+        if (row.klinik_pribadi) memberData.klinik_pribadi = row.klinik_pribadi;
 
         if (mode === 'upsert') {
           // Check if member exists - use more comprehensive matching
