@@ -106,19 +106,23 @@ Deno.serve(async (req) => {
       const row = rows[i];
       
       try {
-        // Validate required fields
-        if (!row.nama || !row.provinsi_kantor || !row.tempat_tugas) {
+        // Validate required fields - only skip if nama is missing (most critical)
+        if (!row.nama || !row.nama.trim()) {
           invalid++;
           if (sampleErrors.length < 5) {
             sampleErrors.push({
               row: i + 1,
               reason: 'FIELD_REQUIRED',
-              details: 'Missing required fields: nama, provinsi, or tempat_tugas',
+              details: 'Missing required field: nama',
               data: row
             });
           }
           continue;
         }
+
+        // Set default values for missing non-critical fields
+        if (!row.provinsi_kantor) row.provinsi_kantor = 'Tidak Diketahui';
+        if (!row.tempat_tugas) row.tempat_tugas = 'Tidak Diketahui';
 
         // Handle branch mapping
         let cabangId = null;
