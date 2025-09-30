@@ -63,8 +63,8 @@ export function MemberTable({
                 <TableHead className="font-semibold">Nama</TableHead>
                 <TableHead className="font-semibold">NPA</TableHead>
                 <TableHead className="font-semibold">Alumni</TableHead>
-                <TableHead className="font-semibold">Kota</TableHead>
-                <TableHead className="font-semibold">Provinsi</TableHead>
+                <TableHead className="font-semibold">Kota/Kabupaten Kantor</TableHead>
+                <TableHead className="font-semibold">Provinsi Kantor</TableHead>
                 <TableHead className="font-semibold">Cabang/Wilayah</TableHead>
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold text-center">Aksi</TableHead>
@@ -90,8 +90,8 @@ export function MemberTable({
                   <TableCell>
                     <p className="text-sm">{member.alumni || "-"}</p>
                   </TableCell>
-                  <TableCell>{member.kota || "-"}</TableCell>
-                  <TableCell>{member.provinsi || "-"}</TableCell>
+                  <TableCell>{member.kota_kabupaten_kantor || "-"}</TableCell>
+                  <TableCell>{member.provinsi_kantor || "-"}</TableCell>
                   <TableCell>{member.pd || "-"}</TableCell>
                   <TableCell>{getStatusBadge(member.status)}</TableCell>
                   <TableCell className="text-center">
