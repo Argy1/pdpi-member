@@ -144,7 +144,7 @@ export class StatsAPI {
     perempuan: number
   }>> {
     try {
-      // Fetch centroids data
+      // Fetch centroids data - always return all 38 provinces
       const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
       const centroids = await centroidsRes.json()
 
@@ -191,7 +191,7 @@ export class StatsAPI {
         provinceMap.set(provFinal, current)
       }
 
-      // Merge with centroids
+      // Merge with centroids - ALWAYS return all provinces, even with total=0
       const result = centroids
         .map((centroid: any) => {
           const stats = provinceMap.get(centroid.provinsi) || { total: 0, laki: 0, perempuan: 0 }
@@ -204,13 +204,20 @@ export class StatsAPI {
             perempuan: stats.perempuan
           }
         })
-        .filter((item: any) => item.total > 0)
+        // Only filter to show markers with data, but return all for the endpoint
         .sort((a: any, b: any) => b.total - a.total)
 
       return result
     } catch (err) {
       console.error('Error fetching centroids:', err)
-      return []
+      // Return empty centroids structure on error
+      try {
+        const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
+        const centroids = await centroidsRes.json()
+        return centroids.map((c: any) => ({ ...c, total: 0, laki: 0, perempuan: 0 }))
+      } catch {
+        return []
+      }
     }
   }
 
