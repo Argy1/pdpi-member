@@ -44,8 +44,11 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               <div className="flex">
                 <span className="font-medium w-32">Nama</span>
                 <span className="mr-2">:</span>
-                <span className="font-semibold text-medical-primary">{member.nama}</span>
-                {member.gelar && <span className="text-muted-foreground ml-1">{member.gelar}</span>}
+                <span className="font-semibold text-medical-primary">
+                  {member.gelar && <span className="text-muted-foreground mr-1">{member.gelar}</span>}
+                  {member.nama}
+                  {member.gelar2 && <span className="text-muted-foreground ml-1">{member.gelar2}</span>}
+                </span>
               </div>
 
               <div className="flex">
