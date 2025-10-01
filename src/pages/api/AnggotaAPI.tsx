@@ -59,6 +59,11 @@ export class AnggotaAPI {
         .from('members')
         .select(isAdmin ? adminFields : publicFields)
 
+      // For public scope, exclude certain statuses
+      if (!isAdmin) {
+        query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
+      }
+
       // Apply search filter (only search by name)
       if (q && q.trim()) {
         const searchTerm = q.trim()
@@ -145,6 +150,11 @@ export class AnggotaAPI {
       let countQuery = supabase
         .from('members')
         .select('*', { count: 'exact', head: true })
+
+      // For public scope, exclude certain statuses from count
+      if (!isAdmin) {
+        countQuery = countQuery.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
+      }
 
       // Apply same search filter for count (only search by name)
       if (q && q.trim()) {
