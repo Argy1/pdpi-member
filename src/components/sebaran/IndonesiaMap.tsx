@@ -46,40 +46,7 @@ function MapBounds({ data }: { data: CentroidData[] }) {
   return null
 }
 
-export function IndonesiaMap({ filters }: IndonesiaMapProps) {
-  const [geoData, setGeoData] = useState<any>(null)
-  const { data, isLoading, error } = useSWR(['centroids', filters], () => fetcher(filters), {
-    revalidateOnFocus: false,
-    dedupingInterval: 10000
-  })
-
-  useEffect(() => {
-    fetch('/geo/indonesia-provinces.geojson')
-      .then(res => res.json())
-      .then(setGeoData)
-      .catch(console.error)
-  }, [])
-
-  if (isLoading || !geoData) {
-    return (
-      <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-        <Skeleton className="w-full h-full" />
-      </div>
-    )
-  }
-
-  if (error || !data) {
-    return (
-      <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <p className="text-slate-500 dark:text-slate-400">Gagal memuat peta</p>
-      </div>
-    )
-  }
-
-  const center: LatLngExpression = [-2.5, 118]
-  const zoom = 5
-  const hasData = data && data.length > 0
-
+function MapContent({ geoData, data }: { geoData: any; data: CentroidData[] }) {
   const createCustomIcon = (centroid: CentroidData) => {
     const size = Math.min(Math.max(6 + 2 * Math.sqrt(centroid.total), 12), 40)
     
@@ -107,6 +74,104 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
   }
 
   return (
+    <>
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      
+      <GeoJSON
+        data={geoData}
+        style={{
+          fillColor: '#e0f2f1',
+          fillOpacity: 0.15,
+          color: '#0d9488',
+          weight: 1.5,
+          opacity: 0.5
+        }}
+      />
+
+      <MapBounds data={data} />
+      
+      {data.map((centroid, idx) => (
+        <Marker
+          key={idx}
+          position={[centroid.lat, centroid.lng]}
+          icon={createCustomIcon(centroid)}
+        >
+          <Popup className="custom-popup">
+            <div className="p-2 min-w-[180px]">
+              <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+                {centroid.provinsi}
+              </h3>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">Total:</span>
+                  <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    {centroid.total.toLocaleString('id-ID')}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">Laki-laki:</span>
+                  <span className="font-medium text-teal-600 dark:text-teal-400">
+                    {centroid.laki.toLocaleString('id-ID')}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600 dark:text-slate-400">Perempuan:</span>
+                  <span className="font-medium text-pink-600 dark:text-pink-400">
+                    {centroid.perempuan.toLocaleString('id-ID')}
+                  </span>
+                </div>
+              </div>
+              <Link
+                to={`/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}`}
+                className="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors"
+              >
+                Lihat Anggota <ExternalLink className="h-3 w-3" />
+              </Link>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
+    </>
+  )
+}
+
+export function IndonesiaMap({ filters }: IndonesiaMapProps) {
+  const [geoData, setGeoData] = useState<any>(null)
+  const { data, isLoading, error } = useSWR(['centroids', filters], () => fetcher(filters), {
+    revalidateOnFocus: false,
+    dedupingInterval: 10000
+  })
+
+  useEffect(() => {
+    fetch('/geo/indonesia-provinces.geojson')
+      .then(res => res.json())
+      .then(setGeoData)
+      .catch(console.error)
+  }, [])
+
+  if (isLoading || !geoData || !data) {
+    return (
+      <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <Skeleton className="w-full h-full" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <p className="text-slate-500 dark:text-slate-400">Gagal memuat peta</p>
+      </div>
+    )
+  }
+
+  const center: LatLngExpression = [-2.5, 118]
+  const zoom = 5
+
+  return (
     <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-800 shadow-xl">
       <MapContainer
         center={center}
@@ -115,65 +180,7 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
         zoomControl={true}
         scrollWheelZoom={true}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        
-        <GeoJSON
-          data={geoData}
-          style={{
-            fillColor: '#e0f2f1',
-            fillOpacity: 0.15,
-            color: '#0d9488',
-            weight: 1.5,
-            opacity: 0.5
-          }}
-        />
-
-        {hasData ? <MapBounds data={data} /> : null}
-        
-        {hasData ? data.map((centroid, idx) => (
-          <Marker
-            key={idx}
-            position={[centroid.lat, centroid.lng]}
-            icon={createCustomIcon(centroid)}
-          >
-            <Popup className="custom-popup">
-              <div className="p-2 min-w-[180px]">
-                <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-                  {centroid.provinsi}
-                </h3>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Total:</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">
-                      {centroid.total.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Laki-laki:</span>
-                    <span className="font-medium text-teal-600 dark:text-teal-400">
-                      {centroid.laki.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Perempuan:</span>
-                    <span className="font-medium text-pink-600 dark:text-pink-400">
-                      {centroid.perempuan.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                </div>
-                <Link
-                  to={`/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}`}
-                  className="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors"
-                >
-                  Lihat Anggota <ExternalLink className="h-3 w-3" />
-                </Link>
-              </div>
-            </Popup>
-          </Marker>
-        )) : null}
+        <MapContent geoData={geoData} data={data} />
       </MapContainer>
     </div>
   )
