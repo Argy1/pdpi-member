@@ -28,9 +28,6 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 src={member.foto || member.fotoUrl} 
                 alt={`Foto ${member.nama}`}
                 className="object-cover"
-                onError={(e) => {
-                  console.warn('Failed to load image:', member.foto);
-                }}
               />
               <AvatarFallback className="text-lg font-semibold bg-medical-primary/10 text-medical-primary">
                 {getInitials(member.nama)}
