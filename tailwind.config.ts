@@ -57,6 +57,13 @@ export default {
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
         info: "hsl(var(--info))",
+        chart: {
+          "1": "14 88% 53%", // teal-500
+          "2": "330 78% 60%", // pink-500
+          "3": "200 98% 48%", // sky-500
+          "4": "142 76% 36%", // emerald-600
+          "5": "270 54% 58%", // purple-500
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
