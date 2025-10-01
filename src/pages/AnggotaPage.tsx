@@ -194,7 +194,17 @@ export default function AnggotaPage() {
             </p>
           </div>
 
-          {/* Search removed as per user request */}
+          {/* Search Bar */}
+          <SearchBar
+            value={filters.query || ''}
+            onSearch={(query) => {
+              setFilters(prev => ({ ...prev, query }))
+              setPagination(prev => ({ ...prev, page: 1 }))
+            }}
+            placeholder="Cari nama anggota..."
+            size="default"
+            scope={isAuthenticated ? 'admin' : 'public'}
+          />
         </div>
 
         {/* Filters - Show for all users */}

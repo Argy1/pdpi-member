@@ -310,7 +310,19 @@ export default function AdminMembers() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex flex-col gap-4 md:flex-row md:items-center">
-              {/* Search removed as per user request */}
+              {/* Search Bar */}
+              <div className="flex-1">
+                <SearchBar
+                  value={filters.query || ''}
+                  onSearch={(query) => {
+                    setFilters(prev => ({ ...prev, query }))
+                    setCurrentPage(1)
+                  }}
+                  placeholder="Cari nama anggota..."
+                  size="default"
+                  scope="admin"
+                />
+              </div>
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
