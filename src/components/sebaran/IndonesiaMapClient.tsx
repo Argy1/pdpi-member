@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import L from 'leaflet'
 import useSWR from 'swr'
+import { StatsAPI } from '@/pages/api/StatsAPI'
 
 interface CentroidData {
   provinsi: string
@@ -22,10 +23,8 @@ interface IndonesiaMapClientProps {
   }
 }
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url, { cache: 'no-store' })
-  if (!res.ok) throw new Error('Failed to fetch')
-  return res.json()
+const fetcher = async (_key: string, filters: any) => {
+  return await StatsAPI.getCentroids(filters)
 }
 
 function createLabelIcon(provinsi: string, total: number) {
@@ -52,16 +51,12 @@ export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersRef = useRef<L.Marker[]>([])
   
-  const queryString = useMemo(() => {
-    const params = new URLSearchParams()
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) params.append(key, value)
-    })
-    return params.toString()
-  }, [filters])
+  const swrKey = useMemo(() => 
+    JSON.stringify(['centroids', filters]), 
+  [filters])
 
   const { data, error } = useSWR<CentroidData[]>(
-    `/api/stats/centroids${queryString ? `?${queryString}` : ''}`,
+    [swrKey, filters],
     fetcher,
     {
       revalidateOnFocus: false,
