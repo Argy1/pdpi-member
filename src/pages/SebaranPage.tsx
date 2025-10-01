@@ -8,7 +8,7 @@ import { DistributionTable } from "@/components/stats/DistributionTable"
 import { IndonesiaStatsMap } from "@/components/stats/IndonesiaStatsMap"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, MapPin } from "lucide-react"
+import { AlertCircle, MapPin, Users } from "lucide-react"
 
 export default function SebaranPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -186,6 +186,3 @@ export default function SebaranPage() {
     </div>
   )
 }
-
-// Missing Users import
-import { Users } from "lucide-react"

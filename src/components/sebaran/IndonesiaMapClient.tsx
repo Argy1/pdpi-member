@@ -4,6 +4,7 @@ import L from 'leaflet'
 import useSWR from 'swr'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
+import { StatsAPI } from '@/pages/api/StatsAPI'
 import 'leaflet/dist/leaflet.css'
 
 // Fix default icon issue in Leaflet
@@ -34,9 +35,8 @@ interface IndonesiaMapClientProps {
   }
 }
 
-const fetcher = async (url: string) => {
-  const res = await fetch(url, { cache: 'no-store' })
-  return res.json()
+const fetcher = async (_key: string, filters: any) => {
+  return await StatsAPI.getCentroids(filters)
 }
 
 function createLabelIcon(total: number) {
@@ -80,19 +80,12 @@ export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps)
     setIsMounted(true)
   }, [])
 
-  const queryString = useMemo(() => {
-    const params = new URLSearchParams()
-    if (filters.q) params.set('q', filters.q)
-    if (filters.provinsi) params.set('provinsi', filters.provinsi)
-    if (filters.pd) params.set('pd', filters.pd)
-    if (filters.kota) params.set('kota', filters.kota)
-    if (filters.status) params.set('status', filters.status)
-    if (filters.gender) params.set('gender', filters.gender)
-    return params.toString()
-  }, [filters])
+  const swrKey = useMemo(() => 
+    JSON.stringify(['centroids', filters]), 
+  [filters])
 
   const { data, isLoading } = useSWR<CentroidData[]>(
-    `/api/stats/centroids?${queryString}`,
+    [swrKey, filters],
     fetcher,
     {
       revalidateOnFocus: false,
