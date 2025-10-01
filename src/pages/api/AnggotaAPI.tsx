@@ -62,32 +62,12 @@ export class AnggotaAPI {
       // Build filter conditions array to combine with AND
       const andConditions = []
 
-      // Apply search filter (OR within search fields)
+      // Apply search filter (only search by name)
       if (q && q.trim()) {
         const searchTerm = q.trim()
         
-        // Simple search across key fields
-        const searchConditions = [
-          `nama.ilike.%${searchTerm}%`,
-          `npa.ilike.%${searchTerm}%`,
-          `tempat_tugas.ilike.%${searchTerm}%`,
-          `kota_kabupaten_kantor.ilike.%${searchTerm}%`,
-          `provinsi_kantor.ilike.%${searchTerm}%`,
-          `cabang.ilike.%${searchTerm}%`,
-          `alumni.ilike.%${searchTerm}%`
-        ]
-
-        // Add admin-only fields if in admin scope (only existing columns)
-        if (isAdmin) {
-          searchConditions.push(
-            `email.ilike.%${searchTerm}%`,
-            `no_hp.ilike.%${searchTerm}%`,
-            `alamat_rumah.ilike.%${searchTerm}%`,
-            `keterangan.ilike.%${searchTerm}%`
-          )
-        }
-
-        andConditions.push(`(${searchConditions.join(',')})`)
+        // Search only in nama field
+        andConditions.push(`nama.ilike.%${searchTerm}%`)
       }
 
       // Apply province filter (OR within provinces)
@@ -179,30 +159,12 @@ export class AnggotaAPI {
       // Build same filter conditions for count query
       const countAndConditions = []
 
-      // Apply same search filter for count
+      // Apply same search filter for count (only search by name)
       if (q && q.trim()) {
         const searchTerm = q.trim()
         
-        const searchConditions = [
-          `nama.ilike.%${searchTerm}%`,
-          `npa.ilike.%${searchTerm}%`,
-          `tempat_tugas.ilike.%${searchTerm}%`,
-          `kota_kabupaten_kantor.ilike.%${searchTerm}%`,
-          `provinsi_kantor.ilike.%${searchTerm}%`,
-          `cabang.ilike.%${searchTerm}%`,
-          `alumni.ilike.%${searchTerm}%`
-        ]
-
-        if (isAdmin) {
-          searchConditions.push(
-            `email.ilike.%${searchTerm}%`,
-            `no_hp.ilike.%${searchTerm}%`,
-            `alamat_rumah.ilike.%${searchTerm}%`,
-            `keterangan.ilike.%${searchTerm}%`
-          )
-        }
-
-        countAndConditions.push(`(${searchConditions.join(',')})`)
+        // Search only in nama field
+        countAndConditions.push(`nama.ilike.%${searchTerm}%`)
       }
 
       if (provinsi_kantor) {
