@@ -132,52 +132,49 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
           />
         )}
 
-        {data && data.length > 0 && (
-          <>
-            <MapBounds data={data} />
-            {data.map((centroid, idx) => (
-              <Marker
-                key={idx}
-                position={[centroid.lat, centroid.lng]}
-                icon={createCustomIcon(centroid)}
-              >
-                <Popup className="custom-popup">
-                  <div className="p-2 min-w-[180px]">
-                    <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-                      {centroid.provinsi}
-                    </h3>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600 dark:text-slate-400">Total:</span>
-                        <span className="font-semibold text-slate-900 dark:text-slate-100">
-                          {centroid.total.toLocaleString('id-ID')}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600 dark:text-slate-400">Laki-laki:</span>
-                        <span className="font-medium text-teal-600 dark:text-teal-400">
-                          {centroid.laki.toLocaleString('id-ID')}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-600 dark:text-slate-400">Perempuan:</span>
-                        <span className="font-medium text-pink-600 dark:text-pink-400">
-                          {centroid.perempuan.toLocaleString('id-ID')}
-                        </span>
-                      </div>
-                    </div>
-                    <Link
-                      to={`/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}`}
-                      className="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors"
-                    >
-                      Lihat Anggota <ExternalLink className="h-3 w-3" />
-                    </Link>
+        {data && data.length > 0 && <MapBounds data={data} />}
+        
+        {data && data.length > 0 && data.map((centroid, idx) => (
+          <Marker
+            key={idx}
+            position={[centroid.lat, centroid.lng]}
+            icon={createCustomIcon(centroid)}
+          >
+            <Popup className="custom-popup">
+              <div className="p-2 min-w-[180px]">
+                <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+                  {centroid.provinsi}
+                </h3>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600 dark:text-slate-400">Total:</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {centroid.total.toLocaleString('id-ID')}
+                    </span>
                   </div>
-                </Popup>
-              </Marker>
-            ))}
-          </>
-        )}
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600 dark:text-slate-400">Laki-laki:</span>
+                    <span className="font-medium text-teal-600 dark:text-teal-400">
+                      {centroid.laki.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600 dark:text-slate-400">Perempuan:</span>
+                    <span className="font-medium text-pink-600 dark:text-pink-400">
+                      {centroid.perempuan.toLocaleString('id-ID')}
+                    </span>
+                  </div>
+                </div>
+                <Link
+                  to={`/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}`}
+                  className="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors"
+                >
+                  Lihat Anggota <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   )
