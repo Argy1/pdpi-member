@@ -50,7 +50,7 @@ export class AnggotaAPI {
       const isAdmin = scope === 'admin'
 
       // Define field selection based on scope - only include existing columns
-      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi, email'
+      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi, email, foto'
       const publicFields = `${baseFields}, kota_kabupaten_kantor, provinsi_kantor`
       const adminFields = `${baseFields}, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor`
 
