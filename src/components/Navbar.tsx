@@ -48,6 +48,12 @@ export function Navbar() {
             >
               Tabel Anggota
             </Link>
+            <Link 
+              to="/sebaran" 
+              className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth"
+            >
+              Sebaran Anggota
+            </Link>
           </div>
 
           {/* Right Section */}

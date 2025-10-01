@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import Homepage from "./pages/Homepage";
 import AnggotaPage from "./pages/AnggotaPage";
+import SebaranPage from "./pages/SebaranPage";
 import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMembers from "./pages/admin/AdminMembers";
@@ -46,6 +47,15 @@ const App = () => (
                   <Navbar />
                   <main className="flex-1">
                     <AnggotaPage />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/sebaran" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <SebaranPage />
                   </main>
                   <Footer />
                 </div>
