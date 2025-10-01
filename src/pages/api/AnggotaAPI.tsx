@@ -59,15 +59,10 @@ export class AnggotaAPI {
         .from('members')
         .select(isAdmin ? adminFields : publicFields)
 
-      // Build filter conditions array to combine with AND
-      const andConditions = []
-
       // Apply search filter (only search by name)
       if (q && q.trim()) {
         const searchTerm = q.trim()
-        
-        // Search only in nama field
-        andConditions.push(`nama.ilike.%${searchTerm}%`)
+        query = query.ilike('nama', `%${searchTerm}%`)
       }
 
       // Apply province filter (OR within provinces)
@@ -77,13 +72,13 @@ export class AnggotaAPI {
           const provinceConditions = provinces.map(province => 
             `provinsi_kantor.ilike.%${province}%`
           ).join(',')
-          andConditions.push(`(${provinceConditions})`)
+          query = query.or(provinceConditions)
         }
       }
 
       // Apply PD filter
       if (pd) {
-        andConditions.push(`cabang.ilike.%${pd}%`)
+        query = query.ilike('cabang', `%${pd}%`)
       }
 
       // Apply city filter (OR within cities)
@@ -93,13 +88,13 @@ export class AnggotaAPI {
           const cityConditions = cities.map(city => 
             `kota_kabupaten_kantor.ilike.%${city}%`
           ).join(',')
-          andConditions.push(`(${cityConditions})`)
+          query = query.or(cityConditions)
         }
       }
 
       // Apply status filter
       if (status) {
-        andConditions.push(`status.eq.${status}`)
+        query = query.eq('status', status)
       }
 
       // Apply alphabetical filter (OR within letters)
@@ -109,7 +104,7 @@ export class AnggotaAPI {
           const letterConditions = letters.map(letter => 
             `nama.ilike.${letter}%`
           ).join(',')
-          andConditions.push(`(${letterConditions})`)
+          query = query.or(letterConditions)
         }
       }
 
@@ -130,14 +125,9 @@ export class AnggotaAPI {
             }
           })
           if (hospitalConditions.length > 0) {
-            andConditions.push(`(${hospitalConditions.join(',')})`)
+            query = query.or(hospitalConditions.join(','))
           }
         }
-      }
-
-      // Apply all conditions with AND logic
-      if (andConditions.length > 0) {
-        query = query.or(andConditions.join(',and.'))
       }
 
       // Apply sorting
@@ -156,15 +146,10 @@ export class AnggotaAPI {
         .from('members')
         .select('*', { count: 'exact', head: true })
 
-      // Build same filter conditions for count query
-      const countAndConditions = []
-
       // Apply same search filter for count (only search by name)
       if (q && q.trim()) {
         const searchTerm = q.trim()
-        
-        // Search only in nama field
-        countAndConditions.push(`nama.ilike.%${searchTerm}%`)
+        countQuery = countQuery.ilike('nama', `%${searchTerm}%`)
       }
 
       if (provinsi_kantor) {
@@ -173,12 +158,12 @@ export class AnggotaAPI {
           const provinceConditions = provinces.map(province => 
             `provinsi_kantor.ilike.%${province}%`
           ).join(',')
-          countAndConditions.push(`(${provinceConditions})`)
+          countQuery = countQuery.or(provinceConditions)
         }
       }
 
       if (pd) {
-        countAndConditions.push(`cabang.ilike.%${pd}%`)
+        countQuery = countQuery.ilike('cabang', `%${pd}%`)
       }
 
       if (kota_kabupaten_kantor) {
@@ -187,12 +172,12 @@ export class AnggotaAPI {
           const cityConditions = cities.map(city => 
             `kota_kabupaten_kantor.ilike.%${city}%`
           ).join(',')
-          countAndConditions.push(`(${cityConditions})`)
+          countQuery = countQuery.or(cityConditions)
         }
       }
 
       if (status) {
-        countAndConditions.push(`status.eq.${status}`)
+        countQuery = countQuery.eq('status', status)
       }
 
       // Apply alphabetical filter for count query too
@@ -202,7 +187,7 @@ export class AnggotaAPI {
           const letterConditions = letters.map(letter => 
             `nama.ilike.${letter}%`
           ).join(',')
-          countAndConditions.push(`(${letterConditions})`)
+          countQuery = countQuery.or(letterConditions)
         }
       }
 
@@ -223,14 +208,9 @@ export class AnggotaAPI {
             }
           })
           if (hospitalConditions.length > 0) {
-            countAndConditions.push(`(${hospitalConditions.join(',')})`)
+            countQuery = countQuery.or(hospitalConditions.join(','))
           }
         }
-      }
-
-      // Apply all conditions with AND logic
-      if (countAndConditions.length > 0) {
-        countQuery = countQuery.or(countAndConditions.join(',and.'))
       }
 
       // Get total count
