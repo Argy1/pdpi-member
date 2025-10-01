@@ -59,7 +59,10 @@ export class AnggotaAPI {
         .from('members')
         .select(isAdmin ? adminFields : publicFields)
 
-      // Apply simple but effective search filter
+      // Build filter conditions array to combine with AND
+      const andConditions = []
+
+      // Apply search filter (OR within search fields)
       if (q && q.trim()) {
         const searchTerm = q.trim()
         
@@ -84,50 +87,53 @@ export class AnggotaAPI {
           )
         }
 
-        query = query.or(searchConditions.join(','))
+        andConditions.push(`(${searchConditions.join(',')})`)
       }
 
-      // Apply filters
+      // Apply province filter (OR within provinces)
       if (provinsi_kantor) {
         const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
         if (provinces.length > 0) {
           const provinceConditions = provinces.map(province => 
             `provinsi_kantor.ilike.%${province}%`
           ).join(',')
-          query = query.or(provinceConditions)
+          andConditions.push(`(${provinceConditions})`)
         }
       }
 
+      // Apply PD filter
       if (pd) {
-        query = query.ilike('cabang', `%${pd}%`)
+        andConditions.push(`cabang.ilike.%${pd}%`)
       }
 
+      // Apply city filter (OR within cities)
       if (kota_kabupaten_kantor) {
         const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
         if (cities.length > 0) {
           const cityConditions = cities.map(city => 
             `kota_kabupaten_kantor.ilike.%${city}%`
           ).join(',')
-          query = query.or(cityConditions)
+          andConditions.push(`(${cityConditions})`)
         }
       }
 
+      // Apply status filter
       if (status) {
-        query = query.eq('status', status)
+        andConditions.push(`status.eq.${status}`)
       }
 
-      // Apply alphabetical filter for first letter of name
+      // Apply alphabetical filter (OR within letters)
       if (namaHurufDepan) {
         const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
         if (letters.length > 0) {
           const letterConditions = letters.map(letter => 
             `nama.ilike.${letter}%`
           ).join(',')
-          query = query.or(letterConditions)
+          andConditions.push(`(${letterConditions})`)
         }
       }
 
-      // Apply hospital type filter
+      // Apply hospital type filter (OR within types)
       if (hospitalType) {
         const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
         if (types.length > 0) {
@@ -144,9 +150,14 @@ export class AnggotaAPI {
             }
           })
           if (hospitalConditions.length > 0) {
-            query = query.or(hospitalConditions.join(','))
+            andConditions.push(`(${hospitalConditions.join(',')})`)
           }
         }
+      }
+
+      // Apply all conditions with AND logic
+      if (andConditions.length > 0) {
+        query = query.or(andConditions.join(',and.'))
       }
 
       // Apply sorting
@@ -164,6 +175,9 @@ export class AnggotaAPI {
       let countQuery = supabase
         .from('members')
         .select('*', { count: 'exact', head: true })
+
+      // Build same filter conditions for count query
+      const countAndConditions = []
 
       // Apply same search filter for count
       if (q && q.trim()) {
@@ -188,7 +202,7 @@ export class AnggotaAPI {
           )
         }
 
-        countQuery = countQuery.or(searchConditions.join(','))
+        countAndConditions.push(`(${searchConditions.join(',')})`)
       }
 
       if (provinsi_kantor) {
@@ -197,12 +211,12 @@ export class AnggotaAPI {
           const provinceConditions = provinces.map(province => 
             `provinsi_kantor.ilike.%${province}%`
           ).join(',')
-          countQuery = countQuery.or(provinceConditions)
+          countAndConditions.push(`(${provinceConditions})`)
         }
       }
 
       if (pd) {
-        countQuery = countQuery.ilike('cabang', `%${pd}%`)
+        countAndConditions.push(`cabang.ilike.%${pd}%`)
       }
 
       if (kota_kabupaten_kantor) {
@@ -211,12 +225,12 @@ export class AnggotaAPI {
           const cityConditions = cities.map(city => 
             `kota_kabupaten_kantor.ilike.%${city}%`
           ).join(',')
-          countQuery = countQuery.or(cityConditions)
+          countAndConditions.push(`(${cityConditions})`)
         }
       }
 
       if (status) {
-        countQuery = countQuery.eq('status', status)
+        countAndConditions.push(`status.eq.${status}`)
       }
 
       // Apply alphabetical filter for count query too
@@ -226,7 +240,7 @@ export class AnggotaAPI {
           const letterConditions = letters.map(letter => 
             `nama.ilike.${letter}%`
           ).join(',')
-          countQuery = countQuery.or(letterConditions)
+          countAndConditions.push(`(${letterConditions})`)
         }
       }
 
@@ -247,9 +261,14 @@ export class AnggotaAPI {
             }
           })
           if (hospitalConditions.length > 0) {
-            countQuery = countQuery.or(hospitalConditions.join(','))
+            countAndConditions.push(`(${hospitalConditions.join(',')})`)
           }
         }
+      }
+
+      // Apply all conditions with AND logic
+      if (countAndConditions.length > 0) {
+        countQuery = countQuery.or(countAndConditions.join(',and.'))
       }
 
       // Get total count
