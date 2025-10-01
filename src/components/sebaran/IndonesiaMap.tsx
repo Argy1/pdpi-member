@@ -78,6 +78,7 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
 
   const center: LatLngExpression = [-2.5, 118]
   const zoom = 5
+  const hasData = data && data.length > 0
 
   const createCustomIcon = (centroid: CentroidData) => {
     const size = Math.min(Math.max(6 + 2 * Math.sqrt(centroid.total), 12), 40)
@@ -119,22 +120,20 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        {geoData && (
-          <GeoJSON
-            data={geoData}
-            style={{
-              fillColor: '#e0f2f1',
-              fillOpacity: 0.15,
-              color: '#0d9488',
-              weight: 1.5,
-              opacity: 0.5
-            }}
-          />
-        )}
+        <GeoJSON
+          data={geoData}
+          style={{
+            fillColor: '#e0f2f1',
+            fillOpacity: 0.15,
+            color: '#0d9488',
+            weight: 1.5,
+            opacity: 0.5
+          }}
+        />
 
-        {data && data.length > 0 && <MapBounds data={data} />}
+        {hasData ? <MapBounds data={data} /> : null}
         
-        {data && data.length > 0 && data.map((centroid, idx) => (
+        {hasData ? data.map((centroid, idx) => (
           <Marker
             key={idx}
             position={[centroid.lat, centroid.lng]}
@@ -174,7 +173,7 @@ export function IndonesiaMap({ filters }: IndonesiaMapProps) {
               </div>
             </Popup>
           </Marker>
-        ))}
+        )) : null}
       </MapContainer>
     </div>
   )
