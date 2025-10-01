@@ -28,8 +28,8 @@ const fetcher = async (_key: string, filters: any) => {
   return await StatsAPI.getCentroids(filters)
 }
 
-function createLabelIcon(total: number) {
-  const size = Math.min(Math.max(8 + Math.sqrt(total) * 1.5, 12), 32)
+function createLabelIcon(provinsi: string, total: number) {
+  const size = Math.min(Math.max(10 + Math.sqrt(total) * 1.8, 14), 36)
   
   return L.divIcon({
     className: 'pdpi-map-marker',
@@ -44,21 +44,33 @@ function createLabelIcon(total: number) {
           box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         "></div>
         <div style="
-          margin-top: 4px;
-          padding: 2px 8px;
-          background: rgba(255, 255, 255, 0.95);
+          margin-top: 6px;
+          padding: 4px 10px;
+          background: rgba(255, 255, 255, 0.98);
           border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          font-size: 11px;
-          font-weight: 600;
-          color: #1e293b;
-          white-space: nowrap;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        ">${total.toLocaleString('id-ID')}</div>
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+          text-align: center;
+          min-width: 80px;
+        ">
+          <div style="
+            font-size: 11px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+            margin-bottom: 2px;
+          ">${provinsi}</div>
+          <div style="
+            font-size: 13px;
+            font-weight: 800;
+            color: #0d9488;
+            line-height: 1.2;
+          ">${total.toLocaleString('id-ID')}</div>
+        </div>
       </div>
     `,
-    iconSize: [size, size + 24],
-    iconAnchor: [size / 2, (size / 2) + 12],
+    iconSize: [size, size + 60],
+    iconAnchor: [size / 2, size / 2],
   })
 }
 
@@ -114,44 +126,47 @@ export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps)
     // Add new markers
     data.forEach((centroid) => {
       const marker = L.marker([centroid.lat, centroid.lng], {
-        icon: createLabelIcon(centroid.total)
+        icon: createLabelIcon(centroid.provinsi, centroid.total)
       })
 
       const popupContent = `
-        <div class="p-2 min-w-[180px]">
-          <h3 class="font-semibold text-base text-slate-900 mb-2 border-b border-slate-200 pb-2">
+        <div class="p-3 min-w-[200px]">
+          <h3 class="font-bold text-lg text-slate-900 mb-3 border-b-2 border-teal-500 pb-2">
             ${centroid.provinsi}
           </h3>
-          <div class="space-y-1 text-sm">
-            <div class="flex justify-between items-center">
-              <span class="text-slate-600">Total:</span>
-              <span class="font-semibold text-slate-900">
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between items-center py-1">
+              <span class="text-slate-600 font-medium">Total Anggota:</span>
+              <span class="font-bold text-lg text-teal-600">
                 ${centroid.total.toLocaleString('id-ID')}
               </span>
             </div>
-            <div class="flex justify-between items-center">
-              <span class="text-slate-600">Laki-laki:</span>
-              <span class="font-medium text-teal-600">
+            <div class="flex justify-between items-center py-1 border-t border-slate-100">
+              <span class="text-slate-600">👨 Laki-laki:</span>
+              <span class="font-semibold text-blue-600">
                 ${centroid.laki.toLocaleString('id-ID')}
               </span>
             </div>
-            <div class="flex justify-between items-center">
-              <span class="text-slate-600">Perempuan:</span>
-              <span class="font-medium text-pink-600">
+            <div class="flex justify-between items-center py-1">
+              <span class="text-slate-600">👩 Perempuan:</span>
+              <span class="font-semibold text-pink-600">
                 ${centroid.perempuan.toLocaleString('id-ID')}
               </span>
             </div>
           </div>
           <a
             href="/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}"
-            class="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors no-underline"
+            class="mt-4 flex items-center justify-center gap-2 text-sm font-semibold bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-4 py-2 transition-colors no-underline shadow-sm"
           >
-            Lihat Anggota
+            <span>📋</span> Lihat Daftar Anggota
           </a>
         </div>
       `
 
-      marker.bindPopup(popupContent)
+      marker.bindPopup(popupContent, {
+        maxWidth: 250,
+        className: 'custom-popup'
+      })
       marker.addTo(mapInstanceRef.current!)
       markersRef.current.push(marker)
     })

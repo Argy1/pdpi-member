@@ -148,10 +148,10 @@ export class StatsAPI {
       const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
       const centroids = await centroidsRes.json()
 
-      // Fetch member data
+      // Fetch member data with all needed fields
       let query = supabase
         .from('members')
-        .select('provinsi, jenis_kelamin')
+        .select('provinsi, provinsi_kantor, kota_kabupaten, kota_kabupaten_kantor, jenis_kelamin')
 
       query = this.applyFilters(query, params)
 
@@ -159,20 +159,37 @@ export class StatsAPI {
 
       if (error) throw new Error(error.message)
 
-      // Group by province
+      // Dynamically import normalization utilities
+      const { normalizeProvinsi, inferProvFromKota } = await import('@/utils/provinceNormalizer')
+
+      // Group by province with normalization and inference
       const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
-      data?.forEach(member => {
-        const prov = member.provinsi
-        if (!prov) return
+      for (const member of data || []) {
+        // Try multiple sources for province
+        let provFinal = normalizeProvinsi(member.provinsi)
         
-        const current = provinceMap.get(prov) || { total: 0, laki: 0, perempuan: 0 }
+        if (!provFinal) {
+          provFinal = normalizeProvinsi(member.provinsi_kantor)
+        }
+        
+        if (!provFinal) {
+          provFinal = await inferProvFromKota(member.kota_kabupaten)
+        }
+        
+        if (!provFinal) {
+          provFinal = await inferProvFromKota(member.kota_kabupaten_kantor)
+        }
+        
+        if (!provFinal) continue
+        
+        const current = provinceMap.get(provFinal) || { total: 0, laki: 0, perempuan: 0 }
         current.total++
         if (member.jenis_kelamin === 'L') current.laki++
         if (member.jenis_kelamin === 'P') current.perempuan++
         
-        provinceMap.set(prov, current)
-      })
+        provinceMap.set(provFinal, current)
+      }
 
       // Merge with centroids
       const result = centroids
