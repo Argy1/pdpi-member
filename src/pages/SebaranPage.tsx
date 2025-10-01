@@ -124,6 +124,7 @@ export default function SebaranPage() {
               <IndonesiaStatsMap
                 data={provinceStats}
                 loading={loading}
+                filters={filters}
               />
             </div>
 

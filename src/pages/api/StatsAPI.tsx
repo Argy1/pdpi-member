@@ -99,37 +99,100 @@ export class StatsAPI {
   }
 
   static async getProvinceStats(params: StatsParams = {}): Promise<ProvinceStats[]> {
+    let query = supabase
+      .from('members')
+      .select('provinsi, jenis_kelamin')
+
+    query = this.applyFilters(query, params)
+
+    const { data, error } = await query
+
+    if (error) throw new Error(error.message)
+
+    // Group by province
+    const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
+    
+    data?.forEach(member => {
+      const prov = member.provinsi || 'Tidak Diketahui'
+      const current = provinceMap.get(prov) || { count: 0, laki: 0, perempuan: 0 }
+      
+      current.count++
+      if (member.jenis_kelamin === 'L') current.laki++
+      if (member.jenis_kelamin === 'P') current.perempuan++
+      
+      provinceMap.set(prov, current)
+    })
+
+    const provinceStats: ProvinceStats[] = Array.from(provinceMap.entries())
+      .map(([provinsi, stats]) => ({
+        provinsi,
+        count: stats.count,
+        laki: stats.laki,
+        perempuan: stats.perempuan
+      }))
+      .sort((a, b) => b.count - a.count)
+
+    return provinceStats
+  }
+
+  static async getCentroids(params: StatsParams = {}): Promise<Array<{
+    provinsi: string
+    lat: number
+    lng: number
+    total: number
+    laki: number
+    perempuan: number
+  }>> {
     try {
-      let query = supabase.from('members').select('provinsi_kantor, jenis_kelamin')
+      // Fetch centroids data
+      const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
+      const centroids = await centroidsRes.json()
+
+      // Fetch member data
+      let query = supabase
+        .from('members')
+        .select('provinsi, jenis_kelamin')
 
       query = this.applyFilters(query, params)
 
-      const { data: members, error } = await query
+      const { data, error } = await query
 
-      if (error) throw error
+      if (error) throw new Error(error.message)
 
-      // Group by provinsi with gender breakdown
-      const provinsiMap = new Map<string, { count: number; laki: number; perempuan: number }>()
+      // Group by province
+      const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
-      members?.forEach(m => {
-        const prov = m.provinsi_kantor || 'Tidak Diketahui'
-        const current = provinsiMap.get(prov) || { count: 0, laki: 0, perempuan: 0 }
-        current.count++
-        if (m.jenis_kelamin === 'L') current.laki++
-        if (m.jenis_kelamin === 'P') current.perempuan++
-        provinsiMap.set(prov, current)
+      data?.forEach(member => {
+        const prov = member.provinsi
+        if (!prov) return
+        
+        const current = provinceMap.get(prov) || { total: 0, laki: 0, perempuan: 0 }
+        current.total++
+        if (member.jenis_kelamin === 'L') current.laki++
+        if (member.jenis_kelamin === 'P') current.perempuan++
+        
+        provinceMap.set(prov, current)
       })
 
-      return Array.from(provinsiMap.entries())
-        .map(([provinsi, stats]) => ({
-          provinsi,
-          count: stats.count,
-          laki: stats.laki,
-          perempuan: stats.perempuan
-        }))
-        .sort((a, b) => b.count - a.count)
-    } catch (error) {
-      console.error('Error fetching province stats:', error)
+      // Merge with centroids
+      const result = centroids
+        .map((centroid: any) => {
+          const stats = provinceMap.get(centroid.provinsi) || { total: 0, laki: 0, perempuan: 0 }
+          return {
+            provinsi: centroid.provinsi,
+            lat: centroid.lat,
+            lng: centroid.lng,
+            total: stats.total,
+            laki: stats.laki,
+            perempuan: stats.perempuan
+          }
+        })
+        .filter((item: any) => item.total > 0)
+        .sort((a: any, b: any) => b.total - a.total)
+
+      return result
+    } catch (err) {
+      console.error('Error fetching centroids:', err)
       return []
     }
   }

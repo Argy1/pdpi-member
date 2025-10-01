@@ -68,6 +68,25 @@
   }
 }
 
+/* Leaflet custom styles */
+.leaflet-popup-content-wrapper {
+  @apply rounded-xl shadow-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800;
+}
+
+.leaflet-popup-tip {
+  @apply bg-white dark:bg-slate-800;
+}
+
+.custom-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-container {
+  @apply bg-slate-50 dark:bg-slate-900;
+}
+
+
 @layer components {
   .container-pdpi {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
