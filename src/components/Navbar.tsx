@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserCircle, LogOut, Settings } from "lucide-react"
+import { UserCircle, LogOut, Settings, Menu } from "lucide-react"
 import logoImage from "@/assets/logo-pdpi.png"
 import { useAuth } from "@/contexts/AuthContext"
 import {
@@ -12,9 +12,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { useState } from "react"
 
 export function Navbar() {
   const { user, profile, signOut, isAdmin } = useAuth()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container-pdpi">
@@ -34,7 +44,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Navigation Links */}
+          {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-6">
             <Link 
               to="/" 
@@ -58,6 +68,75 @@ export function Navbar() {
 
           {/* Right Section */}
           <div className="flex items-center space-x-2">
+            {/* Mobile Menu Button */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] sm:w-[320px]">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col space-y-4 mt-6">
+                  <Link 
+                    to="/" 
+                    className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Beranda
+                  </Link>
+                  <Link 
+                    to="/anggota" 
+                    className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Tabel Anggota
+                  </Link>
+                  <Link 
+                    to="/sebaran" 
+                    className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sebaran Anggota
+                  </Link>
+                  
+                  {user && isAdmin && (
+                    <>
+                      <div className="border-t pt-4 mt-4">
+                        <Link 
+                          to="/admin" 
+                          className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2 flex items-center"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Settings className="mr-2 h-4 w-4" />
+                          Dashboard Admin
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                  
+                  {user && (
+                    <div className="border-t pt-4 mt-4">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start"
+                        onClick={() => {
+                          signOut()
+                          setMobileMenuOpen(false)
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <ThemeToggle />
             
             {user ? (
