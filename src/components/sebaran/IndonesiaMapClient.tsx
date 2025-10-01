@@ -1,19 +1,8 @@
-import { useEffect, useState, useMemo } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { useEffect, useMemo, useRef } from 'react'
 import L from 'leaflet'
 import useSWR from 'swr'
-import { Link } from 'react-router-dom'
-import { ExternalLink } from 'lucide-react'
 import { StatsAPI } from '@/pages/api/StatsAPI'
 import 'leaflet/dist/leaflet.css'
-
-// Fix default icon issue in Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-})
 
 interface CentroidData {
   provinsi: string
@@ -45,7 +34,7 @@ function createLabelIcon(total: number) {
   return L.divIcon({
     className: 'pdpi-map-marker',
     html: `
-      <div style="display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -50%);">
+      <div style="display: flex; flex-direction: column; align-items: center;">
         <div style="
           width: ${size}px;
           height: ${size}px;
@@ -69,17 +58,15 @@ function createLabelIcon(total: number) {
       </div>
     `,
     iconSize: [size, size + 24],
-    iconAnchor: [size / 2, size / 2],
+    iconAnchor: [size / 2, (size / 2) + 12],
   })
 }
 
 export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps) {
-  const [isMounted, setIsMounted] = useState(false)
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<L.Map | null>(null)
+  const markersRef = useRef<L.Marker[]>([])
   
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
   const swrKey = useMemo(() => 
     JSON.stringify(['centroids', filters]), 
   [filters])
@@ -93,71 +80,93 @@ export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps)
     }
   )
 
-  const center = useMemo<[number, number]>(() => [-2.5, 118], [])
+  // Initialize map
+  useEffect(() => {
+    if (!mapRef.current || mapInstanceRef.current) return
 
-  if (!isMounted || isLoading || !data) {
+    const map = L.map(mapRef.current, {
+      center: [-2.5, 118],
+      zoom: 5,
+      scrollWheelZoom: true,
+      zoomControl: true,
+    })
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map)
+
+    mapInstanceRef.current = map
+
+    return () => {
+      map.remove()
+      mapInstanceRef.current = null
+    }
+  }, [])
+
+  // Update markers when data changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !data) return
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove())
+    markersRef.current = []
+
+    // Add new markers
+    data.forEach((centroid) => {
+      const marker = L.marker([centroid.lat, centroid.lng], {
+        icon: createLabelIcon(centroid.total)
+      })
+
+      const popupContent = `
+        <div class="p-2 min-w-[180px]">
+          <h3 class="font-semibold text-base text-slate-900 mb-2 border-b border-slate-200 pb-2">
+            ${centroid.provinsi}
+          </h3>
+          <div class="space-y-1 text-sm">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600">Total:</span>
+              <span class="font-semibold text-slate-900">
+                ${centroid.total.toLocaleString('id-ID')}
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600">Laki-laki:</span>
+              <span class="font-medium text-teal-600">
+                ${centroid.laki.toLocaleString('id-ID')}
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600">Perempuan:</span>
+              <span class="font-medium text-pink-600">
+                ${centroid.perempuan.toLocaleString('id-ID')}
+              </span>
+            </div>
+          </div>
+          <a
+            href="/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}"
+            class="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors no-underline"
+          >
+            Lihat Anggota
+          </a>
+        </div>
+      `
+
+      marker.bindPopup(popupContent)
+      marker.addTo(mapInstanceRef.current!)
+      markersRef.current.push(marker)
+    })
+  }, [data])
+
+  if (isLoading || !data) {
     return (
       <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 animate-pulse" />
     )
   }
 
   return (
-    <div className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-800 shadow-xl">
-      <MapContainer
-        center={center}
-        zoom={5}
-        scrollWheelZoom={true}
-        zoomControl={true}
-        style={{ height: '100%', width: '100%' }}
-        className="z-0"
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-
-        {data.map((centroid) => (
-          <Marker
-            key={centroid.provinsi}
-            position={[centroid.lat, centroid.lng]}
-            icon={createLabelIcon(centroid.total)}
-          >
-            <Popup className="custom-popup">
-              <div className="p-2 min-w-[180px]">
-                <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100 mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
-                  {centroid.provinsi}
-                </h3>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Total:</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">
-                      {centroid.total.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Laki-laki:</span>
-                    <span className="font-medium text-teal-600 dark:text-teal-400">
-                      {centroid.laki.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600 dark:text-slate-400">Perempuan:</span>
-                    <span className="font-medium text-pink-600 dark:text-pink-400">
-                      {centroid.perempuan.toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                </div>
-                <Link
-                  to={`/anggota?provinsi=${encodeURIComponent(centroid.provinsi)}`}
-                  className="mt-3 flex items-center justify-center gap-2 text-xs bg-teal-500 hover:bg-teal-600 text-white rounded-lg px-3 py-1.5 transition-colors"
-                >
-                  Lihat Anggota <ExternalLink className="h-3 w-3" />
-                </Link>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
-    </div>
+    <div 
+      ref={mapRef}
+      className="h-[56vh] md:h-[62vh] lg:h-[68vh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-800 shadow-xl"
+    />
   )
 }
