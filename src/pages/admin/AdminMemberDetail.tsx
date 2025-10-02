@@ -309,6 +309,37 @@ export default function AdminMemberDetail() {
             </CardContent>
           </Card>
 
+          {/* Practice Locations */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Tempat Praktek
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 1</label>
+                <p className="mt-1">{member.rs_tipe_a || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</label>
+                <p className="mt-1">{member.rs_tipe_b || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</label>
+                <p className="mt-1">{member.rs_tipe_c || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Klinik Pribadi</label>
+                <p className="mt-1">{member.klinik_pribadi || '-'}</p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Legal Documents */}
           <Card>
             <CardHeader>
