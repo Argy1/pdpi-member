@@ -50,7 +50,7 @@ export class AnggotaAPI {
       const isAdmin = scope === 'admin'
 
       // Define field selection based on scope - only include existing columns
-      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi, email, foto'
+      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_3, tempat_praktek_3_tipe, email, foto'
       const publicFields = `${baseFields}, kota_kabupaten_kantor, provinsi_kantor`
       const adminFields = `${baseFields}, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor`
 
@@ -119,15 +119,10 @@ export class AnggotaAPI {
         if (types.length > 0) {
           const hospitalConditions = []
           types.forEach(type => {
-            if (type === 'Rumah Sakit Tipe A') {
-              hospitalConditions.push('rs_tipe_a.neq.')
-            } else if (type === 'Rumah Sakit Tipe B') {
-              hospitalConditions.push('rs_tipe_b.neq.')
-            } else if (type === 'Rumah Sakit Tipe C') {
-              hospitalConditions.push('rs_tipe_c.neq.')
-            } else if (type === 'Klinik Pribadi') {
-              hospitalConditions.push('klinik_pribadi.neq.')
-            }
+            // Check across all practice locations for matching type
+            hospitalConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
           })
           if (hospitalConditions.length > 0) {
             query = query.or(hospitalConditions.join(','))
@@ -207,15 +202,10 @@ export class AnggotaAPI {
         if (types.length > 0) {
           const hospitalConditions = []
           types.forEach(type => {
-            if (type === 'Rumah Sakit Tipe A') {
-              hospitalConditions.push('rs_tipe_a.neq.')
-            } else if (type === 'Rumah Sakit Tipe B') {
-              hospitalConditions.push('rs_tipe_b.neq.')
-            } else if (type === 'Rumah Sakit Tipe C') {
-              hospitalConditions.push('rs_tipe_c.neq.')
-            } else if (type === 'Klinik Pribadi') {
-              hospitalConditions.push('klinik_pribadi.neq.')
-            }
+            // Check across all practice locations for matching type
+            hospitalConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
           })
           if (hospitalConditions.length > 0) {
             countQuery = countQuery.or(hospitalConditions.join(','))
@@ -337,27 +327,29 @@ export class AnggotaAPI {
     try {
       const { data, error } = await supabase
         .from('members')
-        .select('rs_tipe_a, rs_tipe_b, rs_tipe_c, klinik_pribadi')
+        .select('tempat_praktek_1_tipe, tempat_praktek_2_tipe, tempat_praktek_3_tipe')
 
       if (error) {
         console.error('Database error:', error)
         return { error: 'Database error' }
       }
 
-      const hospitalTypes: string[] = []
+      const hospitalTypesSet = new Set<string>()
       
-      // Check if any members have data for each hospital type
-      const hasRsTipeA = data?.some(member => member.rs_tipe_a && member.rs_tipe_a.trim() !== '')
-      const hasRsTipeB = data?.some(member => member.rs_tipe_b && member.rs_tipe_b.trim() !== '')
-      const hasRsTipeC = data?.some(member => member.rs_tipe_c && member.rs_tipe_c.trim() !== '')
-      const hasKlinikPribadi = data?.some(member => member.klinik_pribadi && member.klinik_pribadi.trim() !== '')
+      // Collect all unique hospital types from all three practice locations
+      data?.forEach(member => {
+        if (member.tempat_praktek_1_tipe && member.tempat_praktek_1_tipe.trim() !== '') {
+          hospitalTypesSet.add(member.tempat_praktek_1_tipe)
+        }
+        if (member.tempat_praktek_2_tipe && member.tempat_praktek_2_tipe.trim() !== '') {
+          hospitalTypesSet.add(member.tempat_praktek_2_tipe)
+        }
+        if (member.tempat_praktek_3_tipe && member.tempat_praktek_3_tipe.trim() !== '') {
+          hospitalTypesSet.add(member.tempat_praktek_3_tipe)
+        }
+      })
 
-      if (hasRsTipeA) hospitalTypes.push('Rumah Sakit Tipe A')
-      if (hasRsTipeB) hospitalTypes.push('Rumah Sakit Tipe B')
-      if (hasRsTipeC) hospitalTypes.push('Rumah Sakit Tipe C')
-      if (hasKlinikPribadi) hospitalTypes.push('Klinik Pribadi')
-
-      return { data: hospitalTypes }
+      return { data: Array.from(hospitalTypesSet).sort() }
 
     } catch (error) {
       console.error('API error:', error)

@@ -228,19 +228,30 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 1</p>
-                  <p className="text-medical-body">{member.rs_tipe_a || "-"}</p>
+                  <p className="text-medical-body">
+                    {member.tempat_praktek_1 || "-"}
+                    {member.tempat_praktek_1 && member.tempat_praktek_1_tipe && (
+                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_1_tipe})</span>
+                    )}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</p>
-                  <p className="text-medical-body">{member.rs_tipe_b || "-"}</p>
+                  <p className="text-medical-body">
+                    {member.tempat_praktek_2 || "-"}
+                    {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
+                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_2_tipe})</span>
+                    )}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</p>
-                  <p className="text-medical-body">{member.rs_tipe_c || "-"}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Klinik Pribadi</p>
-                  <p className="text-medical-body">{member.klinik_pribadi || "-"}</p>
+                  <p className="text-medical-body">
+                    {member.tempat_praktek_3 || "-"}
+                    {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
+                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_3_tipe})</span>
+                    )}
+                  </p>
                 </div>
               </div>
             </div>

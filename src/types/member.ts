@@ -21,10 +21,12 @@ export interface Member {
   email?: string
   foto?: string
   keterangan?: string
-  rs_tipe_a?: string
-  rs_tipe_b?: string
-  rs_tipe_c?: string
-  klinik_pribadi?: string
+  tempat_praktek_1?: string
+  tempat_praktek_1_tipe?: string
+  tempat_praktek_2?: string
+  tempat_praktek_2_tipe?: string
+  tempat_praktek_3?: string
+  tempat_praktek_3_tipe?: string
   created_at: string
   updated_at: string
   

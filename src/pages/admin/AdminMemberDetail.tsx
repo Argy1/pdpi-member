@@ -320,22 +320,32 @@ export default function AdminMemberDetail() {
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 1</label>
-                <p className="mt-1">{member.rs_tipe_a || '-'}</p>
+                <p className="mt-1">
+                  {member.tempat_praktek_1 || '-'}
+                  {member.tempat_praktek_1 && member.tempat_praktek_1_tipe && (
+                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_1_tipe})</span>
+                  )}
+                </p>
               </div>
               
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</label>
-                <p className="mt-1">{member.rs_tipe_b || '-'}</p>
+                <p className="mt-1">
+                  {member.tempat_praktek_2 || '-'}
+                  {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
+                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_2_tipe})</span>
+                  )}
+                </p>
               </div>
               
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</label>
-                <p className="mt-1">{member.rs_tipe_c || '-'}</p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Klinik Pribadi</label>
-                <p className="mt-1">{member.klinik_pribadi || '-'}</p>
+                <p className="mt-1">
+                  {member.tempat_praktek_3 || '-'}
+                  {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
+                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_3_tipe})</span>
+                  )}
+                </p>
               </div>
             </CardContent>
           </Card>

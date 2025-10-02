@@ -76,45 +76,44 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               {/* Hospital Practice Info */}
-              {(member.rs_tipe_a || member.rs_tipe_b || member.rs_tipe_c || member.klinik_pribadi) && (
+              {(member.tempat_praktek_1 || member.tempat_praktek_2 || member.tempat_praktek_3) && (
                 <>
-                  {member.rs_tipe_a && (
+                  {member.tempat_praktek_1 && (
                     <div className="flex">
                       <span className="font-medium w-32">Tempat Praktek 1</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.rs_tipe_a}
+                        {member.tempat_praktek_1}
+                        {member.tempat_praktek_1_tipe && (
+                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_1_tipe})</span>
+                        )}
                       </span>
                     </div>
                   )}
-                  {member.rs_tipe_b && (
+                  {member.tempat_praktek_2 && (
                     <div className="flex">
                       <span className="font-medium w-32">Tempat Praktek 2</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.rs_tipe_b}
+                        {member.tempat_praktek_2}
+                        {member.tempat_praktek_2_tipe && (
+                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_2_tipe})</span>
+                        )}
                       </span>
                     </div>
                   )}
-                  {member.rs_tipe_c && (
+                  {member.tempat_praktek_3 && (
                     <div className="flex">
                       <span className="font-medium w-32">Tempat Praktek 3</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.rs_tipe_c}
-                      </span>
-                    </div>
-                  )}
-                  {member.klinik_pribadi && (
-                    <div className="flex">
-                      <span className="font-medium w-32">Klinik Pribadi</span>
-                      <span className="mr-2">:</span>
-                      <span className="flex items-center gap-1">
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.klinik_pribadi}
+                        {member.tempat_praktek_3}
+                        {member.tempat_praktek_3_tipe && (
+                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_3_tipe})</span>
+                        )}
                       </span>
                     </div>
                   )}

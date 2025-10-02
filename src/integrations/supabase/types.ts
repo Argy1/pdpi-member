@@ -42,7 +42,6 @@ export type Database = {
           id: string
           jenis_kelamin: string | null
           keterangan: string | null
-          klinik_pribadi: string | null
           kota_kabupaten: string | null
           kota_kabupaten_kantor: string | null
           kota_kabupaten_rumah: string | null
@@ -52,12 +51,15 @@ export type Database = {
           provinsi: string | null
           provinsi_kantor: string | null
           provinsi_rumah: string | null
-          rs_tipe_a: string | null
-          rs_tipe_b: string | null
-          rs_tipe_c: string | null
           search_text: string | null
           status: string | null
           tempat_lahir: string | null
+          tempat_praktek_1: string | null
+          tempat_praktek_1_tipe: string | null
+          tempat_praktek_2: string | null
+          tempat_praktek_2_tipe: string | null
+          tempat_praktek_3: string | null
+          tempat_praktek_3_tipe: string | null
           tempat_tugas: string | null
           tgl_lahir: string | null
           thn_lulus: number | null
@@ -75,7 +77,6 @@ export type Database = {
           id?: string
           jenis_kelamin?: string | null
           keterangan?: string | null
-          klinik_pribadi?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_kantor?: string | null
           kota_kabupaten_rumah?: string | null
@@ -85,12 +86,15 @@ export type Database = {
           provinsi?: string | null
           provinsi_kantor?: string | null
           provinsi_rumah?: string | null
-          rs_tipe_a?: string | null
-          rs_tipe_b?: string | null
-          rs_tipe_c?: string | null
           search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null
+          tempat_praktek_1?: string | null
+          tempat_praktek_1_tipe?: string | null
+          tempat_praktek_2?: string | null
+          tempat_praktek_2_tipe?: string | null
+          tempat_praktek_3?: string | null
+          tempat_praktek_3_tipe?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
           thn_lulus?: number | null
@@ -108,7 +112,6 @@ export type Database = {
           id?: string
           jenis_kelamin?: string | null
           keterangan?: string | null
-          klinik_pribadi?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_kantor?: string | null
           kota_kabupaten_rumah?: string | null
@@ -118,12 +121,15 @@ export type Database = {
           provinsi?: string | null
           provinsi_kantor?: string | null
           provinsi_rumah?: string | null
-          rs_tipe_a?: string | null
-          rs_tipe_b?: string | null
-          rs_tipe_c?: string | null
           search_text?: string | null
           status?: string | null
           tempat_lahir?: string | null
+          tempat_praktek_1?: string | null
+          tempat_praktek_1_tipe?: string | null
+          tempat_praktek_2?: string | null
+          tempat_praktek_2_tipe?: string | null
+          tempat_praktek_3?: string | null
+          tempat_praktek_3_tipe?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
           thn_lulus?: number | null

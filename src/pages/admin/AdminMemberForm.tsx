@@ -44,10 +44,12 @@ interface MemberFormData {
   // Profesi
   unitKerja: string;
   jabatan: string;
-  rsTipeA: string;
-  rsTipeB: string;
-  rsTipeC: string;
-  klinikPribadi: string;
+  tempatPraktek1: string;
+  tempatPraktek1Tipe: string;
+  tempatPraktek2: string;
+  tempatPraktek2Tipe: string;
+  tempatPraktek3: string;
+  tempatPraktek3Tipe: string;
   
   // Legal
   nik: string;
@@ -89,10 +91,12 @@ const initialFormData: MemberFormData = {
   pd: '',
   unitKerja: '',
   jabatan: '',
-  rsTipeA: '',
-  rsTipeB: '',
-  rsTipeC: '',
-  klinikPribadi: '',
+  tempatPraktek1: '',
+  tempatPraktek1Tipe: '',
+  tempatPraktek2: '',
+  tempatPraktek2Tipe: '',
+  tempatPraktek3: '',
+  tempatPraktek3Tipe: '',
   nik: '',
   noSTR: '',
   strBerlakuSampai: undefined,
@@ -173,10 +177,12 @@ export default function AdminMemberForm() {
             pd: existingMember.cabang || '',
             unitKerja: existingMember.tempat_tugas || '', // Map tempat_tugas to unitKerja
             jabatan: '', // Field doesn't exist in database, set to empty
-            rsTipeA: existingMember.rs_tipe_a || '',
-            rsTipeB: existingMember.rs_tipe_b || '',
-            rsTipeC: existingMember.rs_tipe_c || '',
-            klinikPribadi: existingMember.klinik_pribadi || '',
+            tempatPraktek1: existingMember.tempat_praktek_1 || '',
+            tempatPraktek1Tipe: existingMember.tempat_praktek_1_tipe || '',
+            tempatPraktek2: existingMember.tempat_praktek_2 || '',
+            tempatPraktek2Tipe: existingMember.tempat_praktek_2_tipe || '',
+            tempatPraktek3: existingMember.tempat_praktek_3 || '',
+            tempatPraktek3Tipe: existingMember.tempat_praktek_3_tipe || '',
             nik: '', // Field doesn't exist in database, set to empty
             noSTR: '', // Field doesn't exist in database, set to empty
             strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
@@ -309,10 +315,12 @@ export default function AdminMemberForm() {
         foto: formData.foto || null,
         status: formData.status || 'Biasa',
         cabang: formData.pd || null,
-        rs_tipe_a: formData.rsTipeA || null,
-        rs_tipe_b: formData.rsTipeB || null,
-        rs_tipe_c: formData.rsTipeC || null,
-        klinik_pribadi: formData.klinikPribadi || null,
+        tempat_praktek_1: formData.tempatPraktek1 || null,
+        tempat_praktek_1_tipe: formData.tempatPraktek1Tipe || null,
+        tempat_praktek_2: formData.tempatPraktek2 || null,
+        tempat_praktek_2_tipe: formData.tempatPraktek2Tipe || null,
+        tempat_praktek_3: formData.tempatPraktek3 || null,
+        tempat_praktek_3_tipe: formData.tempatPraktek3Tipe || null,
         keterangan: null // Can be added later if needed
       }
 
@@ -875,48 +883,94 @@ export default function AdminMemberForm() {
 
                   <div className="border-t pt-6">
                     <h4 className="text-lg font-semibold mb-4">Institusi Tempat Praktik</h4>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="space-y-4">
+                    <div className="space-y-6">
+                      {/* Tempat Praktek 1 */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeA">Tempat Praktek 1</Label>
+                          <Label htmlFor="tempatPraktek1">Tempat Praktek 1</Label>
                           <Input
-                            id="rsTipeA"
-                            value={formData.rsTipeA}
-                            onChange={(e) => handleInputChange('rsTipeA', e.target.value)}
-                            placeholder="Daftar Tempat Praktek 1 (pisahkan dengan koma)"
+                            id="tempatPraktek1"
+                            value={formData.tempatPraktek1}
+                            onChange={(e) => handleInputChange('tempatPraktek1', e.target.value)}
+                            placeholder="Nama RS / Klinik"
                           />
                         </div>
-
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeB">Tempat Praktek 2</Label>
-                          <Input
-                            id="rsTipeB"
-                            value={formData.rsTipeB}
-                            onChange={(e) => handleInputChange('rsTipeB', e.target.value)}
-                            placeholder="Daftar Tempat Praktek 2 (pisahkan dengan koma)"
-                          />
+                          <Label htmlFor="tempatPraktek1Tipe">Tipe Tempat Praktek 1</Label>
+                          <Select 
+                            value={formData.tempatPraktek1Tipe} 
+                            onValueChange={(value) => handleInputChange('tempatPraktek1Tipe', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih tipe" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background z-50">
+                              <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                              <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                              <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                              <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
-                      <div className="space-y-4">
+                      {/* Tempat Praktek 2 */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeC">Tempat Praktek 3</Label>
+                          <Label htmlFor="tempatPraktek2">Tempat Praktek 2</Label>
                           <Input
-                            id="rsTipeC"
-                            value={formData.rsTipeC}
-                            onChange={(e) => handleInputChange('rsTipeC', e.target.value)}
-                            placeholder="Daftar Tempat Praktek 3 (pisahkan dengan koma)"
+                            id="tempatPraktek2"
+                            value={formData.tempatPraktek2}
+                            onChange={(e) => handleInputChange('tempatPraktek2', e.target.value)}
+                            placeholder="Nama RS / Klinik"
                           />
                         </div>
-
                         <div className="space-y-2">
-                          <Label htmlFor="klinikPribadi">Klinik Pribadi</Label>
+                          <Label htmlFor="tempatPraktek2Tipe">Tipe Tempat Praktek 2</Label>
+                          <Select 
+                            value={formData.tempatPraktek2Tipe} 
+                            onValueChange={(value) => handleInputChange('tempatPraktek2Tipe', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih tipe" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background z-50">
+                              <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                              <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                              <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                              <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      {/* Tempat Praktek 3 */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="tempatPraktek3">Tempat Praktek 3</Label>
                           <Input
-                            id="klinikPribadi"
-                            value={formData.klinikPribadi}
-                            onChange={(e) => handleInputChange('klinikPribadi', e.target.value)}
-                            placeholder="Daftar Klinik Pribadi (pisahkan dengan koma)"
+                            id="tempatPraktek3"
+                            value={formData.tempatPraktek3}
+                            onChange={(e) => handleInputChange('tempatPraktek3', e.target.value)}
+                            placeholder="Nama RS / Klinik"
                           />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="tempatPraktek3Tipe">Tipe Tempat Praktek 3</Label>
+                          <Select 
+                            value={formData.tempatPraktek3Tipe} 
+                            onValueChange={(value) => handleInputChange('tempatPraktek3Tipe', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih tipe" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background z-50">
+                              <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                              <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                              <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                              <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </div>

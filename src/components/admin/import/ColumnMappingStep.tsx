@@ -39,10 +39,12 @@ const dbFields = {
   no_hp: { label: 'Nomor HP/Telepon', required: false, type: 'text' },
   foto: { label: 'Foto URL', required: false, type: 'text' },
   keterangan: { label: 'Keterangan', required: false, type: 'text' },
-  rs_tipe_a: { label: 'Tempat Praktek 1', required: false, type: 'text' },
-  rs_tipe_b: { label: 'Tempat Praktek 2', required: false, type: 'text' },
-  rs_tipe_c: { label: 'Tempat Praktek 3', required: false, type: 'text' },
-  klinik_pribadi: { label: 'Klinik Pribadi', required: false, type: 'text' }
+  tempat_praktek_1: { label: 'Tempat Praktek 1', required: false, type: 'text' },
+  tempat_praktek_1_tipe: { label: 'Tipe Tempat Praktek 1', required: false, type: 'text' },
+  tempat_praktek_2: { label: 'Tempat Praktek 2', required: false, type: 'text' },
+  tempat_praktek_2_tipe: { label: 'Tipe Tempat Praktek 2', required: false, type: 'text' },
+  tempat_praktek_3: { label: 'Tempat Praktek 3', required: false, type: 'text' },
+  tempat_praktek_3_tipe: { label: 'Tipe Tempat Praktek 3', required: false, type: 'text' }
 };
 
 export const ColumnMappingStep = () => {
@@ -88,10 +90,12 @@ export const ColumnMappingStep = () => {
       no_hp: ['nohp', 'telepon', 'telp', 'hp', 'phone', 'mobile', 'kontaktelepon'],
       foto: ['foto', 'photo', 'picture', 'image'],
       keterangan: ['keterangan', 'notes', 'catatan', 'remarks'],
-      rs_tipe_a: ['rstipea', 'rumahsakittipea', 'hospitala', 'tempatpraktek1', 'praktek1'],
-      rs_tipe_b: ['rstipeb', 'rumahsakittipeb', 'hospitalb', 'tempatpraktek2', 'praktek2'],
-      rs_tipe_c: ['rstipec', 'rumahsakittipec', 'hospitalc', 'tempatpraktek3', 'praktek3'],
-      klinik_pribadi: ['klinikpribadi', 'privateclinic', 'klinik']
+      tempat_praktek_1: ['tempatpraktek1', 'praktek1', 'rstipea', 'rumahsakittipea', 'hospitala'],
+      tempat_praktek_1_tipe: ['tipetempatpraktek1', 'tipepraktek1', 'tipe1'],
+      tempat_praktek_2: ['tempatpraktek2', 'praktek2', 'rstipeb', 'rumahsakittipeb', 'hospitalb'],
+      tempat_praktek_2_tipe: ['tipetempatpraktek2', 'tipepraktek2', 'tipe2'],
+      tempat_praktek_3: ['tempatpraktek3', 'praktek3', 'rstipec', 'rumahsakittipec', 'hospitalc'],
+      tempat_praktek_3_tipe: ['tipetempatpraktek3', 'tipepraktek3', 'tipe3']
     };
 
     fileData.headers.forEach((header, index) => {
