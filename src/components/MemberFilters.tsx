@@ -162,10 +162,10 @@ export function MemberFiltersComponent({
         <FilterPopover
           open={openHospitalType}
           setOpen={setOpenHospitalType}
-          title="Jenis Institusi"
+          title="Tipe RS"
           options={hospitalTypes}
           filterKey="hospitalType"
-          placeholder="Cari jenis institusi..."
+          placeholder="Cari tipe RS..."
         />
 
         {hasActiveFilters && (
