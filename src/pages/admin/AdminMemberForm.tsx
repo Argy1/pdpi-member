@@ -878,34 +878,34 @@ export default function AdminMemberForm() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeA">Rumah Sakit Tipe A</Label>
+                          <Label htmlFor="rsTipeA">Tempat Praktek 1</Label>
                           <Input
                             id="rsTipeA"
                             value={formData.rsTipeA}
                             onChange={(e) => handleInputChange('rsTipeA', e.target.value)}
-                            placeholder="Daftar RS Tipe A (pisahkan dengan koma)"
+                            placeholder="Daftar Tempat Praktek 1 (pisahkan dengan koma)"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeB">Rumah Sakit Tipe B</Label>
+                          <Label htmlFor="rsTipeB">Tempat Praktek 2</Label>
                           <Input
                             id="rsTipeB"
                             value={formData.rsTipeB}
                             onChange={(e) => handleInputChange('rsTipeB', e.target.value)}
-                            placeholder="Daftar RS Tipe B (pisahkan dengan koma)"
+                            placeholder="Daftar Tempat Praktek 2 (pisahkan dengan koma)"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="rsTipeC">Rumah Sakit Tipe C</Label>
+                          <Label htmlFor="rsTipeC">Tempat Praktek 3</Label>
                           <Input
                             id="rsTipeC"
                             value={formData.rsTipeC}
                             onChange={(e) => handleInputChange('rsTipeC', e.target.value)}
-                            placeholder="Daftar RS Tipe C (pisahkan dengan koma)"
+                            placeholder="Daftar Tempat Praktek 3 (pisahkan dengan koma)"
                           />
                         </div>
 

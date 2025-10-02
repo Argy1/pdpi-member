@@ -80,7 +80,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 <>
                   {member.rs_tipe_a && (
                     <div className="flex">
-                      <span className="font-medium w-32">RS Tipe A</span>
+                      <span className="font-medium w-32">Tempat Praktek 1</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />
@@ -90,7 +90,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                   )}
                   {member.rs_tipe_b && (
                     <div className="flex">
-                      <span className="font-medium w-32">RS Tipe B</span>
+                      <span className="font-medium w-32">Tempat Praktek 2</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />
@@ -100,7 +100,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                   )}
                   {member.rs_tipe_c && (
                     <div className="flex">
-                      <span className="font-medium w-32">RS Tipe C</span>
+                      <span className="font-medium w-32">Tempat Praktek 3</span>
                       <span className="mr-2">:</span>
                       <span className="flex items-center gap-1">
                         <Building className="h-3 w-3 text-muted-foreground" />

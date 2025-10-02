@@ -227,15 +227,15 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             <div className="space-y-3 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe A</p>
+                  <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 1</p>
                   <p className="text-medical-body">{member.rs_tipe_a || "-"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe B</p>
+                  <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</p>
                   <p className="text-medical-body">{member.rs_tipe_b || "-"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Rumah Sakit Tipe C</p>
+                  <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</p>
                   <p className="text-medical-body">{member.rs_tipe_c || "-"}</p>
                 </div>
                 <div className="space-y-1">
