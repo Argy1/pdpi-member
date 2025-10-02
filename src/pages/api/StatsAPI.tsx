@@ -224,6 +224,13 @@ export class StatsAPI {
   private static applyFilters(query: any, params: StatsParams) {
     const { q, provinsi, pd, kota, status, gender } = params
 
+    // By default, exclude "Luar Biasa", "Meninggal", "Muda" statuses to match member table
+    if (!status) {
+      query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
+    } else if (status) {
+      query = query.eq('status', status)
+    }
+
     if (q && q.trim()) {
       const searchTerm = q.trim()
       query = query.or([
@@ -256,10 +263,6 @@ export class StatsAPI {
       if (cities.length > 0) {
         query = query.or(cities.map(c => `kota_kabupaten_kantor.ilike.%${c}%`).join(','))
       }
-    }
-
-    if (status) {
-      query = query.eq('status', status)
     }
 
     if (gender) {

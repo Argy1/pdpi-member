@@ -11,7 +11,7 @@ import pdpiLogo from "@/assets/logo-pdpi.png"
 
 const Index = () => {
   const navigate = useNavigate()
-  const { summary, loading } = useStats({ status: 'AKTIF' })
+  const { summary, loading } = useStats({})
 
   const lastUpdated = useMemo(() => {
     if (!summary) return new Date()
