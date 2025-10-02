@@ -40,11 +40,11 @@ const dbFields = {
   foto: { label: 'Foto URL', required: false, type: 'text' },
   keterangan: { label: 'Keterangan', required: false, type: 'text' },
   tempat_praktek_1: { label: 'Tempat Praktek 1', required: false, type: 'text' },
-  tempat_praktek_1_tipe: { label: 'Tipe Tempat Praktek 1', required: false, type: 'text' },
+  tempat_praktek_1_tipe: { label: 'Tipe Tempat Praktek 1 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' },
   tempat_praktek_2: { label: 'Tempat Praktek 2', required: false, type: 'text' },
-  tempat_praktek_2_tipe: { label: 'Tipe Tempat Praktek 2', required: false, type: 'text' },
+  tempat_praktek_2_tipe: { label: 'Tipe Tempat Praktek 2 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' },
   tempat_praktek_3: { label: 'Tempat Praktek 3', required: false, type: 'text' },
-  tempat_praktek_3_tipe: { label: 'Tipe Tempat Praktek 3', required: false, type: 'text' }
+  tempat_praktek_3_tipe: { label: 'Tipe Tempat Praktek 3 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' }
 };
 
 export const ColumnMappingStep = () => {
