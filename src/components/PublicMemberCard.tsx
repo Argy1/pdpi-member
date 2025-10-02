@@ -17,29 +17,36 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
       .slice(0, 2)
   }
 
+  const practiceLocations = [
+    { name: member.tempat_praktek_1, type: member.tempat_praktek_1_tipe },
+    { name: member.tempat_praktek_2, type: member.tempat_praktek_2_tipe },
+    { name: member.tempat_praktek_3, type: member.tempat_praktek_3_tipe },
+  ].filter(loc => loc.name)
+
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex gap-4">
-          {/* Profile Photo */}
-          <div className="flex-shrink-0">
-            <Avatar className="h-20 w-20">
-              <AvatarImage 
-                src={member.foto || member.fotoUrl} 
-                alt={`Foto ${member.nama}`}
-                className="object-cover"
-              />
-              <AvatarFallback className="text-lg font-semibold bg-medical-primary/10 text-medical-primary">
-                {getInitials(member.nama)}
-              </AvatarFallback>
-            </Avatar>
-          </div>
+      <CardContent className="p-4 md:p-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Side: Basic Information */}
+          <div className="flex gap-4 flex-shrink-0">
+            {/* Profile Photo */}
+            <div className="flex-shrink-0">
+              <Avatar className="h-24 w-24 md:h-32 md:w-32">
+                <AvatarImage 
+                  src={member.foto || member.fotoUrl} 
+                  alt={`Foto ${member.nama}`}
+                  className="object-cover"
+                />
+                <AvatarFallback className="text-lg md:text-xl font-semibold bg-medical-primary/10 text-medical-primary">
+                  {getInitials(member.nama)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
 
-          {/* Member Information */}
-          <div className="flex-1 space-y-2">
-            <div className="grid grid-cols-1 gap-2 text-sm">
+            {/* Basic Info */}
+            <div className="flex-1 space-y-1.5 text-sm">
               <div className="flex">
-                <span className="font-medium w-32">Nama</span>
+                <span className="font-medium w-28 md:w-32 flex-shrink-0">Nama</span>
                 <span className="mr-2">:</span>
                 <span className="font-semibold text-medical-primary">
                   {member.gelar && <span className="text-muted-foreground mr-1">{member.gelar}</span>}
@@ -49,83 +56,38 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Cabang</span>
+                <span className="font-medium w-28 md:w-32 flex-shrink-0">Cabang</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                   {member.cabang || member.provinsi || '-'}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Kota/Kabupaten</span>
+                <span className="font-medium w-28 md:w-32 flex-shrink-0">Kota/Kabupaten</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                   {member.kota_kabupaten_kantor || '-'}
                 </span>
               </div>
 
               <div className="flex">
-                <span className="font-medium w-32">Provinsi</span>
+                <span className="font-medium w-28 md:w-32 flex-shrink-0">Provinsi</span>
                 <span className="mr-2">:</span>
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                   {member.provinsi_kantor || '-'}
                 </span>
               </div>
 
-              {/* Hospital Practice Info */}
-              {(member.tempat_praktek_1 || member.tempat_praktek_2 || member.tempat_praktek_3) && (
-                <>
-                  {member.tempat_praktek_1 && (
-                    <div className="flex">
-                      <span className="font-medium w-32">Tempat Praktek 1</span>
-                      <span className="mr-2">:</span>
-                      <span className="flex items-center gap-1">
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.tempat_praktek_1}
-                        {member.tempat_praktek_1_tipe && (
-                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_1_tipe})</span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                  {member.tempat_praktek_2 && (
-                    <div className="flex">
-                      <span className="font-medium w-32">Tempat Praktek 2</span>
-                      <span className="mr-2">:</span>
-                      <span className="flex items-center gap-1">
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.tempat_praktek_2}
-                        {member.tempat_praktek_2_tipe && (
-                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_2_tipe})</span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                  {member.tempat_praktek_3 && (
-                    <div className="flex">
-                      <span className="font-medium w-32">Tempat Praktek 3</span>
-                      <span className="mr-2">:</span>
-                      <span className="flex items-center gap-1">
-                        <Building className="h-3 w-3 text-muted-foreground" />
-                        {member.tempat_praktek_3}
-                        {member.tempat_praktek_3_tipe && (
-                          <span className="text-xs text-muted-foreground">({member.tempat_praktek_3_tipe})</span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                </>
-              )}
-
               {member.email && (
                 <div className="flex">
-                  <span className="font-medium w-32">Email</span>
+                  <span className="font-medium w-28 md:w-32 flex-shrink-0">Email</span>
                   <span className="mr-2">:</span>
-                  <span className="flex items-center gap-1">
-                    <Mail className="h-3 w-3 text-muted-foreground" />
+                  <span className="flex items-center gap-1 break-all">
+                    <Mail className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                     <a 
                       href={`mailto:${member.email}`} 
                       className="text-medical-primary hover:underline"
@@ -137,6 +99,36 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               )}
             </div>
           </div>
+
+          {/* Right Side: Practice Locations */}
+          {practiceLocations.length > 0 && (
+            <div className="flex-1 border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
+              <h3 className="font-semibold text-sm mb-3 underline">Tempat Praktik</h3>
+              <div className="space-y-2 text-sm">
+                {practiceLocations.map((location, index) => (
+                  <div key={index} className="flex gap-2">
+                    <span className="font-medium flex-shrink-0">{index + 1}.</span>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-x-2">
+                        <span className="font-medium">{location.name}</span>
+                        {location.type && (
+                          <>
+                            <span className="text-muted-foreground">:</span>
+                            <span className="text-muted-foreground">
+                              RS.............. (Tipe RS: {location.type})
+                            </span>
+                            <span className="text-muted-foreground">
+                              Kota/Kabupaten: {member.kota_kabupaten_kantor || '-'}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
