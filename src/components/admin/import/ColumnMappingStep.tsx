@@ -81,6 +81,12 @@ export const ColumnMappingStep = () => {
       provinsi_rumah: ['provinsirumah', 'provincehome', 'prophome'],
       cabang: ['cabang', 'pd', 'wilayah', 'branch', 'region'],
       jenis_kelamin: ['jeniskelamin', 'kelamin', 'gender', 'jk'],
+      tempat_praktek_1: ['tempatpraktek1', 'praktek1', 'rstipea', 'rumahsakittipea', 'hospitala', 'rs1', 'rumahsakit1', 'tempatpraktik1', 'praktik1'],
+      tempat_praktek_1_tipe: ['tipetempatpraktek1', 'tipepraktek1', 'tipe1', 'tipepraktik1', 'jenispraktek1', 'kategoripraktek1'],
+      tempat_praktek_2: ['tempatpraktek2', 'praktek2', 'rstipeb', 'rumahsakittipeb', 'hospitalb', 'rs2', 'rumahsakit2', 'tempatpraktik2', 'praktik2'],
+      tempat_praktek_2_tipe: ['tipetempatpraktek2', 'tipepraktek2', 'tipe2', 'tipepraktik2', 'jenispraktek2', 'kategoripraktek2'],
+      tempat_praktek_3: ['tempatpraktek3', 'praktek3', 'rstipec', 'rumahsakittipec', 'hospitalc', 'rs3', 'rumahsakit3', 'tempatpraktik3', 'praktik3'],
+      tempat_praktek_3_tipe: ['tipetempatpraktek3', 'tipepraktek3', 'tipe3', 'tipepraktik3', 'jenispraktek3', 'kategoripraktek3'],
       tempat_lahir: ['tempatlahir', 'birthplace'],
       tgl_lahir: ['tanggallahir', 'tgllahir', 'birthdate', 'dob'],
       alamat_rumah: ['alamat', 'alamatrumah', 'address', 'addresshome'],
@@ -89,13 +95,7 @@ export const ColumnMappingStep = () => {
       email: ['email', 'mail', 'emailaddress', 'kontakemail'],
       no_hp: ['nohp', 'telepon', 'telp', 'hp', 'phone', 'mobile', 'kontaktelepon'],
       foto: ['foto', 'photo', 'picture', 'image'],
-      keterangan: ['keterangan', 'notes', 'catatan', 'remarks'],
-      tempat_praktek_1: ['tempatpraktek1', 'praktek1', 'rstipea', 'rumahsakittipea', 'hospitala'],
-      tempat_praktek_1_tipe: ['tipetempatpraktek1', 'tipepraktek1', 'tipe1'],
-      tempat_praktek_2: ['tempatpraktek2', 'praktek2', 'rstipeb', 'rumahsakittipeb', 'hospitalb'],
-      tempat_praktek_2_tipe: ['tipetempatpraktek2', 'tipepraktek2', 'tipe2'],
-      tempat_praktek_3: ['tempatpraktek3', 'praktek3', 'rstipec', 'rumahsakittipec', 'hospitalc'],
-      tempat_praktek_3_tipe: ['tipetempatpraktek3', 'tipepraktek3', 'tipe3']
+      keterangan: ['keterangan', 'notes', 'catatan', 'remarks']
     };
 
     fileData.headers.forEach((header, index) => {

@@ -27,10 +27,12 @@ interface ImportRow {
   tempat_lahir?: string;
   keterangan?: string;
   foto?: string;
-  rs_tipe_a?: string;
-  rs_tipe_b?: string;
-  rs_tipe_c?: string;
-  klinik_pribadi?: string;
+  tempat_praktek_1?: string;
+  tempat_praktek_1_tipe?: string;
+  tempat_praktek_2?: string;
+  tempat_praktek_2_tipe?: string;
+  tempat_praktek_3?: string;
+  tempat_praktek_3_tipe?: string;
 }
 
 interface ImportRequest {
@@ -205,11 +207,13 @@ Deno.serve(async (req) => {
         if (row.foto) memberData.foto = row.foto;
         if (row.cabang) memberData.cabang = row.cabang;
         
-        // Add hospital type fields
-        if (row.rs_tipe_a) memberData.rs_tipe_a = row.rs_tipe_a;
-        if (row.rs_tipe_b) memberData.rs_tipe_b = row.rs_tipe_b;
-        if (row.rs_tipe_c) memberData.rs_tipe_c = row.rs_tipe_c;
-        if (row.klinik_pribadi) memberData.klinik_pribadi = row.klinik_pribadi;
+        // Add practice location fields
+        if (row.tempat_praktek_1) memberData.tempat_praktek_1 = row.tempat_praktek_1;
+        if (row.tempat_praktek_1_tipe) memberData.tempat_praktek_1_tipe = row.tempat_praktek_1_tipe;
+        if (row.tempat_praktek_2) memberData.tempat_praktek_2 = row.tempat_praktek_2;
+        if (row.tempat_praktek_2_tipe) memberData.tempat_praktek_2_tipe = row.tempat_praktek_2_tipe;
+        if (row.tempat_praktek_3) memberData.tempat_praktek_3 = row.tempat_praktek_3;
+        if (row.tempat_praktek_3_tipe) memberData.tempat_praktek_3_tipe = row.tempat_praktek_3_tipe;
 
         if (mode === 'upsert') {
           // Check if member exists - use more comprehensive matching
