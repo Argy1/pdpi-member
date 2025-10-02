@@ -56,20 +56,20 @@ export function MemberTable({
   return (
     <div className="space-y-4">
       {/* Table */}
-      <div className="card-glass overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
+      <div className="card-glass overflow-hidden rounded-lg border">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+          <Table className="min-w-full">
             <TableHeader className="bg-muted/50">
               <TableRow>
-                <TableHead className="font-semibold">Foto</TableHead>
-                <TableHead className="font-semibold">Nama</TableHead>
-                <TableHead className="font-semibold">NPA</TableHead>
-                <TableHead className="font-semibold">Alumni</TableHead>
-                <TableHead className="font-semibold">Kota/Kabupaten Kantor</TableHead>
-                <TableHead className="font-semibold">Provinsi Kantor</TableHead>
-                <TableHead className="font-semibold">Cabang/Wilayah</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
-                <TableHead className="font-semibold text-center">Aksi</TableHead>
+                <TableHead className="font-semibold min-w-[80px] sticky left-0 bg-muted/50 z-10">Foto</TableHead>
+                <TableHead className="font-semibold min-w-[200px]">Nama</TableHead>
+                <TableHead className="font-semibold min-w-[120px]">NPA</TableHead>
+                <TableHead className="font-semibold min-w-[180px]">Alumni</TableHead>
+                <TableHead className="font-semibold min-w-[180px]">Kota/Kabupaten Kantor</TableHead>
+                <TableHead className="font-semibold min-w-[160px]">Provinsi Kantor</TableHead>
+                <TableHead className="font-semibold min-w-[150px]">Cabang/Wilayah</TableHead>
+                <TableHead className="font-semibold min-w-[120px]">Status</TableHead>
+                <TableHead className="font-semibold text-center min-w-[100px] sticky right-0 bg-muted/50 z-10">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -79,7 +79,7 @@ export function MemberTable({
                   className="hover:bg-muted/30 transition-smooth cursor-pointer"
                   onClick={() => onViewMember(member)}
                 >
-                  <TableCell>
+                  <TableCell className="sticky left-0 bg-background z-10">
                     <Avatar className="h-10 w-10">
                       <AvatarImage 
                         src={member.foto || member.fotoUrl} 
@@ -93,22 +93,22 @@ export function MemberTable({
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <p className="font-medium">{member.nama}</p>
+                      <p className="font-medium whitespace-nowrap">{member.nama}</p>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <code className="text-xs bg-muted px-2 py-1 rounded">
+                    <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
                       {member.npa || "-"}
                     </code>
                   </TableCell>
                   <TableCell>
-                    <p className="text-sm">{member.alumni || "-"}</p>
+                    <p className="text-sm whitespace-nowrap">{member.alumni || "-"}</p>
                   </TableCell>
-                  <TableCell>{member.kota_kabupaten_kantor || "-"}</TableCell>
-                  <TableCell>{member.provinsi_kantor || "-"}</TableCell>
-                  <TableCell>{member.pd || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{member.kota_kabupaten_kantor || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{member.provinsi_kantor || "-"}</TableCell>
+                  <TableCell className="whitespace-nowrap">{member.pd || "-"}</TableCell>
                   <TableCell>{getStatusBadge(member.status)}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center sticky right-0 bg-background z-10">
                     <Button
                       variant="ghost"
                       size="sm"
