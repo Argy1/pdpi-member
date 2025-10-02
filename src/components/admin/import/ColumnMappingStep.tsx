@@ -81,12 +81,12 @@ export const ColumnMappingStep = () => {
       provinsi_rumah: ['provinsirumah', 'provincehome', 'prophome'],
       cabang: ['cabang', 'pd', 'wilayah', 'branch', 'region'],
       jenis_kelamin: ['jeniskelamin', 'kelamin', 'gender', 'jk'],
-      tempat_praktek_1: ['tempatpraktek1', 'praktek1', 'rstipea', 'rumahsakittipea', 'hospitala', 'rs1', 'rumahsakit1', 'tempatpraktik1', 'praktik1'],
-      tempat_praktek_1_tipe: ['tipetempatpraktek1', 'tipepraktek1', 'tipe1', 'tipepraktik1', 'jenispraktek1', 'kategoripraktek1'],
-      tempat_praktek_2: ['tempatpraktek2', 'praktek2', 'rstipeb', 'rumahsakittipeb', 'hospitalb', 'rs2', 'rumahsakit2', 'tempatpraktik2', 'praktik2'],
-      tempat_praktek_2_tipe: ['tipetempatpraktek2', 'tipepraktek2', 'tipe2', 'tipepraktik2', 'jenispraktek2', 'kategoripraktek2'],
-      tempat_praktek_3: ['tempatpraktek3', 'praktek3', 'rstipec', 'rumahsakittipec', 'hospitalc', 'rs3', 'rumahsakit3', 'tempatpraktik3', 'praktik3'],
-      tempat_praktek_3_tipe: ['tipetempatpraktek3', 'tipepraktek3', 'tipe3', 'tipepraktik3', 'jenispraktek3', 'kategoripraktek3'],
+      tempat_praktek_1: ['tempatpraktek1', 'praktek1', 'rstipea', 'rumahsakittipea', 'hospitala', 'rs1', 'rumahsakit1', 'tempatpraktik1', 'praktik1', 'rstipea', 'rsatype', 'typea', 'tipea'],
+      tempat_praktek_1_tipe: ['tipetempatpraktek1', 'tipepraktek1', 'tipe1', 'tipepraktik1', 'jenispraktek1', 'kategoripraktek1', 'tiperstipea', 'tipers1', 'jenisrstipea', 'tipehospital1'],
+      tempat_praktek_2: ['tempatpraktek2', 'praktek2', 'rstipeb', 'rumahsakittipeb', 'hospitalb', 'rs2', 'rumahsakit2', 'tempatpraktik2', 'praktik2', 'rstipeb', 'rsbtype', 'typeb', 'tipeb'],
+      tempat_praktek_2_tipe: ['tipetempatpraktek2', 'tipepraktek2', 'tipe2', 'tipepraktik2', 'jenispraktek2', 'kategoripraktek2', 'tiperstipeb', 'tipers2', 'jenisrstipeb', 'tipehospital2'],
+      tempat_praktek_3: ['tempatpraktek3', 'praktek3', 'rstipec', 'rumahsakittipec', 'hospitalc', 'rs3', 'rumahsakit3', 'tempatpraktik3', 'praktik3', 'rstipec', 'rsctype', 'typec', 'tipec', 'klinikpribadi', 'klinik'],
+      tempat_praktek_3_tipe: ['tipetempatpraktek3', 'tipepraktek3', 'tipe3', 'tipepraktik3', 'jenispraktek3', 'kategoripraktek3', 'tiperstipec', 'tipers3', 'jenisrstipec', 'tipehospital3', 'tipeklinik'],
       tempat_lahir: ['tempatlahir', 'birthplace'],
       tgl_lahir: ['tanggallahir', 'tgllahir', 'birthdate', 'dob'],
       alamat_rumah: ['alamat', 'alamatrumah', 'address', 'addresshome'],
@@ -131,6 +131,16 @@ export const ColumnMappingStep = () => {
         message: `Field wajib belum dimapping: ${missingRequired.map(f => dbFields[f as keyof typeof dbFields].label).join(', ')}`
       }]);
       return false;
+    }
+    
+    // Check if practice location fields are mapped
+    const practiceFields = ['tempat_praktek_1', 'tempat_praktek_1_tipe', 'tempat_praktek_2', 'tempat_praktek_2_tipe', 'tempat_praktek_3', 'tempat_praktek_3_tipe'];
+    const mappedPracticeFields = practiceFields.filter(field => mappedFields.includes(field));
+    
+    if (mappedPracticeFields.length === 0) {
+      console.warn('⚠️ Peringatan: Tidak ada field tempat praktek yang dimapping. Data tempat praktek tidak akan tersimpan.');
+    } else if (mappedPracticeFields.length < 6) {
+      console.warn(`⚠️ Peringatan: Hanya ${mappedPracticeFields.length}/6 field tempat praktek yang dimapping:`, mappedPracticeFields);
     }
     
     setValidationErrors([]);
@@ -256,6 +266,45 @@ export const ColumnMappingStep = () => {
           </AlertDescription>
         </Alert>
       )}
+
+      {/* Warning for practice location fields */}
+      {(() => {
+        const practiceFields = ['tempat_praktek_1', 'tempat_praktek_1_tipe', 'tempat_praktek_2', 'tempat_praktek_2_tipe', 'tempat_praktek_3', 'tempat_praktek_3_tipe'];
+        const mappedPracticeFields = practiceFields.filter(field => mappedFields.includes(field));
+        
+        if (mappedPracticeFields.length === 0) {
+          return (
+            <Alert className="border-orange-500/50 bg-orange-500/10">
+              <AlertTriangle className="h-4 w-4 text-orange-500" />
+              <AlertDescription className="text-orange-900 dark:text-orange-100">
+                <strong>Perhatian:</strong> Tidak ada field Tempat Praktek yang dimapping. 
+                Data tempat praktek (RS Tipe A/B/C, Klinik Pribadi) tidak akan tersimpan ke database.
+                <div className="mt-2 text-sm">
+                  Pastikan Anda memetakan kolom berikut jika ada di Excel:
+                  <ul className="ml-4 mt-1 list-disc">
+                    <li>Tempat Praktek 1, 2, 3</li>
+                    <li>Tipe Tempat Praktek 1, 2, 3</li>
+                  </ul>
+                </div>
+              </AlertDescription>
+            </Alert>
+          );
+        } else if (mappedPracticeFields.length < 6 && mappedPracticeFields.length > 0) {
+          const missingFields = practiceFields.filter(field => !mappedFields.includes(field));
+          return (
+            <Alert className="border-blue-500/50 bg-blue-500/10">
+              <AlertTriangle className="h-4 w-4 text-blue-500" />
+              <AlertDescription className="text-blue-900 dark:text-blue-100">
+                <strong>Info:</strong> {mappedPracticeFields.length}/6 field tempat praktek dimapping.
+                <div className="mt-1 text-sm">
+                  Field yang belum dimapping: {missingFields.map(f => dbFields[f as keyof typeof dbFields]?.label || f).join(', ')}
+                </div>
+              </AlertDescription>
+            </Alert>
+          );
+        }
+        return null;
+      })()}
 
       {/* Mapping Table */}
       <Card>
