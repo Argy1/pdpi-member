@@ -8,17 +8,10 @@ import { DistributionTable } from "@/components/stats/DistributionTable"
 import { IndonesiaStatsMap } from "@/components/stats/IndonesiaStatsMap"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { AlertCircle, MapPin, Users, Download, FileSpreadsheet } from "lucide-react"
+import { AlertCircle, MapPin, Users } from "lucide-react"
 import { StatsAPI } from "@/pages/api/StatsAPI"
 import { exportMembersToExcel, getExportFilename } from "@/utils/exportMembers"
 import { useToast } from "@/hooks/use-toast"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export default function SebaranPage() {
   const { toast } = useToast()
@@ -137,45 +130,13 @@ export default function SebaranPage() {
                 Visualisasi distribusi anggota berdasarkan provinsi, cabang, dan kota/kabupaten di seluruh Indonesia
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <Badge 
-                variant="secondary" 
-                className="px-6 py-3 text-lg rounded-2xl shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border-2 border-teal-500/20"
-              >
-                <Users className="h-5 w-5 mr-2 text-teal-600 dark:text-teal-400" />
-                {summary?.total.toLocaleString('id-ID') || '0'} Anggota
-              </Badge>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    disabled={isExporting || loading}
-                    className="rounded-xl px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
-                  >
-                    {isExporting ? (
-                      <>
-                        <Download className="h-4 w-4 mr-2 animate-bounce" />
-                        Mengunduh...
-                      </>
-                    ) : (
-                      <>
-                        <FileSpreadsheet className="h-4 w-4 mr-2" />
-                        Export Data
-                      </>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => handleExport('xlsx')}>
-                    <FileSpreadsheet className="h-4 w-4 mr-2" />
-                    Export ke Excel (.xlsx)
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleExport('csv')}>
-                    <FileSpreadsheet className="h-4 w-4 mr-2" />
-                    Export ke CSV (.csv)
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <Badge 
+              variant="secondary" 
+              className="self-start md:self-center px-6 py-3 text-lg rounded-2xl shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border-2 border-teal-500/20"
+            >
+              <Users className="h-5 w-5 mr-2 text-teal-600 dark:text-teal-400" />
+              {summary?.total.toLocaleString('id-ID') || '0'} Anggota
+            </Badge>
           </div>
         </div>
       </div>
@@ -188,6 +149,8 @@ export default function SebaranPage() {
         pds={pds}
         cities={cities}
         loading={loading}
+        onExport={handleExport}
+        isExporting={isExporting}
       />
 
       {/* Content */}
