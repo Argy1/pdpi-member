@@ -21,7 +21,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
     { name: member.tempat_praktek_1, type: member.tempat_praktek_1_tipe },
     { name: member.tempat_praktek_2, type: member.tempat_praktek_2_tipe },
     { name: member.tempat_praktek_3, type: member.tempat_praktek_3_tipe },
-  ].filter(loc => loc.name)
+  ]
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -111,35 +111,33 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
           </div>
 
           {/* Right Side: Practice Locations */}
-          {practiceLocations.length > 0 && (
-            <div className="flex-1 border-t lg:border-t-0 lg:border-l pt-5 lg:pt-0 lg:pl-8 mt-2 lg:mt-0">
-              <h3 className="font-bold text-base sm:text-lg mb-4 underline decoration-2 underline-offset-4">Tempat Praktik</h3>
-              <div className="space-y-4">
-                {practiceLocations.map((location, index) => (
-                  <div key={index} className="flex gap-3">
-                    <span className="font-bold flex-shrink-0 text-base sm:text-lg">{index + 1}.</span>
-                    <div className="flex-1 space-y-1.5">
-                      <div className="font-semibold text-base sm:text-lg text-medical-primary">
-                        {location.name}
-                      </div>
-                      {location.type && (
-                        <div className="space-y-1 text-sm sm:text-base text-muted-foreground">
-                          <div className="flex flex-wrap gap-x-2">
-                            <span className="font-medium">RS:</span>
-                            <span>.............. (Tipe RS: <span className="font-semibold">{location.type}</span>)</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <span className="font-medium">Kota/Kabupaten:</span>
-                            <span className="font-semibold">{member.kota_kabupaten_kantor || '-'}</span>
-                          </div>
-                        </div>
-                      )}
+          <div className="flex-1 border-t lg:border-t-0 lg:border-l pt-5 lg:pt-0 lg:pl-8 mt-2 lg:mt-0">
+            <h3 className="font-bold text-base sm:text-lg mb-4 underline decoration-2 underline-offset-4">Tempat Praktik</h3>
+            <div className="space-y-4">
+              {practiceLocations.map((location, index) => (
+                <div key={index} className="flex gap-3">
+                  <span className="font-bold flex-shrink-0 text-base sm:text-lg">{index + 1}.</span>
+                  <div className="flex-1 space-y-1.5">
+                    <div className="font-semibold text-base sm:text-lg text-medical-primary">
+                      {location.name || '-'}
                     </div>
+                    {location.name && location.type && (
+                      <div className="space-y-1 text-sm sm:text-base text-muted-foreground">
+                        <div className="flex flex-wrap gap-x-2">
+                          <span className="font-medium">RS:</span>
+                          <span>.............. (Tipe RS: <span className="font-semibold">{location.type}</span>)</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <span className="font-medium">Kota/Kabupaten:</span>
+                          <span className="font-semibold">{member.kota_kabupaten_kantor || '-'}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       </CardContent>
     </Card>
