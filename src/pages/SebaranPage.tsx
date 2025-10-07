@@ -8,10 +8,22 @@ import { DistributionTable } from "@/components/stats/DistributionTable"
 import { IndonesiaStatsMap } from "@/components/stats/IndonesiaStatsMap"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, MapPin, Users } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { AlertCircle, MapPin, Users, Download, FileSpreadsheet } from "lucide-react"
+import { StatsAPI } from "@/pages/api/StatsAPI"
+import { exportMembersToExcel, getExportFilename } from "@/utils/exportMembers"
+import { useToast } from "@/hooks/use-toast"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function SebaranPage() {
+  const { toast } = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
+  const [isExporting, setIsExporting] = useState(false)
   
   const [filters, setFilters] = useState<{
     q?: string
@@ -53,6 +65,48 @@ export default function SebaranPage() {
     refresh()
   }, [filters])
 
+  const handleExport = async (format: 'xlsx' | 'csv') => {
+    setIsExporting(true)
+    try {
+      toast({
+        title: "Mengunduh data...",
+        description: "Mohon tunggu, sedang mempersiapkan file export.",
+      })
+
+      // Fetch all members with current filters
+      const members = await StatsAPI.getAllMembersForExport(filters)
+      
+      if (members.length === 0) {
+        toast({
+          title: "Tidak ada data",
+          description: "Tidak ada anggota yang sesuai dengan filter yang dipilih.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Generate filename based on filters
+      const filename = getExportFilename(filters)
+
+      // Export to Excel/CSV
+      exportMembersToExcel(members, { format, filename })
+
+      toast({
+        title: "Berhasil!",
+        description: `Data ${members.length.toLocaleString('id-ID')} anggota berhasil diexport ke ${format.toUpperCase()}.`,
+      })
+    } catch (error) {
+      console.error('Export error:', error)
+      toast({
+        title: "Gagal export",
+        description: error instanceof Error ? error.message : "Terjadi kesalahan saat export data.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -83,13 +137,45 @@ export default function SebaranPage() {
                 Visualisasi distribusi anggota berdasarkan provinsi, cabang, dan kota/kabupaten di seluruh Indonesia
               </p>
             </div>
-            <Badge 
-              variant="secondary" 
-              className="self-start md:self-center px-6 py-3 text-lg rounded-2xl shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border-2 border-teal-500/20"
-            >
-              <Users className="h-5 w-5 mr-2 text-teal-600 dark:text-teal-400" />
-              {summary?.total.toLocaleString('id-ID') || '0'} Anggota
-            </Badge>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <Badge 
+                variant="secondary" 
+                className="px-6 py-3 text-lg rounded-2xl shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border-2 border-teal-500/20"
+              >
+                <Users className="h-5 w-5 mr-2 text-teal-600 dark:text-teal-400" />
+                {summary?.total.toLocaleString('id-ID') || '0'} Anggota
+              </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    disabled={isExporting || loading}
+                    className="rounded-xl px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                  >
+                    {isExporting ? (
+                      <>
+                        <Download className="h-4 w-4 mr-2 animate-bounce" />
+                        Mengunduh...
+                      </>
+                    ) : (
+                      <>
+                        <FileSpreadsheet className="h-4 w-4 mr-2" />
+                        Export Data
+                      </>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => handleExport('xlsx')}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Export ke Excel (.xlsx)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('csv')}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Export ke CSV (.csv)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client'
+import { Member } from '@/types/member'
 
 export interface StatsSummary {
   total: number
@@ -270,5 +271,33 @@ export class StatsAPI {
     }
 
     return query
+  }
+
+  static async getAllMembersForExport(params: StatsParams = {}): Promise<any[]> {
+    try {
+      // Build query with all fields needed for export
+      let query = supabase
+        .from('members')
+        .select('*')
+
+      // Apply the same filters as stats
+      query = this.applyFilters(query, params)
+
+      // Order by name
+      query = query.order('nama', { ascending: true })
+
+      // Get all results (no pagination for export)
+      const { data, error } = await query
+
+      if (error) {
+        console.error('Error fetching members for export:', error)
+        throw new Error(`Failed to fetch members: ${error.message}`)
+      }
+
+      return data || []
+    } catch (error) {
+      console.error('Error in getAllMembersForExport:', error)
+      throw error
+    }
   }
 }
