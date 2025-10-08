@@ -218,14 +218,13 @@ export default function SebaranPage() {
           {/* Cities Table - Full Width */}
           <div className="animate-fade-in" style={{ animationDelay: '600ms' }}>
             <DistributionTable
-              title="Top 20 Kota/Kabupaten"
-              data={summary?.byKota.slice(0, 20).map(k => ({
+              title="Distribusi Per Kota/Kabupaten"
+              data={summary?.byKota.map(k => ({
                 name: k.kota,
                 count: k.count,
                 subtitle: k.provinsi
               })) || []}
               loading={loading}
-              limit={20}
             />
           </div>
         </div>
