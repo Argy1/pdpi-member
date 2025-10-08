@@ -10,6 +10,7 @@ interface UseMembersOptions {
   subspesialis?: string
   namaHurufDepan?: string[]
   hospitalType?: string[]
+  namaRS?: string
   kota?: string[]
   kota_kabupaten_kantor?: string[]
   status?: string
@@ -44,6 +45,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         ...options,
         namaHurufDepan: options.namaHurufDepan?.join(','),
         hospitalType: options.hospitalType?.join(','),
+        namaRS: options.namaRS,
         kota: options.kota?.join(','),
         provinsi_kantor: options.provinsi_kantor?.join(','),
         kota_kabupaten_kantor: options.kota_kabupaten_kantor?.join(','),

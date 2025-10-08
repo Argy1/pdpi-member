@@ -73,6 +73,7 @@ export interface MemberFilters {
   status?: string[]
   namaHurufDepan?: string[]
   hospitalType?: string[]
+  namaRS?: string
   kota?: string[]
   // New office location filters
   provinsi_kantor?: string[]

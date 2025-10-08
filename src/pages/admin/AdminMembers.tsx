@@ -87,6 +87,8 @@ export default function AdminMembers() {
     pd: filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
     namaHurufDepan: filters.namaHurufDepan,
+    hospitalType: filters.hospitalType,
+    namaRS: filters.namaRS,
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',

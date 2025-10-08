@@ -1,9 +1,10 @@
 import { useState } from "react"
-import { Check, ChevronDown, Filter, X } from "lucide-react"
+import { Check, ChevronDown, Filter, X, Hospital } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { MemberFilters } from "@/types/member"
 import { AlphabeticalFilter } from "@/components/AlphabeticalFilter"
 
@@ -63,7 +64,14 @@ export function MemberFiltersComponent({
     onFiltersChange({})
   }
 
-  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length)
+  const handleNamaRSChange = (value: string) => {
+    onFiltersChange({
+      ...filters,
+      namaRS: value || undefined
+    })
+  }
+
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS)
 
   const FilterPopover = ({ 
     open, 
@@ -181,6 +189,28 @@ export function MemberFiltersComponent({
         )}
       </div>
 
+      {/* Hospital Name Search Input */}
+      <div className="relative max-w-md">
+        <Hospital className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Cari nama rumah sakit..."
+          value={filters.namaRS || ''}
+          onChange={(e) => handleNamaRSChange(e.target.value)}
+          className="pl-9 focus-visible"
+        />
+        {filters.namaRS && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleNamaRSChange('')}
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
       {/* Alphabetical Filter */}
       <AlphabeticalFilter
         selectedLetters={filters.namaHurufDepan || []}
@@ -188,7 +218,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
@@ -234,6 +264,16 @@ export function MemberFiltersComponent({
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}
+          {filters.namaRS && (
+            <Badge 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleNamaRSChange('')}
+            >
+              RS: {filters.namaRS}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          )}
         </div>
       )}
     </div>

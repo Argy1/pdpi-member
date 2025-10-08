@@ -18,6 +18,7 @@ interface GetMembersParams {
   subspesialis?: string
   namaHurufDepan?: string
   hospitalType?: string
+  namaRS?: string
   kota?: string
   kota_kabupaten_kantor?: string
   sort?: string
@@ -38,6 +39,7 @@ export class AnggotaAPI {
         subspesialis, 
         namaHurufDepan,
         hospitalType,
+        namaRS,
         kota,
         kota_kabupaten_kantor,
         sort = 'nama_asc', 
@@ -130,6 +132,18 @@ export class AnggotaAPI {
         }
       }
 
+      // Apply hospital name search filter
+      if (namaRS && namaRS.trim()) {
+        const searchTerm = namaRS.trim()
+        const hospitalNameConditions = [
+          `tempat_praktek_1.ilike.%${searchTerm}%`,
+          `tempat_praktek_2.ilike.%${searchTerm}%`,
+          `tempat_praktek_3.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`
+        ]
+        query = query.or(hospitalNameConditions.join(','))
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -211,6 +225,18 @@ export class AnggotaAPI {
             countQuery = countQuery.or(hospitalConditions.join(','))
           }
         }
+      }
+
+      // Apply hospital name search filter for count query too
+      if (namaRS && namaRS.trim()) {
+        const searchTerm = namaRS.trim()
+        const hospitalNameConditions = [
+          `tempat_praktek_1.ilike.%${searchTerm}%`,
+          `tempat_praktek_2.ilike.%${searchTerm}%`,
+          `tempat_praktek_3.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`
+        ]
+        countQuery = countQuery.or(hospitalNameConditions.join(','))
       }
 
       // Get total count
