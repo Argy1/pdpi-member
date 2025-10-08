@@ -203,13 +203,12 @@ export default function SebaranPage() {
 
                 <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
                   <DistributionTable
-                    title="Top 10 Cabang/PD"
-                    data={summary?.byCabang.slice(0, 10).map(c => ({
+                    title="Distribusi Per Cabang/PD"
+                    data={summary?.byCabang.map(c => ({
                       name: c.pd,
                       count: c.count
                     })) || []}
                     loading={loading}
-                    limit={10}
                   />
                 </div>
               </div>
