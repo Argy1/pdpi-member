@@ -192,13 +192,12 @@ export default function SebaranPage() {
               <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
                 <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
                   <DistributionTable
-                    title="Top 10 Provinsi"
-                    data={summary?.byProvinsi.slice(0, 10).map(p => ({
+                    title="Distribusi Per Provinsi"
+                    data={summary?.byProvinsi.map(p => ({
                       name: p.provinsi,
                       count: p.count
                     })) || []}
                     loading={loading}
-                    limit={10}
                   />
                 </div>
 
