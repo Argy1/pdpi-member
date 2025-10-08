@@ -17,8 +17,8 @@ interface DistributionTableProps {
   limit?: number
 }
 
-export function DistributionTable({ title, data, loading, limit = 10 }: DistributionTableProps) {
-  const displayData = data.slice(0, limit)
+export function DistributionTable({ title, data, loading, limit }: DistributionTableProps) {
+  const displayData = limit ? data.slice(0, limit) : data
 
   return (
     <Card className="rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur shadow-xl hover:shadow-2xl transition-shadow duration-200">
