@@ -11,13 +11,15 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EnhancedCalendar } from '@/components/ui/enhanced-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Upload, ArrowLeft, Save, X } from 'lucide-react';
+import { CalendarIcon, Upload, ArrowLeft, Save, X, Lock } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useMemberContext } from '@/contexts/MemberContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { ExcelImport } from '@/components/admin/ExcelImport';
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface MemberFormData {
   // Identitas
@@ -115,12 +117,17 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
+  const { isPusatAdmin, isCabangAdmin } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
+  
+  // Field protections based on role
+  const isNPADisabled = isCabangAdmin;
+  const isCabangDisabled = isCabangAdmin;
 
   useEffect(() => {
     const fetchMemberForEdit = async () => {
@@ -484,14 +491,24 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="npa">Nomor Peserta Anggota (NPA) *</Label>
+                      <Label htmlFor="npa" className="flex items-center gap-2">
+                        Nomor Peserta Anggota (NPA) *
+                        {isNPADisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Input
                         id="npa"
                         value={formData.npa}
                         onChange={(e) => handleInputChange('npa', e.target.value)}
                         placeholder="NPA123456"
                         required
+                        disabled={isNPADisabled}
+                        className={cn(isNPADisabled && "bg-muted cursor-not-allowed")}
                       />
+                      {isNPADisabled && (
+                        <p className="text-xs text-muted-foreground">
+                          Field ini hanya dapat diedit oleh Super Admin
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -779,12 +796,16 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="pd">Cabang/Wilayah</Label>
+                      <Label htmlFor="pd" className="flex items-center gap-2">
+                        Cabang/Wilayah
+                        {isCabangDisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Select 
                         value={formData.pd} 
                         onValueChange={(value) => handleInputChange('pd', value)}
+                        disabled={isCabangDisabled}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className={cn(isCabangDisabled && "bg-muted cursor-not-allowed")}>
                           <SelectValue placeholder="Pilih cabang" />
                         </SelectTrigger>
                         <SelectContent>
@@ -822,6 +843,11 @@ export default function AdminMemberForm() {
                           <SelectItem value="Cabang Papua">Cabang Papua</SelectItem>
                         </SelectContent>
                       </Select>
+                      {isCabangDisabled && (
+                        <p className="text-xs text-muted-foreground">
+                          Field ini hanya dapat diedit oleh Super Admin
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
