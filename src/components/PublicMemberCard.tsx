@@ -28,7 +28,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
       <CardContent className="p-5 md:p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row gap-5 lg:gap-8">
           {/* Left Side: Photo and Basic Information */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:flex-shrink-0">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:flex-shrink-0 lg:w-[480px]">
             {/* Profile Photo */}
             <div className="flex-shrink-0 mx-auto sm:mx-0">
               <Avatar className="h-28 w-28 sm:h-32 sm:w-32 lg:h-36 lg:w-36">
