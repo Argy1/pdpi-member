@@ -7,7 +7,8 @@ import {
   UserPlus,
   Upload,
   User,
-  BarChart3
+  BarChart3,
+  GitPullRequest
 } from 'lucide-react';
 import {
   Sidebar,
@@ -41,6 +42,12 @@ const menuItems = [
     title: 'Tambah Anggota',
     url: '/admin/anggota/new',
     icon: UserPlus,
+    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Usulan Perubahan',
+    url: '/admin/usulan-perubahan',
+    icon: GitPullRequest,
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {

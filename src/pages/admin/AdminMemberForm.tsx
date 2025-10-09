@@ -117,7 +117,7 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
-  const { isPusatAdmin, isCabangAdmin } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, user } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -334,7 +334,32 @@ export default function AdminMemberForm() {
       console.log('Mapped member data:', memberData);
       
       if (isEditing && id) {
-        // Direct Supabase update for better control and error handling
+        // Admin Cabang: Create change request instead of direct update
+        if (isCabangAdmin && !isPusatAdmin) {
+          const { error } = await supabase
+            .from('member_change_requests')
+            .insert({
+              member_id: id,
+              requested_by: user?.id,
+              changes: memberData,
+              status: 'pending',
+            });
+
+          if (error) {
+            console.error('Supabase change request error:', error);
+            throw new Error(`Database error: ${error.message}`);
+          }
+
+          toast({
+            title: 'Usulan Perubahan Dikirim',
+            description: 'Perubahan data akan diterapkan setelah disetujui Super Admin.',
+          });
+          
+          navigate('/admin/anggota');
+          return;
+        }
+
+        // Super Admin: Direct update
         const { data, error } = await supabase
           .from('members')
           .update(memberData)

@@ -20,6 +20,7 @@ import AdminMemberDetail from "./pages/admin/AdminMemberDetail";
 import AdminImport from "./pages/admin/AdminImport";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminChangeRequests from "./pages/admin/AdminChangeRequests";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="anggota/new" element={<AdminMemberForm />} />
                 <Route path="anggota/:id" element={<AdminMemberDetail />} />
                 <Route path="anggota/:id/edit" element={<AdminMemberForm />} />
+                <Route path="usulan-perubahan" element={<AdminChangeRequests />} />
                 <Route path="import" element={<AdminImport />} />
                 <Route path="laporan" element={<AdminReports />} />
                 <Route path="profil" element={<AdminProfile />} />
