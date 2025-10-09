@@ -26,9 +26,9 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <CardContent className="p-5 md:p-6 lg:p-8">
-        <div className="flex flex-col lg:flex-row gap-5 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
           {/* Left Side: Photo and Basic Information */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 lg:flex-shrink-0 lg:w-[480px]">
+          <div className="lg:col-span-2 flex flex-col sm:flex-row gap-4 sm:gap-5">
             {/* Profile Photo */}
             <div className="flex-shrink-0 mx-auto sm:mx-0">
               <Avatar className="h-28 w-28 sm:h-32 sm:w-32 lg:h-36 lg:w-36">
@@ -111,7 +111,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
           </div>
 
           {/* Right Side: Practice Locations */}
-          <div className="flex-1 border-t lg:border-t-0 lg:border-l pt-5 lg:pt-0 lg:pl-8 mt-2 lg:mt-0">
+          <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l pt-6 lg:pt-0 lg:pl-8">
             <h3 className="font-bold text-base sm:text-lg mb-4 underline decoration-2 underline-offset-4">Tempat Praktik</h3>
             <div className="space-y-4">
               {practiceLocations.map((location, index) => (
