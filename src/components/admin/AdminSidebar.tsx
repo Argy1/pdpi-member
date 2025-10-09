@@ -8,7 +8,8 @@ import {
   Upload,
   User,
   BarChart3,
-  GitPullRequest
+  GitPullRequest,
+  History
 } from 'lucide-react';
 import {
   Sidebar,
@@ -49,6 +50,12 @@ const menuItems = [
     url: '/admin/usulan-perubahan',
     icon: GitPullRequest,
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Audit Log',
+    url: '/admin/audit-log',
+    icon: History,
+    roles: ['ADMIN_PUSAT']
   },
   {
     title: 'Import Anggota',

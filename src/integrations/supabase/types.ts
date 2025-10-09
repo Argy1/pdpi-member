@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          changed_at: string
+          changed_by: string | null
+          changed_fields: string[] | null
+          id: string
+          ip_address: unknown | null
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string
+          table_name: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          changed_at?: string
+          changed_by?: string | null
+          changed_fields?: string[] | null
+          id?: string
+          ip_address?: unknown | null
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id: string
+          table_name: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          changed_at?: string
+          changed_by?: string | null
+          changed_fields?: string[] | null
+          id?: string
+          ip_address?: unknown | null
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string
+          table_name?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       branches: {
         Row: {
           id: string
@@ -105,10 +147,13 @@ export type Database = {
           status: string | null
           tempat_lahir: string | null
           tempat_praktek_1: string | null
+          tempat_praktek_1_alkes: string | null
           tempat_praktek_1_tipe: string | null
           tempat_praktek_2: string | null
+          tempat_praktek_2_alkes: string | null
           tempat_praktek_2_tipe: string | null
           tempat_praktek_3: string | null
+          tempat_praktek_3_alkes: string | null
           tempat_praktek_3_tipe: string | null
           tempat_tugas: string | null
           tgl_lahir: string | null
@@ -140,10 +185,13 @@ export type Database = {
           status?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
+          tempat_praktek_1_alkes?: string | null
           tempat_praktek_1_tipe?: string | null
           tempat_praktek_2?: string | null
+          tempat_praktek_2_alkes?: string | null
           tempat_praktek_2_tipe?: string | null
           tempat_praktek_3?: string | null
+          tempat_praktek_3_alkes?: string | null
           tempat_praktek_3_tipe?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
@@ -175,10 +223,13 @@ export type Database = {
           status?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
+          tempat_praktek_1_alkes?: string | null
           tempat_praktek_1_tipe?: string | null
           tempat_praktek_2?: string | null
+          tempat_praktek_2_alkes?: string | null
           tempat_praktek_2_tipe?: string | null
           tempat_praktek_3?: string | null
+          tempat_praktek_3_alkes?: string | null
           tempat_praktek_3_tipe?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
