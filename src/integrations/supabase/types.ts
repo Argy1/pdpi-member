@@ -238,6 +238,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          related_id: string | null
+          related_table: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          related_id?: string | null
+          related_table?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_id?: string | null
+          related_table?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           branch_id: string | null
@@ -303,6 +339,16 @@ export type Database = {
       normalize_text: {
         Args: { input_text: string }
         Returns: string
+      }
+      notify_super_admins: {
+        Args: {
+          p_message: string
+          p_related_id?: string
+          p_related_table?: string
+          p_title: string
+          p_type?: string
+        }
+        Returns: undefined
       }
       set_limit: {
         Args: { "": number }

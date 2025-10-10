@@ -6,6 +6,7 @@ import { StatsSummaryCards } from "@/components/stats/StatsSummaryCards"
 import { GenderChart } from "@/components/stats/GenderChart"
 import { DistributionTable } from "@/components/stats/DistributionTable"
 import { IndonesiaStatsMap } from "@/components/stats/IndonesiaStatsMap"
+import { TipeRSView } from "@/components/sebaran/TipeRSView"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { AlertCircle, MapPin, Users } from "lucide-react"
@@ -226,6 +227,11 @@ export default function SebaranPage() {
               })) || []}
               loading={loading}
             />
+          </div>
+
+          {/* Tipe RS View - Filter by Hospital Type */}
+          <div className="animate-fade-in" style={{ animationDelay: '700ms' }}>
+            <TipeRSView filters={filters} />
           </div>
         </div>
       </div>

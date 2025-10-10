@@ -3,6 +3,8 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, User } from 'lucide-react';
+import { NotificationBell } from '@/components/admin/NotificationBell';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +49,8 @@ export const AdminHeader = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <NotificationBell />
+          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">

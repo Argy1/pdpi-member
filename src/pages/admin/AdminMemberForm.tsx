@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EnhancedCalendar } from '@/components/ui/enhanced-calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -299,6 +300,38 @@ export default function AdminMemberForm() {
       toast({
         title: 'Validasi Error',
         description: 'NPA (Nomor Peserta Anggota) wajib diisi.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate Tempat Praktek 1 is required
+    if (!formData.tempatPraktek1.trim() || !formData.tempatPraktek1Tipe || !formData.tempatPraktek1Alkes.trim()) {
+      toast({
+        title: 'Validasi Error',
+        description: 'Tempat Praktek 1 wajib diisi lengkap (Nama RS, Tipe, dan Alat Kesehatan).',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate sequential order: if Praktek 3 is filled, Praktek 2 must be filled
+    if ((formData.tempatPraktek3 || formData.tempatPraktek3Tipe || formData.tempatPraktek3Alkes) &&
+        (!formData.tempatPraktek2 || !formData.tempatPraktek2Tipe || !formData.tempatPraktek2Alkes)) {
+      toast({
+        title: 'Validasi Error',
+        description: 'Jika mengisi Tempat Praktek 3, Tempat Praktek 2 harus diisi terlebih dahulu.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate sequential order: if Praktek 2 is filled, Praktek 1 must be filled
+    if ((formData.tempatPraktek2 || formData.tempatPraktek2Tipe || formData.tempatPraktek2Alkes) &&
+        (!formData.tempatPraktek1 || !formData.tempatPraktek1Tipe || !formData.tempatPraktek1Alkes)) {
+      toast({
+        title: 'Validasi Error',
+        description: 'Jika mengisi Tempat Praktek 2, Tempat Praktek 1 harus diisi terlebih dahulu.',
         variant: 'destructive',
       });
       return;
@@ -948,20 +981,24 @@ export default function AdminMemberForm() {
                     <h4 className="text-lg font-semibold mb-4">Institusi Tempat Praktik</h4>
                     <div className="space-y-6">
                       {/* Tempat Praktek 1 */}
-                      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                        <h5 className="font-medium text-sm">Tempat Praktek 1</h5>
+                      <div className="space-y-4 p-4 border rounded-lg bg-primary/5">
+                        <div className="flex items-center gap-2">
+                          <h5 className="font-medium text-sm">Tempat Praktek 1</h5>
+                          <Badge variant="destructive" className="text-xs">WAJIB</Badge>
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1">Nama RS / Klinik</Label>
+                            <Label htmlFor="tempatPraktek1">Nama RS / Klinik *</Label>
                             <Input
                               id="tempatPraktek1"
                               value={formData.tempatPraktek1}
                               onChange={(e) => handleInputChange('tempatPraktek1', e.target.value)}
                               placeholder="Nama RS / Klinik"
+                              required
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Tipe">Tipe</Label>
+                            <Label htmlFor="tempatPraktek1Tipe">Tipe *</Label>
                             <Select 
                               value={formData.tempatPraktek1Tipe} 
                               onValueChange={(value) => handleInputChange('tempatPraktek1Tipe', value)}
@@ -978,13 +1015,14 @@ export default function AdminMemberForm() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Alkes">Alat Kesehatan Penunjang Paru</Label>
+                            <Label htmlFor="tempatPraktek1Alkes">Alat Kesehatan Penunjang Paru *</Label>
                             <Textarea
                               id="tempatPraktek1Alkes"
                               value={formData.tempatPraktek1Alkes}
                               onChange={(e) => handleInputChange('tempatPraktek1Alkes', e.target.value)}
                               placeholder="Spirometer, X-Ray, CT Scan, dll"
                               rows={2}
+                              required
                             />
                           </div>
                         </div>
@@ -992,7 +1030,10 @@ export default function AdminMemberForm() {
 
                       {/* Tempat Praktek 2 */}
                       <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                        <h5 className="font-medium text-sm">Tempat Praktek 2</h5>
+                        <div className="flex items-center gap-2">
+                          <h5 className="font-medium text-sm">Tempat Praktek 2</h5>
+                          <Badge variant="secondary" className="text-xs">OPSIONAL</Badge>
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="tempatPraktek2">Nama RS / Klinik</Label>
@@ -1035,7 +1076,10 @@ export default function AdminMemberForm() {
 
                       {/* Tempat Praktek 3 */}
                       <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                        <h5 className="font-medium text-sm">Tempat Praktek 3</h5>
+                        <div className="flex items-center gap-2">
+                          <h5 className="font-medium text-sm">Tempat Praktek 3</h5>
+                          <Badge variant="secondary" className="text-xs">OPSIONAL</Badge>
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="tempatPraktek3">Nama RS / Klinik</Label>

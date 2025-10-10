@@ -2,3 +2,6 @@ project_id = "zxlccvozsbjmwrjbwyrr"
 
 [functions.import-anggota]
 verify_jwt = true
+
+[functions.reminder-7-hari]
+verify_jwt = false
