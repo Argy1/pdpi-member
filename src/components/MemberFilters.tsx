@@ -84,7 +84,7 @@ export function MemberFiltersComponent({
     debounce((value: string) => {
       onFiltersChange({
         ...filters,
-        nama: value || undefined
+        query: value || undefined
       })
     }, 1500),
     [filters, onFiltersChange]
@@ -101,8 +101,7 @@ export function MemberFiltersComponent({
     filters.hospitalType?.length || 
     filters.kota_kabupaten_kantor?.length || 
     filters.namaRS ||
-    filters.query ||
-    filters.nama ||
+    filters.query 
   )
 
   const FilterPopover = ({ 
@@ -227,16 +226,16 @@ export function MemberFiltersComponent({
         <Input
           type="text"
           placeholder="Cari nama anggota..."
-          defaultValue={filters.nama || ''}
+          defaultValue={filters.query || ''}
           onChange={(e) => handleNamaChange(e.target.value)}
           className="pl-9 focus-visible"
         />
-        {filters.nama && (
+        {filters.query && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
-              onFiltersChange({ ...filters, nama: undefined })
+              onFiltersChange({ ...filters, query: undefined })
             }}
             className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
           >
@@ -274,15 +273,15 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.nama) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.query) && (
         <div className="flex flex-wrap gap-2">
-          {filters.nama && (
+          {filters.query && (
             <Badge 
               variant="secondary" 
               className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => onFiltersChange({ ...filters, nama: undefined })}
+              onClick={() => onFiltersChange({ ...filters, query: undefined })}
             >
-              Nama: {filters.nama}
+              Nama: {filters.query}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           )}
