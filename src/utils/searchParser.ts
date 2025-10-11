@@ -110,7 +110,7 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
     }
   })
 
-  // Handle phrases and tokens - build single OR condition for text search
+  // Handle phrases and tokens - build search conditions
   const searchTerms = [...parsedQuery.phrases, ...parsedQuery.tokens]
   
   if (searchTerms.length > 0) {
@@ -121,17 +121,20 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
       if (normalizedTerm) {
         const termConditions = []
 
-        // Priority exact matches first
-        if (normalizedTerm.match(/^\d+$/)) { // If term is numeric (like NPA)
+        // Priority on name search
+        termConditions.push(
+          `nama.ilike.${normalizedTerm}%`, // Starts with
+          `nama.ilike.% ${normalizedTerm}%` // Contains as word
+        )
+
+        // Then try NPA if numeric
+        if (normalizedTerm.match(/^\d+$/)) {
           termConditions.push(`npa.eq.${normalizedTerm}`)
         }
 
-        // Then partial matches
+        // Then try other fields
         termConditions.push(
-          `nama.ilike.%${normalizedTerm}%`,
           `tempat_tugas.ilike.%${normalizedTerm}%`,
-          `kota_kabupaten.ilike.%${normalizedTerm}%`,
-          `provinsi.ilike.%${normalizedTerm}%`,
           `cabang.ilike.%${normalizedTerm}%`
         )
 
@@ -140,14 +143,9 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
           termConditions.push(
             `email.ilike.%${normalizedTerm}%`,
             `no_hp.ilike.%${normalizedTerm}%`,
-            `nik.ilike.%${normalizedTerm}%`,
-            `no_str.ilike.%${normalizedTerm}%`,
-            `no_sip.ilike.%${normalizedTerm}%`
+            `nik.ilike.%${normalizedTerm}%`
           )
         }
-
-        // Always include search_text as fallback
-        termConditions.push(`search_text.ilike.%${normalizedTerm}%`)
 
         // Add term conditions with OR
         if (termConditions.length > 0) {

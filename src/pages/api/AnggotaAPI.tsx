@@ -11,7 +11,7 @@ interface APIResponse<T> {
 }
 
 interface GetMembersParams {
-  q?: string
+  namaAnggota?: string
   provinsi?: string
   provinsi_kantor?: string
   pd?: string
@@ -32,7 +32,7 @@ export class AnggotaAPI {
   static async getMembers(params: GetMembersParams = {}): Promise<APIResponse<any[]>> {
     try {
       const { 
-        q = '', 
+        namaAnggota = '', 
         provinsi, 
         provinsi_kantor,
         pd, 
@@ -70,8 +70,8 @@ export class AnggotaAPI {
       const allOrConditions: string[] = []
 
       // 1. Advanced search filter
-      if (q && q.trim()) {
-        const parsedQuery = parseSearchQuery(q)
+      if (namaAnggota && namaAnggota.trim()) {
+        const parsedQuery = parseSearchQuery(namaAnggota)
         const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
         if (searchConditions.length > 0) {
           allOrConditions.push(...searchConditions)

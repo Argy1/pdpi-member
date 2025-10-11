@@ -72,13 +72,13 @@ export function MemberFiltersComponent({
   }
 
   // Handle search with debouncing
-  const [searchValue, setSearchValue] = useState(filters.query || '')
+  const [searchValue, setSearchValue] = useState(filters.namaAnggota || '')
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onFiltersChange({
         ...filters,
-        query: searchValue || undefined
+        namaAnggota: searchValue || undefined
       })
     }, 1500)
 
@@ -96,7 +96,7 @@ export function MemberFiltersComponent({
     filters.hospitalType?.length || 
     filters.kota_kabupaten_kantor?.length || 
     filters.namaRS ||
-    filters.query 
+    filters.namaAnggota 
   )
 
   const FilterPopover = ({ 
@@ -225,12 +225,12 @@ export function MemberFiltersComponent({
           onChange={(e) => handleNamaChange(e.target.value)}
           className="pl-9 focus-visible"
         />
-        {filters.query && (
+        {filters.namaAnggota && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
-              onFiltersChange({ ...filters, query: undefined })
+              onFiltersChange({ ...filters, namaAnggota: undefined })
             }}
             className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
           >
@@ -270,13 +270,13 @@ export function MemberFiltersComponent({
       {/* Active Filter Tags */}
       {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.query) && (
         <div className="flex flex-wrap gap-2">
-          {filters.query && (
+          {filters.namaAnggota && (
             <Badge 
               variant="secondary" 
               className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => onFiltersChange({ ...filters, query: undefined })}
+              onClick={() => onFiltersChange({ ...filters, namaAnggota: undefined })}
             >
-              Nama: {filters.query}
+              Nama: {filters.namaAnggota}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           )}
