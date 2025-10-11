@@ -219,7 +219,7 @@ export function MemberFiltersComponent({
 
       {/* Active Filter Tags */}
       {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS) && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
               key={province} 
