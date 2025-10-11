@@ -118,40 +118,48 @@ export function buildSearchConditions(parsedQuery: ParsedQuery, isAdmin: boolean
     
     searchTerms.forEach(term => {
       const normalizedTerm = normalizeText(term)
-      
-      // Priority search fields (higher relevance)
-      const termConditions = [
-        `nama.ilike.%${normalizedTerm}%`,
-        `npa.eq.${normalizedTerm}`, // Exact NPA match
-        `npa.ilike.%${normalizedTerm}%`,
-        `tempat_tugas.ilike.%${normalizedTerm}%`,
-        `kota_kabupaten.ilike.%${normalizedTerm}%`,
-        `provinsi.ilike.%${normalizedTerm}%`,
-        `cabang.ilike.%${normalizedTerm}%`,
-        `alumni.ilike.%${normalizedTerm}%`,
-        `alamat_rumah.ilike.%${normalizedTerm}%`
-      ]
+      if (normalizedTerm) {
+        const termConditions = []
 
-      // Admin-only search fields
-      if (isAdmin) {
+        // Priority exact matches first
+        if (normalizedTerm.match(/^\d+$/)) { // If term is numeric (like NPA)
+          termConditions.push(`npa.eq.${normalizedTerm}`)
+        }
+
+        // Then partial matches
         termConditions.push(
-          `email.ilike.%${normalizedTerm}%`,
-          `no_hp.ilike.%${normalizedTerm}%`,
-          `nik.ilike.%${normalizedTerm}%`,
-          `no_str.ilike.%${normalizedTerm}%`,
-          `no_sip.ilike.%${normalizedTerm}%`
+          `nama.ilike.%${normalizedTerm}%`,
+          `tempat_tugas.ilike.%${normalizedTerm}%`,
+          `kota_kabupaten.ilike.%${normalizedTerm}%`,
+          `provinsi.ilike.%${normalizedTerm}%`,
+          `cabang.ilike.%${normalizedTerm}%`
         )
+
+        // Add admin fields if applicable
+        if (isAdmin) {
+          termConditions.push(
+            `email.ilike.%${normalizedTerm}%`,
+            `no_hp.ilike.%${normalizedTerm}%`,
+            `nik.ilike.%${normalizedTerm}%`,
+            `no_str.ilike.%${normalizedTerm}%`,
+            `no_sip.ilike.%${normalizedTerm}%`
+          )
+        }
+
+        // Always include search_text as fallback
+        termConditions.push(`search_text.ilike.%${normalizedTerm}%`)
+
+        // Add term conditions with OR
+        if (termConditions.length > 0) {
+          allSearchConditions.push(`(${termConditions.join(' or ')})`)
+        }
       }
-
-      // Fallback to search_text
-      termConditions.push(`search_text.ilike.%${normalizedTerm}%`)
-
-      allSearchConditions.push(...termConditions)
     })
 
+    // Combine all term conditions with AND by default, OR if specified
     if (allSearchConditions.length > 0) {
-      // Create single OR condition for all search terms
-      conditions.push(allSearchConditions.join(','))
+      const operator = parsedQuery.isOrQuery ? ' or ' : ' and '
+      conditions.push(allSearchConditions.join(operator))
     }
   }
 
