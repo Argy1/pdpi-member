@@ -66,10 +66,15 @@ export class AnggotaAPI {
         query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // Apply search filter (only search by name)
+      // Apply advanced search filter using searchParser
       if (q && q.trim()) {
-        const searchTerm = q.trim()
-        query = query.ilike('nama', `%${searchTerm}%`)
+        const parsedQuery = parseSearchQuery(q)
+        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        
+        if (searchConditions.length > 0) {
+          // Join all conditions with OR
+          query = query.or(searchConditions.join(','))
+        }
       }
 
       // Apply province filter (OR within provinces)
@@ -165,10 +170,15 @@ export class AnggotaAPI {
         countQuery = countQuery.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // Apply same search filter for count (only search by name)
+      // Apply same advanced search filter for count
       if (q && q.trim()) {
-        const searchTerm = q.trim()
-        countQuery = countQuery.ilike('nama', `%${searchTerm}%`)
+        const parsedQuery = parseSearchQuery(q)
+        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
+        
+        if (searchConditions.length > 0) {
+          // Join all conditions with OR
+          countQuery = countQuery.or(searchConditions.join(','))
+        }
       }
 
       if (provinsi_kantor) {
