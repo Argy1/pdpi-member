@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
-import { SearchBar } from "@/components/SearchBar"
 import { MemberFiltersComponent } from "@/components/MemberFilters"
 import { MemberTable } from "@/components/MemberTable"
 import { PublicMemberTable } from "@/components/PublicMemberTable"
@@ -195,17 +194,6 @@ export default function AnggotaPage() {
             </p>
           </div>
 
-          {/* Search Bar */}
-          <SearchBar
-            value={filters.query || ''}
-            onSearch={(query) => {
-              setFilters(prev => ({ ...prev, query }))
-              setPagination(prev => ({ ...prev, page: 1 }))
-            }}
-            placeholder="Cari nama anggota..."
-            size="default"
-            scope={isAuthenticated ? 'admin' : 'public'}
-          />
         </div>
 
         {/* Filters - Show for all users */}
