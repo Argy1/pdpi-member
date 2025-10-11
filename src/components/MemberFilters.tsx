@@ -71,27 +71,22 @@ export function MemberFiltersComponent({
     })
   }
 
-  // Debounced search for nama
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout
-    return (...args: any[]) => {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => func(...args), wait)
-    }
-  }
+  // Handle search with debouncing
+  const [searchValue, setSearchValue] = useState(filters.query || '')
 
-  const debouncedNamaChange = useCallback(
-    debounce((value: string) => {
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
       onFiltersChange({
         ...filters,
-        query: value || undefined
+        query: searchValue || undefined
       })
-    }, 1500),
-    [filters, onFiltersChange]
-  )
+    }, 1500)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchValue, filters, onFiltersChange])
 
   const handleNamaChange = (value: string) => {
-    debouncedNamaChange(value)
+    setSearchValue(value)
   }
 
   const hasActiveFilters = !!(
@@ -226,7 +221,7 @@ export function MemberFiltersComponent({
         <Input
           type="text"
           placeholder="Cari nama anggota..."
-          defaultValue={filters.query || ''}
+          value={searchValue}
           onChange={(e) => handleNamaChange(e.target.value)}
           className="pl-9 focus-visible"
         />
