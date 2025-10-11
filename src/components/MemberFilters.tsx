@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react"
-import { Check, ChevronDown, Filter, X, Hospital, User } from "lucide-react"
+import { useState } from "react"
+import { Check, ChevronDown, Filter, X, Hospital } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -71,33 +71,7 @@ export function MemberFiltersComponent({
     })
   }
 
-  // Handle search with debouncing
-  const [searchValue, setSearchValue] = useState(filters.namaAnggota || '')
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      onFiltersChange({
-        ...filters,
-        namaAnggota: searchValue || undefined
-      })
-    }, 1500)
-
-    return () => clearTimeout(timeoutId)
-  }, [searchValue, filters, onFiltersChange])
-
-  const handleNamaChange = (value: string) => {
-    setSearchValue(value)
-  }
-
-  const hasActiveFilters = !!(
-    filters.provinsi_kantor?.length || 
-    filters.pd?.length || 
-    filters.namaHurufDepan?.length || 
-    filters.hospitalType?.length || 
-    filters.kota_kabupaten_kantor?.length || 
-    filters.namaRS ||
-    filters.namaAnggota 
-  )
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS)
 
   const FilterPopover = ({ 
     open, 
@@ -215,30 +189,6 @@ export function MemberFiltersComponent({
         )}
       </div>
 
-      {/* Search by Nama Input */}
-      <div className="relative max-w-md">
-        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Cari nama anggota..."
-          value={searchValue}
-          onChange={(e) => handleNamaChange(e.target.value)}
-          className="pl-9 focus-visible"
-        />
-        {filters.namaAnggota && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              onFiltersChange({ ...filters, namaAnggota: undefined })
-            }}
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-
       {/* Hospital Name Search Input */}
       <div className="relative max-w-md">
         <Hospital className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -268,18 +218,8 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.query) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS) && (
         <div className="flex flex-wrap gap-2">
-          {filters.namaAnggota && (
-            <Badge 
-              variant="secondary" 
-              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
-              onClick={() => onFiltersChange({ ...filters, namaAnggota: undefined })}
-            >
-              Nama: {filters.namaAnggota}
-              <X className="h-3 w-3 ml-1" />
-            </Badge>
-          )}
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
               key={province} 

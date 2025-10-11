@@ -66,7 +66,7 @@ export interface Member {
 }
 
 export interface MemberFilters {
-  namaAnggota?: string
+  query?: string
   provinsi?: string[]
   pd?: string[]
   subspesialis?: string[]

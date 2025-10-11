@@ -33,7 +33,7 @@ export function SearchBar({
 
   const finalPlaceholder = placeholder || defaultPlaceholder
 
-  // Debounced search function with 1.5 second delay
+  // Debounced search function
   const debouncedSearch = useCallback(
     debounce((searchQuery: string) => {
       if (onSearch) {
@@ -43,7 +43,7 @@ export function SearchBar({
       } else if (onSearch) {
         onSearch("")
       }
-    }, 1500), // 1.5 second debounce to prevent lag
+    }, 300),
     [onSearch, navigate]
   )
 

@@ -11,7 +11,7 @@ interface APIResponse<T> {
 }
 
 interface GetMembersParams {
-  namaAnggota?: string
+  q?: string
   provinsi?: string
   provinsi_kantor?: string
   pd?: string
@@ -32,7 +32,7 @@ export class AnggotaAPI {
   static async getMembers(params: GetMembersParams = {}): Promise<APIResponse<any[]>> {
     try {
       const { 
-        namaAnggota = '', 
+        q = '', 
         provinsi, 
         provinsi_kantor,
         pd, 
@@ -66,75 +66,82 @@ export class AnggotaAPI {
         query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // === COLLECT ALL OR CONDITIONS ===
-      const allOrConditions: string[] = []
+      // Apply search filter (only search by name)
+      if (q && q.trim()) {
+        const searchTerm = q.trim()
+        query = query.ilike('nama', `%${searchTerm}%`)
+      }
 
-      // 1. Advanced search filter
-      if (namaAnggota && namaAnggota.trim()) {
-        const parsedQuery = parseSearchQuery(namaAnggota)
-        const searchConditions = buildSearchConditions(parsedQuery, isAdmin)
-        if (searchConditions.length > 0) {
-          allOrConditions.push(...searchConditions)
+      // Apply province filter (OR within provinces)
+      if (provinsi_kantor) {
+        const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
+        if (provinces.length > 0) {
+          const provinceConditions = provinces.map(province => 
+            `provinsi_kantor.ilike.%${province}%`
+          ).join(',')
+          query = query.or(provinceConditions)
         }
       }
 
-      // 2. Province filter
-      if (provinsi_kantor) {
-        const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
-        provinces.forEach(province => {
-          allOrConditions.push(`provinsi_kantor.ilike.%${province}%`)
-        })
-      }
-
-      // 3. City filter
-      if (kota_kabupaten_kantor) {
-        const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
-        cities.forEach(city => {
-          allOrConditions.push(`kota_kabupaten_kantor.ilike.%${city}%`)
-        })
-      }
-
-      // 4. Alphabetical filter
-      if (namaHurufDepan) {
-        const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
-        letters.forEach(letter => {
-          allOrConditions.push(`nama.ilike.${letter}%`)
-        })
-      }
-
-      // 5. Hospital type filter
-      if (hospitalType) {
-        const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
-        types.forEach(type => {
-          allOrConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
-          allOrConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
-          allOrConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
-        })
-      }
-
-      // 6. Hospital name search
-      if (namaRS && namaRS.trim()) {
-        const searchTerm = namaRS.trim()
-        allOrConditions.push(`tempat_praktek_1.ilike.%${searchTerm}%`)
-        allOrConditions.push(`tempat_praktek_2.ilike.%${searchTerm}%`)
-        allOrConditions.push(`tempat_praktek_3.ilike.%${searchTerm}%`)
-        allOrConditions.push(`tempat_tugas.ilike.%${searchTerm}%`)
-      }
-
-      // === APPLY ALL OR CONDITIONS IN ONE CALL ===
-      if (allOrConditions.length > 0) {
-        query = query.or(allOrConditions.join(','))
-      }
-
-      // === APPLY AND CONDITIONS SEPARATELY ===
-      // PD filter (uses AND logic)
+      // Apply PD filter
       if (pd) {
         query = query.ilike('cabang', `%${pd}%`)
       }
 
-      // Status filter (uses AND logic)
+      // Apply city filter (OR within cities)
+      if (kota_kabupaten_kantor) {
+        const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
+        if (cities.length > 0) {
+          const cityConditions = cities.map(city => 
+            `kota_kabupaten_kantor.ilike.%${city}%`
+          ).join(',')
+          query = query.or(cityConditions)
+        }
+      }
+
+      // Apply status filter
       if (status) {
         query = query.eq('status', status)
+      }
+
+      // Apply alphabetical filter (OR within letters)
+      if (namaHurufDepan) {
+        const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
+        if (letters.length > 0) {
+          const letterConditions = letters.map(letter => 
+            `nama.ilike.${letter}%`
+          ).join(',')
+          query = query.or(letterConditions)
+        }
+      }
+
+      // Apply hospital type filter (OR within types)
+      if (hospitalType) {
+        const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
+        if (types.length > 0) {
+          const hospitalConditions = []
+          types.forEach(type => {
+            // Check across all practice locations for matching type
+            hospitalConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
+          })
+          if (hospitalConditions.length > 0) {
+            query = query.or(hospitalConditions.join(','))
+          }
+        }
+      }
+
+      // Apply hospital name search filter
+      if (namaRS && namaRS.trim()) {
+        const searchTerm = namaRS.trim()
+        const hospitalNameConditions = [
+          `tempat_praktek_1.ilike.%${searchTerm}%`,
+          `tempat_praktek_2.ilike.%${searchTerm}%`,
+          `tempat_praktek_3.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`
+        ]
+        query = query.or(hospitalNameConditions.join(','))
       }
 
       // Apply sorting
@@ -148,27 +155,88 @@ export class AnggotaAPI {
         ascending: sortDirection === 'asc' 
       })
 
-      // === BUILD COUNT QUERY WITH SAME LOGIC ===
+      // Build count query with same filters
       let countQuery = supabase
         .from('members')
         .select('*', { count: 'exact', head: true })
 
+      // For public scope, exclude certain statuses from count
       if (!isAdmin) {
         countQuery = countQuery.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // Apply same OR conditions for count
-      if (allOrConditions.length > 0) {
-        countQuery = countQuery.or(allOrConditions.join(','))
+      // Apply same search filter for count (only search by name)
+      if (q && q.trim()) {
+        const searchTerm = q.trim()
+        countQuery = countQuery.ilike('nama', `%${searchTerm}%`)
       }
 
-      // Apply same AND conditions for count
+      if (provinsi_kantor) {
+        const provinces = provinsi_kantor.split(',').map(p => p.trim()).filter(p => p)
+        if (provinces.length > 0) {
+          const provinceConditions = provinces.map(province => 
+            `provinsi_kantor.ilike.%${province}%`
+          ).join(',')
+          countQuery = countQuery.or(provinceConditions)
+        }
+      }
+
       if (pd) {
         countQuery = countQuery.ilike('cabang', `%${pd}%`)
       }
 
+      if (kota_kabupaten_kantor) {
+        const cities = kota_kabupaten_kantor.split(',').map(c => c.trim()).filter(c => c)
+        if (cities.length > 0) {
+          const cityConditions = cities.map(city => 
+            `kota_kabupaten_kantor.ilike.%${city}%`
+          ).join(',')
+          countQuery = countQuery.or(cityConditions)
+        }
+      }
+
       if (status) {
         countQuery = countQuery.eq('status', status)
+      }
+
+      // Apply alphabetical filter for count query too
+      if (namaHurufDepan) {
+        const letters = namaHurufDepan.split(',').map(l => l.trim()).filter(l => l)
+        if (letters.length > 0) {
+          const letterConditions = letters.map(letter => 
+            `nama.ilike.${letter}%`
+          ).join(',')
+          countQuery = countQuery.or(letterConditions)
+        }
+      }
+
+      // Apply hospital type filter for count query too
+      if (hospitalType) {
+        const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
+        if (types.length > 0) {
+          const hospitalConditions = []
+          types.forEach(type => {
+            // Check across all practice locations for matching type
+            hospitalConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
+          })
+          if (hospitalConditions.length > 0) {
+            countQuery = countQuery.or(hospitalConditions.join(','))
+          }
+        }
+      }
+
+      // Apply hospital name search filter for count query too
+      if (namaRS && namaRS.trim()) {
+        const searchTerm = namaRS.trim()
+        const hospitalNameConditions = [
+          `tempat_praktek_1.ilike.%${searchTerm}%`,
+          `tempat_praktek_2.ilike.%${searchTerm}%`,
+          `tempat_praktek_3.ilike.%${searchTerm}%`,
+          `tempat_tugas.ilike.%${searchTerm}%`
+        ]
+        countQuery = countQuery.or(hospitalNameConditions.join(','))
       }
 
       // Get total count

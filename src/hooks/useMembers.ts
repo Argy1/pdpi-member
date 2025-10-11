@@ -3,7 +3,7 @@ import { Member } from '@/types/member'
 import { AnggotaAPI } from '@/pages/api/AnggotaAPI'
 
 interface UseMembersOptions {
-  namaAnggota?: string
+  query?: string
   provinsi?: string
   provinsi_kantor?: string[]
   pd?: string

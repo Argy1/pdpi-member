@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
+import { SearchBar } from "@/components/SearchBar"
 import { MemberFiltersComponent } from "@/components/MemberFilters"
 import { MemberTable } from "@/components/MemberTable"
 import { PublicMemberTable } from "@/components/PublicMemberTable"
@@ -25,7 +26,7 @@ export default function AnggotaPage() {
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => ({
-    namaAnggota: searchParams.get("q") || undefined,
+    query: searchParams.get("q") || undefined,
     provinsi_kantor: searchParams.get("provinsi_kantor") ? [searchParams.get("provinsi_kantor")!] : undefined,
     pd: searchParams.get("pd") ? [searchParams.get("pd")!] : undefined,
     subspesialis: searchParams.get("subspesialis") ? [searchParams.get("subspesialis")!] : undefined,
@@ -97,7 +98,7 @@ export default function AnggotaPage() {
     error, 
     refresh 
   } = useMembers({
-    namaAnggota: filters.namaAnggota,
+    query: filters.query,
     provinsi_kantor: filters.provinsi_kantor,
     pd: filters.pd?.[0],
     subspesialis: filters.subspesialis?.[0],
@@ -115,7 +116,7 @@ export default function AnggotaPage() {
   useEffect(() => {
     const params = new URLSearchParams()
     
-    if (filters.namaAnggota) params.set("q", filters.namaAnggota)
+    if (filters.query) params.set("q", filters.query)
     if (filters.provinsi_kantor?.length) params.set("provinsi_kantor", filters.provinsi_kantor.join(","))
     if (filters.pd?.length) params.set("pd", filters.pd.join(","))
     if (filters.subspesialis?.length) params.set("subspesialis", filters.subspesialis.join(","))
@@ -194,6 +195,17 @@ export default function AnggotaPage() {
             </p>
           </div>
 
+          {/* Search Bar */}
+          <SearchBar
+            value={filters.query || ''}
+            onSearch={(query) => {
+              setFilters(prev => ({ ...prev, query }))
+              setPagination(prev => ({ ...prev, page: 1 }))
+            }}
+            placeholder="Cari nama anggota..."
+            size="default"
+            scope={isAuthenticated ? 'admin' : 'public'}
+          />
         </div>
 
         {/* Filters - Show for all users */}
