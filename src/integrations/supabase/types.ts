@@ -119,13 +119,6 @@ export type Database = {
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "member_change_requests_member_id_fkey"
-            columns: ["member_id"]
-            isOneToOne: false
-            referencedRelation: "public_member_directory"
-            referencedColumns: ["id"]
-          },
         ]
       }
       members: {
@@ -310,98 +303,9 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
-        Row: {
-          created_at: string | null
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
-      public_member_directory: {
-        Row: {
-          alumni: string | null
-          cabang: string | null
-          created_at: string | null
-          gelar: string | null
-          gelar2: string | null
-          id: string | null
-          jenis_kelamin: string | null
-          kota_kabupaten_kantor: string | null
-          nama: string | null
-          npa: string | null
-          provinsi_kantor: string | null
-          status: string | null
-          tempat_praktek_1: string | null
-          tempat_praktek_1_tipe: string | null
-          tempat_praktek_2: string | null
-          tempat_praktek_2_tipe: string | null
-          tempat_praktek_3: string | null
-          tempat_praktek_3_tipe: string | null
-          tempat_tugas: string | null
-          thn_lulus: number | null
-        }
-        Insert: {
-          alumni?: string | null
-          cabang?: string | null
-          created_at?: string | null
-          gelar?: string | null
-          gelar2?: string | null
-          id?: string | null
-          jenis_kelamin?: string | null
-          kota_kabupaten_kantor?: string | null
-          nama?: string | null
-          npa?: string | null
-          provinsi_kantor?: string | null
-          status?: string | null
-          tempat_praktek_1?: string | null
-          tempat_praktek_1_tipe?: string | null
-          tempat_praktek_2?: string | null
-          tempat_praktek_2_tipe?: string | null
-          tempat_praktek_3?: string | null
-          tempat_praktek_3_tipe?: string | null
-          tempat_tugas?: string | null
-          thn_lulus?: number | null
-        }
-        Update: {
-          alumni?: string | null
-          cabang?: string | null
-          created_at?: string | null
-          gelar?: string | null
-          gelar2?: string | null
-          id?: string | null
-          jenis_kelamin?: string | null
-          kota_kabupaten_kantor?: string | null
-          nama?: string | null
-          npa?: string | null
-          provinsi_kantor?: string | null
-          status?: string | null
-          tempat_praktek_1?: string | null
-          tempat_praktek_1_tipe?: string | null
-          tempat_praktek_2?: string | null
-          tempat_praktek_2_tipe?: string | null
-          tempat_praktek_3?: string | null
-          tempat_praktek_3_tipe?: string | null
-          tempat_tugas?: string | null
-          thn_lulus?: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       generate_search_text: {
@@ -431,13 +335,6 @@ export type Database = {
       gtrgm_out: {
         Args: { "": unknown }
         Returns: unknown
-      }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
       }
       normalize_text: {
         Args: { input_text: string }
@@ -475,7 +372,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin_pusat" | "admin_cabang" | "user"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -602,8 +499,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin_pusat", "admin_cabang", "user"],
-    },
+    Enums: {},
   },
 } as const

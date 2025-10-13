@@ -31,8 +31,8 @@ interface StatsParams {
 export class StatsAPI {
   static async getSummary(params: StatsParams = {}): Promise<StatsSummary> {
     try {
-      // Build base query - use public_member_directory for non-sensitive stats
-      let query = supabase.from('public_member_directory').select('*', { count: 'exact' })
+      // Build base query
+      let query = supabase.from('members').select('*', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
@@ -42,8 +42,8 @@ export class StatsAPI {
       if (error) throw error
 
       const total = count || 0
-      const laki = members?.filter((m: any) => m.jenis_kelamin === 'L').length || 0
-      const perempuan = members?.filter((m: any) => m.jenis_kelamin === 'P').length || 0
+      const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
+      const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
 
       // Group by provinsi
       const provinsiMap = new Map<string, number>()
