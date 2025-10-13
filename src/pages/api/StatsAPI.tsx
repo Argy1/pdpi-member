@@ -42,8 +42,8 @@ export class StatsAPI {
       if (error) throw error
 
       const total = count || 0
-      const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
-      const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
+      const laki = members?.filter((m: any) => m.jenis_kelamin === 'L').length || 0
+      const perempuan = members?.filter((m: any) => m.jenis_kelamin === 'P').length || 0
 
       // Group by provinsi
       const provinsiMap = new Map<string, number>()

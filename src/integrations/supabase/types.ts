@@ -341,6 +341,7 @@ export type Database = {
           gelar: string | null
           gelar2: string | null
           id: string | null
+          jenis_kelamin: string | null
           kota_kabupaten_kantor: string | null
           nama: string | null
           npa: string | null
@@ -362,6 +363,7 @@ export type Database = {
           gelar?: string | null
           gelar2?: string | null
           id?: string | null
+          jenis_kelamin?: string | null
           kota_kabupaten_kantor?: string | null
           nama?: string | null
           npa?: string | null
@@ -383,6 +385,7 @@ export type Database = {
           gelar?: string | null
           gelar2?: string | null
           id?: string | null
+          jenis_kelamin?: string | null
           kota_kabupaten_kantor?: string | null
           nama?: string | null
           npa?: string | null
