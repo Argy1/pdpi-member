@@ -119,6 +119,13 @@ export type Database = {
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "member_change_requests_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "public_member_directory"
+            referencedColumns: ["id"]
+          },
         ]
       }
       members: {
@@ -326,7 +333,72 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_member_directory: {
+        Row: {
+          alumni: string | null
+          cabang: string | null
+          created_at: string | null
+          gelar: string | null
+          gelar2: string | null
+          id: string | null
+          kota_kabupaten_kantor: string | null
+          nama: string | null
+          npa: string | null
+          provinsi_kantor: string | null
+          status: string | null
+          tempat_praktek_1: string | null
+          tempat_praktek_1_tipe: string | null
+          tempat_praktek_2: string | null
+          tempat_praktek_2_tipe: string | null
+          tempat_praktek_3: string | null
+          tempat_praktek_3_tipe: string | null
+          tempat_tugas: string | null
+          thn_lulus: number | null
+        }
+        Insert: {
+          alumni?: string | null
+          cabang?: string | null
+          created_at?: string | null
+          gelar?: string | null
+          gelar2?: string | null
+          id?: string | null
+          kota_kabupaten_kantor?: string | null
+          nama?: string | null
+          npa?: string | null
+          provinsi_kantor?: string | null
+          status?: string | null
+          tempat_praktek_1?: string | null
+          tempat_praktek_1_tipe?: string | null
+          tempat_praktek_2?: string | null
+          tempat_praktek_2_tipe?: string | null
+          tempat_praktek_3?: string | null
+          tempat_praktek_3_tipe?: string | null
+          tempat_tugas?: string | null
+          thn_lulus?: number | null
+        }
+        Update: {
+          alumni?: string | null
+          cabang?: string | null
+          created_at?: string | null
+          gelar?: string | null
+          gelar2?: string | null
+          id?: string | null
+          kota_kabupaten_kantor?: string | null
+          nama?: string | null
+          npa?: string | null
+          provinsi_kantor?: string | null
+          status?: string | null
+          tempat_praktek_1?: string | null
+          tempat_praktek_1_tipe?: string | null
+          tempat_praktek_2?: string | null
+          tempat_praktek_2_tipe?: string | null
+          tempat_praktek_3?: string | null
+          tempat_praktek_3_tipe?: string | null
+          tempat_tugas?: string | null
+          thn_lulus?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_search_text: {
