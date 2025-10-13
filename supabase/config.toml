@@ -4,4 +4,4 @@ project_id = "zxlccvozsbjmwrjbwyrr"
 verify_jwt = true
 
 [functions.reminder-7-hari]
-verify_jwt = false
+verify_jwt = true

@@ -21,6 +21,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ExcelImport } from '@/components/admin/ExcelImport';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { memberSchema } from '@/schemas/memberSchema';
+import { z } from 'zod';
 
 interface MemberFormData {
   // Identitas
@@ -286,23 +288,45 @@ export default function AdminMemberForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!formData.nama.trim()) {
-      toast({
-        title: 'Validasi Error',
-        description: 'Nama lengkap wajib diisi.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    if (!formData.npa.trim()) {
-      toast({
-        title: 'Validasi Error',
-        description: 'NPA (Nomor Peserta Anggota) wajib diisi.',
-        variant: 'destructive',
-      });
-      return;
+    // Validate using zod schema
+    try {
+      const validationData = {
+        nama: formData.nama,
+        npa: formData.npa,
+        email: formData.kontakEmail || '',
+        no_hp: formData.kontakTelepon || '',
+        jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' : formData.jenisKelamin === 'Perempuan' ? 'P' : '',
+        gelar: formData.gelar || '',
+        gelar2: formData.gelar2 || '',
+        tempat_lahir: formData.tempatLahir || '',
+        tgl_lahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : '',
+        alumni: formData.alumni || '',
+        thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : null,
+        tempat_tugas: formData.unitKerja || '',
+        alamat_rumah: formData.alamat || '',
+        cabang: formData.pd || '',
+        status: formData.status || '',
+        kota_kabupaten: formData.kotaKantor || '',
+        provinsi: formData.provinsiKantor || '',
+        kota_kabupaten_rumah: formData.kotaRumah || '',
+        provinsi_rumah: formData.provinsiRumah || '',
+        kota_kabupaten_kantor: formData.kotaKantor || '',
+        provinsi_kantor: formData.provinsiKantor || '',
+        foto: formData.foto || '',
+        keterangan: '',
+      };
+
+      memberSchema.parse(validationData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('\n');
+        toast({
+          title: 'Validasi Error',
+          description: errorMessages,
+          variant: 'destructive',
+        });
+        return;
+      }
     }
 
     // Validate Tempat Praktek 1 is required
