@@ -31,8 +31,8 @@ interface StatsParams {
 export class StatsAPI {
   static async getSummary(params: StatsParams = {}): Promise<StatsSummary> {
     try {
-      // Build base query
-      let query = supabase.from('members').select('*', { count: 'exact' })
+      // Build base query - use public_member_directory for non-sensitive stats
+      let query = supabase.from('public_member_directory').select('*', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)

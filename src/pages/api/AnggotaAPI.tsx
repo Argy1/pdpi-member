@@ -51,20 +51,14 @@ export class AnggotaAPI {
 
       const isAdmin = scope === 'admin'
 
-      // Define field selection based on scope - only include existing columns
-      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_3, tempat_praktek_3_tipe, email, foto'
-      const publicFields = `${baseFields}, kota_kabupaten_kantor, provinsi_kantor`
-      const adminFields = `${baseFields}, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor`
+      // Define field selection based on scope
+      const publicFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_3, tempat_praktek_3_tipe, kota_kabupaten_kantor, provinsi_kantor'
+      const adminFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_3, tempat_praktek_3_tipe, email, foto, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, jenis_kelamin, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor'
 
-      // Build query conditions
-      let query = supabase
-        .from('members')
-        .select(isAdmin ? adminFields : publicFields)
-
-      // For public scope, exclude certain statuses
-      if (!isAdmin) {
-        query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
-      }
+      // Build query - use public view for non-admin, members table for admin
+      let query = isAdmin 
+        ? supabase.from('members').select(adminFields)
+        : supabase.from('public_member_directory').select(publicFields)
 
       // Apply search filter (only search by name)
       if (q && q.trim()) {
