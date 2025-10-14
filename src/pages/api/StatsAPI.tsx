@@ -31,8 +31,8 @@ interface StatsParams {
 export class StatsAPI {
   static async getSummary(params: StatsParams = {}): Promise<StatsSummary> {
     try {
-      // Build base query
-      let query = supabase.from('members').select('*', { count: 'exact' })
+      // Build base query with specific fields needed
+      let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, cabang, kota_kabupaten_kantor', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
@@ -102,7 +102,7 @@ export class StatsAPI {
   static async getProvinceStats(params: StatsParams = {}): Promise<ProvinceStats[]> {
     let query = supabase
       .from('members')
-      .select('provinsi, jenis_kelamin')
+      .select('provinsi_kantor, jenis_kelamin')
 
     query = this.applyFilters(query, params)
 
@@ -114,7 +114,7 @@ export class StatsAPI {
     const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
     
     data?.forEach(member => {
-      const prov = member.provinsi || 'Tidak Diketahui'
+      const prov = member.provinsi_kantor || 'Tidak Diketahui'
       const current = provinceMap.get(prov) || { count: 0, laki: 0, perempuan: 0 }
       
       current.count++

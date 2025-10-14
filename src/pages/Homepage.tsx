@@ -20,10 +20,10 @@ export default function Homepage() {
   const stats = useMemo(() => {
     const totalMembers = members.length;
     
-    // Calculate unique provinces
+    // Calculate unique provinces - use provinsi_kantor field
     const uniqueProvinces = new Set(
       members
-        .map(m => m.provinsi)
+        .map(m => m.provinsi_kantor || m.provinsi)
         .filter(Boolean) // Remove null/undefined values
     );
     
