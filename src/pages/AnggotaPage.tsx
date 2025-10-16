@@ -12,7 +12,7 @@ import { mockProvinces, mockPDs, mockSubspesialisOptions, mockCities } from "@/d
 import { useMembers } from '@/hooks/useMembers'
 import { supabase } from "@/integrations/supabase/client"
 import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
-import { ArrowUpDown, Users, RefreshCw } from "lucide-react"
+import { ArrowUpDown, Users, RefreshCw, X } from "lucide-react"
 
 export default function AnggotaPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -206,6 +206,25 @@ export default function AnggotaPage() {
             size="default"
             scope={isAuthenticated ? 'admin' : 'public'}
           />
+          
+          {/* Search Chip - Show active search query */}
+          {filters.query && (
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm">
+                <span className="font-medium">Nama: {filters.query}</span>
+                <button
+                  onClick={() => {
+                    setFilters(prev => ({ ...prev, query: undefined }))
+                    setPagination(prev => ({ ...prev, page: 1 }))
+                  }}
+                  className="hover:bg-background rounded-full p-1 transition-colors"
+                  aria-label="Hapus pencarian"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filters - Show for all users */}
