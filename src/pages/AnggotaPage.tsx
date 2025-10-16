@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router-dom"
+import { SearchBar } from "@/components/SearchBar"
 import { MemberFiltersComponent } from "@/components/MemberFilters"
 import { MemberTable } from "@/components/MemberTable"
 import { PublicMemberTable } from "@/components/PublicMemberTable"
@@ -11,7 +12,7 @@ import { mockProvinces, mockPDs, mockSubspesialisOptions, mockCities } from "@/d
 import { useMembers } from '@/hooks/useMembers'
 import { supabase } from "@/integrations/supabase/client"
 import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
-import { ArrowUpDown, Users, RefreshCw } from "lucide-react"
+import { ArrowUpDown, Users, RefreshCw, X } from "lucide-react"
 
 export default function AnggotaPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -23,8 +24,9 @@ export default function AnggotaPage() {
   const [availableBranches, setAvailableBranches] = useState<string[]>([])
   const [availableCities, setAvailableCities] = useState<string[]>([])
 
-  // Initialize state from URL params (removed query)
+  // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => ({
+    query: searchParams.get("q") || undefined,
     provinsi_kantor: searchParams.get("provinsi_kantor") ? [searchParams.get("provinsi_kantor")!] : undefined,
     pd: searchParams.get("pd") ? [searchParams.get("pd")!] : undefined,
     subspesialis: searchParams.get("subspesialis") ? [searchParams.get("subspesialis")!] : undefined,
@@ -96,6 +98,7 @@ export default function AnggotaPage() {
     error, 
     refresh 
   } = useMembers({
+    query: filters.query,
     provinsi_kantor: filters.provinsi_kantor,
     pd: filters.pd?.[0],
     subspesialis: filters.subspesialis?.[0],
@@ -109,10 +112,11 @@ export default function AnggotaPage() {
     scope: isAuthenticated ? 'admin' : 'public'
   })
 
-  // Update URL when filters change (removed query)
+  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams()
     
+    if (filters.query) params.set("q", filters.query)
     if (filters.provinsi_kantor?.length) params.set("provinsi_kantor", filters.provinsi_kantor.join(","))
     if (filters.pd?.length) params.set("pd", filters.pd.join(","))
     if (filters.subspesialis?.length) params.set("subspesialis", filters.subspesialis.join(","))
@@ -190,6 +194,37 @@ export default function AnggotaPage() {
               }
             </p>
           </div>
+
+          {/* Search Bar - Only trigger on Enter or Click */}
+          <SearchBar
+            value={filters.query || ''}
+            onSearch={(query) => {
+              setFilters(prev => ({ ...prev, query }))
+              setPagination(prev => ({ ...prev, page: 1 }))
+            }}
+            placeholder="Cari nama anggota..."
+            size="default"
+            scope={isAuthenticated ? 'admin' : 'public'}
+          />
+          
+          {/* Search Chip - Show active search query */}
+          {filters.query && (
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm">
+                <span className="font-medium">Nama: {filters.query}</span>
+                <button
+                  onClick={() => {
+                    setFilters(prev => ({ ...prev, query: undefined }))
+                    setPagination(prev => ({ ...prev, page: 1 }))
+                  }}
+                  className="hover:bg-background rounded-full p-1 transition-colors"
+                  aria-label="Hapus pencarian"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Filters - Show for all users */}
