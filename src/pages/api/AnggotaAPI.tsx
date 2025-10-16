@@ -66,14 +66,11 @@ export class AnggotaAPI {
         query = query.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // Apply search filter - use OR pattern for name search (same method as hospital search)
+      // Apply search filter for name (without title/gelar)
       if (q && q.trim()) {
         const searchTerm = q.trim()
-        const nameSearchConditions = [
-          `nama.ilike.%${searchTerm}%`,
-          `npa.ilike.%${searchTerm}%`
-        ]
-        query = query.or(nameSearchConditions.join(','))
+        // Search only in nama field, case insensitive
+        query = query.ilike('nama', `%${searchTerm}%`)
       }
 
       // Apply province filter (OR within provinces)
@@ -169,14 +166,11 @@ export class AnggotaAPI {
         countQuery = countQuery.not('status', 'in', '("Luar Biasa","Meninggal","Muda")')
       }
 
-      // Apply same search filter for count - use OR pattern for name search
+      // Apply same search filter for count - name only (without title/gelar)
       if (q && q.trim()) {
         const searchTerm = q.trim()
-        const nameSearchConditions = [
-          `nama.ilike.%${searchTerm}%`,
-          `npa.ilike.%${searchTerm}%`
-        ]
-        countQuery = countQuery.or(nameSearchConditions.join(','))
+        // Search only in nama field, case insensitive
+        countQuery = countQuery.ilike('nama', `%${searchTerm}%`)
       }
 
       if (provinsi_kantor) {
