@@ -33,32 +33,11 @@ export function SearchBar({
 
   const finalPlaceholder = placeholder || defaultPlaceholder
 
-  // Debounced search function
-  const debouncedSearch = useCallback(
-    debounce((searchQuery: string) => {
-      if (onSearch) {
-        onSearch(searchQuery.trim())
-      } else if (searchQuery.trim()) {
-        navigate(`/anggota?q=${encodeURIComponent(searchQuery.trim())}`)
-      } else if (onSearch) {
-        onSearch("")
-      }
-    }, 300),
-    [onSearch, navigate]
-  )
-
-  // Update controlled value
-  useEffect(() => {
-    if (controlledValue !== undefined) {
-      setQuery(controlledValue)
-    }
-  }, [controlledValue])
-
-  // Handle input change with debounce
+  // Handle input change WITHOUT debounce
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value
     setQuery(newQuery)
-    debouncedSearch(newQuery)
+    // Don't trigger search on every keystroke
   }
 
   const handleSearch = () => {
@@ -83,18 +62,12 @@ export function SearchBar({
     }
   }
 
-  // Debounce utility function
-  function debounce(func: Function, wait: number) {
-    let timeout: NodeJS.Timeout
-    return function executedFunction(...args: any[]) {
-      const later = () => {
-        clearTimeout(timeout)
-        func(...args)
-      }
-      clearTimeout(timeout)
-      timeout = setTimeout(later, wait)
+  // Update controlled value
+  useEffect(() => {
+    if (controlledValue !== undefined) {
+      setQuery(controlledValue)
     }
-  }
+  }, [controlledValue])
 
   const inputClasses = size === "hero" 
     ? "input-hero text-lg pl-12 pr-24" 
