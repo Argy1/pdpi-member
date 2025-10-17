@@ -43,6 +43,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
 
       const result = await AnggotaAPI.getMembers({
         ...options,
+        q: options.query, // Map query to q parameter for API
         namaHurufDepan: options.namaHurufDepan?.join(','),
         hospitalType: options.hospitalType?.join(','),
         namaRS: options.namaRS,
