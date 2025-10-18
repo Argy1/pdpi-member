@@ -40,11 +40,11 @@ const dbFields = {
   foto: { label: 'Foto URL', required: false, type: 'text' },
   keterangan: { label: 'Keterangan', required: false, type: 'text' },
   tempat_praktek_1: { label: 'Tempat Praktek 1', required: false, type: 'text' },
-  tempat_praktek_1_tipe: { label: 'Tipe Tempat Praktek 1 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' },
+  tempat_praktek_1_tipe: { label: 'Tipe Tempat Praktek 1 (Paripurna/Utama/Madya/Dasar/Klinik Pribadi)', required: false, type: 'text' },
   tempat_praktek_2: { label: 'Tempat Praktek 2', required: false, type: 'text' },
-  tempat_praktek_2_tipe: { label: 'Tipe Tempat Praktek 2 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' },
+  tempat_praktek_2_tipe: { label: 'Tipe Tempat Praktek 2 (Paripurna/Utama/Madya/Dasar/Klinik Pribadi)', required: false, type: 'text' },
   tempat_praktek_3: { label: 'Tempat Praktek 3', required: false, type: 'text' },
-  tempat_praktek_3_tipe: { label: 'Tipe Tempat Praktek 3 (RS Tipe A/B/C/Klinik Pribadi)', required: false, type: 'text' }
+  tempat_praktek_3_tipe: { label: 'Tipe Tempat Praktek 3 (Paripurna/Utama/Madya/Dasar/Klinik Pribadi)', required: false, type: 'text' }
 };
 
 export const ColumnMappingStep = () => {
@@ -278,7 +278,7 @@ export const ColumnMappingStep = () => {
               <AlertTriangle className="h-4 w-4 text-orange-500" />
               <AlertDescription className="text-orange-900 dark:text-orange-100">
                 <strong>Perhatian:</strong> Tidak ada field Tempat Praktek yang dimapping. 
-                Data tempat praktek (RS Tipe A/B/C, Klinik Pribadi) tidak akan tersimpan ke database.
+                Data tempat praktek (Paripurna/Utama/Madya/Dasar/Klinik Pribadi) tidak akan tersimpan ke database.
                 <div className="mt-2 text-sm">
                   Pastikan Anda memetakan kolom berikut jika ada di Excel:
                   <ul className="ml-4 mt-1 list-disc">

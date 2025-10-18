@@ -1007,9 +1007,10 @@ export default function AdminMemberForm() {
                                 <SelectValue placeholder="Pilih tipe" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
-                                <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
-                                <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                                <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                <SelectItem value="Utama">Utama</SelectItem>
+                                <SelectItem value="Madya">Madya</SelectItem>
+                                <SelectItem value="Dasar">Dasar</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
@@ -1054,9 +1055,10 @@ export default function AdminMemberForm() {
                                 <SelectValue placeholder="Pilih tipe" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
-                                <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
-                                <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                                <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                <SelectItem value="Utama">Utama</SelectItem>
+                                <SelectItem value="Madya">Madya</SelectItem>
+                                <SelectItem value="Dasar">Dasar</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
@@ -1100,9 +1102,10 @@ export default function AdminMemberForm() {
                                 <SelectValue placeholder="Pilih tipe" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
-                                <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
-                                <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                                <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                <SelectItem value="Utama">Utama</SelectItem>
+                                <SelectItem value="Madya">Madya</SelectItem>
+                                <SelectItem value="Dasar">Dasar</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
