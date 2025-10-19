@@ -531,7 +531,39 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin_pusat" | "admin_cabang" | "user"
+      app_role:
+        | "admin_pusat"
+        | "admin_cabang_aceh"
+        | "user"
+        | "admin_cabang_sumut"
+        | "admin_cabang_sumbar"
+        | "admin_cabang_riau"
+        | "admin_cabang_kepri"
+        | "admin_cabang_jambi"
+        | "admin_cabang_sumsel"
+        | "admin_cabang_lampung"
+        | "admin_cabang_banten"
+        | "admin_cabang_jakarta"
+        | "admin_cabang_bogor"
+        | "admin_cabang_bekasi"
+        | "admin_cabang_depok"
+        | "admin_cabang_jabar"
+        | "admin_cabang_jateng"
+        | "admin_cabang_surakarta"
+        | "admin_cabang_yogyakarta"
+        | "admin_cabang_jatim"
+        | "admin_cabang_malang"
+        | "admin_cabang_bali"
+        | "admin_cabang_ntb"
+        | "admin_cabang_ntt"
+        | "admin_cabang_kalsel"
+        | "admin_cabang_kaltim"
+        | "admin_cabang_kalbar"
+        | "admin_cabang_kalteng"
+        | "admin_cabang_suselbara"
+        | "admin_cabang_suluttenggo"
+        | "admin_cabang_maluku"
+        | "admin_cabang_papua"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -659,7 +691,40 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin_pusat", "admin_cabang", "user"],
+      app_role: [
+        "admin_pusat",
+        "admin_cabang_aceh",
+        "user",
+        "admin_cabang_sumut",
+        "admin_cabang_sumbar",
+        "admin_cabang_riau",
+        "admin_cabang_kepri",
+        "admin_cabang_jambi",
+        "admin_cabang_sumsel",
+        "admin_cabang_lampung",
+        "admin_cabang_banten",
+        "admin_cabang_jakarta",
+        "admin_cabang_bogor",
+        "admin_cabang_bekasi",
+        "admin_cabang_depok",
+        "admin_cabang_jabar",
+        "admin_cabang_jateng",
+        "admin_cabang_surakarta",
+        "admin_cabang_yogyakarta",
+        "admin_cabang_jatim",
+        "admin_cabang_malang",
+        "admin_cabang_bali",
+        "admin_cabang_ntb",
+        "admin_cabang_ntt",
+        "admin_cabang_kalsel",
+        "admin_cabang_kaltim",
+        "admin_cabang_kalbar",
+        "admin_cabang_kalteng",
+        "admin_cabang_suselbara",
+        "admin_cabang_suluttenggo",
+        "admin_cabang_maluku",
+        "admin_cabang_papua",
+      ],
     },
   },
 } as const

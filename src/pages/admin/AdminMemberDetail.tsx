@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,9 +7,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Edit, Mail, Phone, MapPin, Calendar, User, GraduationCap, Building2 } from 'lucide-react';
 import { Member } from '@/types/member';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminMemberDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { isCabangMalukuAdmin } = useAuth();
+  const { toast } = useToast();
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +40,17 @@ export default function AdminMemberDetail() {
           throw new Error('Member not found');
         }
         
+        // Check if admin_cabang_maluku is trying to view member from different branch
+        if (isCabangMalukuAdmin && data.cabang !== 'Cabang Maluku Selatan dan Utara') {
+          toast({
+            title: 'Akses Ditolak',
+            description: 'Anda hanya dapat melihat detail anggota dari Cabang Maluku Selatan dan Utara.',
+            variant: 'destructive',
+          });
+          navigate('/admin/anggota');
+          return;
+        }
+        
         setMember(data as Member);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch member');
@@ -44,7 +60,7 @@ export default function AdminMemberDetail() {
     };
 
     fetchMember();
-  }, [id]);
+  }, [id, isCabangMalukuAdmin, navigate, toast]);
 
   if (loading) {
     return (

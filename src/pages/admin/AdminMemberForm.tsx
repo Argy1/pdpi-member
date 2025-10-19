@@ -124,17 +124,18 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
-  const { isPusatAdmin, isCabangAdmin, user } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, isCabangMalukuAdmin, userBranch, user } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [originalMemberBranch, setOriginalMemberBranch] = useState<string>('');
   
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
   // Field protections based on role
-  const isNPADisabled = isCabangAdmin;
-  const isCabangDisabled = isCabangAdmin;
+  const isNPADisabled = isCabangAdmin || isCabangMalukuAdmin;
+  const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin;
 
   useEffect(() => {
     const fetchMemberForEdit = async () => {
@@ -170,6 +171,21 @@ export default function AdminMemberForm() {
           }
 
           const existingMember = data;
+          
+          // Store original branch for validation
+          setOriginalMemberBranch(existingMember.cabang || '');
+          
+          // Check if admin_cabang_maluku is trying to edit member from different branch
+          if (isCabangMalukuAdmin && existingMember.cabang !== 'Cabang Maluku Selatan dan Utara') {
+            toast({
+              title: 'Akses Ditolak',
+              description: 'Anda hanya dapat mengedit anggota dari Cabang Maluku Selatan dan Utara.',
+              variant: 'destructive',
+            });
+            navigate('/admin/anggota');
+            return;
+          }
+          
           const memberFormData = {
             nama: existingMember.nama || '',
             gelar: existingMember.gelar || '',
@@ -379,8 +395,36 @@ export default function AdminMemberForm() {
       console.log('Mapped member data:', memberData);
       
       if (isEditing && id) {
-        // Admin Cabang: Create change request instead of direct update
-        if (isCabangAdmin && !isPusatAdmin) {
+        // Validate admin_cabang_maluku can only edit their branch
+        if (isCabangMalukuAdmin) {
+          // Prevent changing NPA and Cabang
+          if (formData.npa !== memberData.npa || formData.pd !== originalMemberBranch) {
+            toast({
+              title: 'Validasi Error',
+              description: 'Admin Cabang Maluku tidak dapat mengubah NPA dan Cabang.',
+              variant: 'destructive',
+            });
+            setLoading(false);
+            return;
+          }
+          
+          // Ensure member belongs to correct branch
+          if (originalMemberBranch !== 'Cabang Maluku Selatan dan Utara') {
+            toast({
+              title: 'Akses Ditolak',
+              description: 'Anda hanya dapat mengedit anggota dari Cabang Maluku Selatan dan Utara.',
+              variant: 'destructive',
+            });
+            setLoading(false);
+            return;
+          }
+          
+          // Force cabang to stay the same
+          memberData.cabang = originalMemberBranch;
+        }
+        
+        // Admin Cabang (non-Maluku): Create change request instead of direct update
+        if (isCabangAdmin && !isPusatAdmin && !isCabangMalukuAdmin) {
           const { error } = await supabase
             .from('member_change_requests')
             .insert({
@@ -404,7 +448,7 @@ export default function AdminMemberForm() {
           return;
         }
 
-        // Super Admin: Direct update
+        // Super Admin or Admin Cabang Maluku: Direct update
         const { data, error } = await supabase
           .from('members')
           .update(memberData)

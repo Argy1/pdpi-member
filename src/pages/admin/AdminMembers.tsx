@@ -71,7 +71,7 @@ export default function AdminMembers() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
-  const { isPusatAdmin, profile } = useAuth();
+  const { isPusatAdmin, isCabangMalukuAdmin, userBranch, profile } = useAuth();
   const { toast } = useToast();
 
   // Use the new hook for fetching data
@@ -84,7 +84,7 @@ export default function AdminMembers() {
   } = useMembers({
     query: filters.query,
     provinsi_kantor: filters.provinsi_kantor,
-    pd: filters.pd?.join(','),
+    pd: isCabangMalukuAdmin ? 'Cabang Maluku Selatan dan Utara' : filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
     namaHurufDepan: filters.namaHurufDepan,
     hospitalType: filters.hospitalType,
