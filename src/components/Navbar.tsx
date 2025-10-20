@@ -103,7 +103,7 @@ export function Navbar() {
                     Sebaran Anggota
                   </Link>
                   
-                  {user && (isAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) && (
+                  {user && (
                     <>
                       <div className="border-t pt-4 mt-4">
                         <Link 
@@ -155,14 +155,12 @@ export function Navbar() {
                       Role: {profile.role}
                     </DropdownMenuItem>
                   )}
-                  {(isAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Dashboard Admin
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Dashboard Admin
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />

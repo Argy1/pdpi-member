@@ -5,7 +5,7 @@ import { AdminSidebar } from './AdminSidebar';
 import { AdminHeader } from './AdminHeader';
 
 export const AdminLayout = () => {
-  const { isAdmin, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -15,7 +15,7 @@ export const AdminLayout = () => {
     );
   }
 
-  if (!isAdmin) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
