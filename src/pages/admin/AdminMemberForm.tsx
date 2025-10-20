@@ -124,7 +124,7 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
-  const { isPusatAdmin, isCabangAdmin, isCabangMalukuAdmin, userBranch, user } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, user } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -134,8 +134,8 @@ export default function AdminMemberForm() {
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
   // Field protections based on role
-  const isNPADisabled = isCabangAdmin || isCabangMalukuAdmin;
-  const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin;
+  const isNPADisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
 
   useEffect(() => {
     const fetchMemberForEdit = async () => {
@@ -175,11 +175,11 @@ export default function AdminMemberForm() {
           // Store original branch for validation
           setOriginalMemberBranch(existingMember.cabang || '');
           
-          // Check if admin_cabang_maluku is trying to edit member from different branch
-          if (isCabangMalukuAdmin && existingMember.cabang !== 'Cabang Maluku Selatan dan Utara') {
+          // Check if branch admin is trying to edit member from different branch
+          if ((isCabangMalukuAdmin || isCabangKaltengAdmin) && existingMember.cabang !== userBranch) {
             toast({
               title: 'Akses Ditolak',
-              description: 'Anda hanya dapat mengedit anggota dari Cabang Maluku Selatan dan Utara.',
+              description: `Anda hanya dapat mengedit anggota dari ${userBranch}.`,
               variant: 'destructive',
             });
             navigate('/admin/anggota');
@@ -395,13 +395,13 @@ export default function AdminMemberForm() {
       console.log('Mapped member data:', memberData);
       
       if (isEditing && id) {
-        // Validate admin_cabang_maluku can only edit their branch
-        if (isCabangMalukuAdmin) {
+        // Validate branch admin can only edit their branch
+        if (isCabangMalukuAdmin || isCabangKaltengAdmin) {
           // Prevent changing NPA and Cabang
           if (formData.npa !== memberData.npa || formData.pd !== originalMemberBranch) {
             toast({
               title: 'Validasi Error',
-              description: 'Admin Cabang Maluku tidak dapat mengubah NPA dan Cabang.',
+              description: 'Admin Cabang tidak dapat mengubah NPA dan Cabang.',
               variant: 'destructive',
             });
             setLoading(false);
@@ -409,10 +409,10 @@ export default function AdminMemberForm() {
           }
           
           // Ensure member belongs to correct branch
-          if (originalMemberBranch !== 'Cabang Maluku Selatan dan Utara') {
+          if (originalMemberBranch !== userBranch) {
             toast({
               title: 'Akses Ditolak',
-              description: 'Anda hanya dapat mengedit anggota dari Cabang Maluku Selatan dan Utara.',
+              description: `Anda hanya dapat mengedit anggota dari ${userBranch}.`,
               variant: 'destructive',
             });
             setLoading(false);
@@ -423,8 +423,8 @@ export default function AdminMemberForm() {
           memberData.cabang = originalMemberBranch;
         }
         
-        // Admin Cabang (non-Maluku): Create change request instead of direct update
-        if (isCabangAdmin && !isPusatAdmin && !isCabangMalukuAdmin) {
+        // Admin Cabang (non-Maluku/Kalteng): Create change request instead of direct update
+        if (isCabangAdmin && !isPusatAdmin && !isCabangMalukuAdmin && !isCabangKaltengAdmin) {
           const { error } = await supabase
             .from('member_change_requests')
             .insert({
@@ -448,7 +448,7 @@ export default function AdminMemberForm() {
           return;
         }
 
-        // Super Admin or Admin Cabang Maluku: Direct update
+        // Super Admin or Admin Cabang Maluku/Kalteng: Direct update
         const { data, error } = await supabase
           .from('members')
           .update(memberData)

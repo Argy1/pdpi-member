@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function AdminMemberDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isCabangMalukuAdmin } = useAuth();
+  const { isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch } = useAuth();
   const { toast } = useToast();
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,11 +40,11 @@ export default function AdminMemberDetail() {
           throw new Error('Member not found');
         }
         
-        // Check if admin_cabang_maluku is trying to view member from different branch
-        if (isCabangMalukuAdmin && data.cabang !== 'Cabang Maluku Selatan dan Utara') {
+        // Check if branch admin is trying to view member from different branch
+        if ((isCabangMalukuAdmin || isCabangKaltengAdmin) && data.cabang !== userBranch) {
           toast({
             title: 'Akses Ditolak',
-            description: 'Anda hanya dapat melihat detail anggota dari Cabang Maluku Selatan dan Utara.',
+            description: `Anda hanya dapat melihat detail anggota dari ${userBranch}.`,
             variant: 'destructive',
           });
           navigate('/admin/anggota');
@@ -60,7 +60,7 @@ export default function AdminMemberDetail() {
     };
 
     fetchMember();
-  }, [id, isCabangMalukuAdmin, navigate, toast]);
+  }, [id, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, navigate, toast]);
 
   if (loading) {
     return (
