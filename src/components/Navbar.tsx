@@ -22,7 +22,7 @@ import {
 import { useState } from "react"
 
 export function Navbar() {
-  const { user, profile, signOut, isAdmin } = useAuth()
+  const { user, profile, signOut, isAdmin, isCabangMalukuAdmin } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -103,7 +103,7 @@ export function Navbar() {
                     Sebaran Anggota
                   </Link>
                   
-                  {user && isAdmin && (
+                  {user && (isAdmin || isCabangMalukuAdmin) && (
                     <>
                       <div className="border-t pt-4 mt-4">
                         <Link 
@@ -155,7 +155,7 @@ export function Navbar() {
                       Role: {profile.role}
                     </DropdownMenuItem>
                   )}
-                  {isAdmin && (
+                  {(isAdmin || isCabangMalukuAdmin) && (
                     <DropdownMenuItem asChild>
                       <Link to="/admin">
                         <Settings className="mr-2 h-4 w-4" />
