@@ -21,6 +21,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ExcelImport } from '@/components/admin/ExcelImport';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { FacilityDialog } from '@/components/admin/FacilityDialog';
 
 interface MemberFormData {
   // Identitas
@@ -129,6 +130,11 @@ export default function AdminMemberForm() {
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [originalMemberBranch, setOriginalMemberBranch] = useState<string>('');
+  const [facilityDialogOpen, setFacilityDialogOpen] = useState(false);
+  const [currentPracticeIndex, setCurrentPracticeIndex] = useState<1 | 2 | 3>(1);
+  const [facilities1, setFacilities1] = useState<string[]>([]);
+  const [facilities2, setFacilities2] = useState<string[]>([]);
+  const [facilities3, setFacilities3] = useState<string[]>([]);
   
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
@@ -230,6 +236,14 @@ export default function AdminMemberForm() {
           };
           setFormData(memberFormData);
           setPhotoPreview(existingMember.foto || '');
+          
+          // Load facilities from fasilitas_kesehatan if exists
+          if (existingMember.fasilitas_kesehatan) {
+            const facilities = existingMember.fasilitas_kesehatan as any;
+            if (facilities.praktek1) setFacilities1(facilities.praktek1);
+            if (facilities.praktek2) setFacilities2(facilities.praktek2);
+            if (facilities.praktek3) setFacilities3(facilities.praktek3);
+          }
           
         } catch (error) {
           console.error('Error in fetchMemberForEdit:', error);
@@ -389,6 +403,11 @@ export default function AdminMemberForm() {
         tempat_praktek_3: formData.tempatPraktek3 || null,
         tempat_praktek_3_tipe: formData.tempatPraktek3Tipe || null,
         tempat_praktek_3_alkes: formData.tempatPraktek3Alkes || null,
+        fasilitas_kesehatan: {
+          praktek1: facilities1,
+          praktek2: facilities2,
+          praktek3: facilities3,
+        },
         keterangan: null // Can be added later if needed
       }
 
@@ -1060,14 +1079,34 @@ export default function AdminMemberForm() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Alkes">Alat Kesehatan Penunjang Paru *</Label>
-                            <Textarea
+                            <Label htmlFor="tempatPraktek1Alkes">Fasilitas Kesehatan *</Label>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(1);
+                                  setFacilityDialogOpen(true);
+                                }}
+                                disabled={!formData.tempatPraktek1Tipe}
+                              >
+                                {facilities1.length > 0 
+                                  ? `${facilities1.length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                            </div>
+                            {facilities1.length > 0 && (
+                              <p className="text-xs text-muted-foreground">
+                                {facilities1.join(', ')}
+                              </p>
+                            )}
+                            <Input
                               id="tempatPraktek1Alkes"
                               value={formData.tempatPraktek1Alkes}
                               onChange={(e) => handleInputChange('tempatPraktek1Alkes', e.target.value)}
-                              placeholder="Spirometer, X-Ray, CT Scan, dll"
-                              rows={2}
-                              required
+                              placeholder="Atau ketik manual jika diperlukan"
+                              className="mt-2"
                             />
                           </div>
                         </div>
@@ -1108,13 +1147,34 @@ export default function AdminMemberForm() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek2Alkes">Alat Kesehatan Penunjang Paru</Label>
-                            <Textarea
+                            <Label htmlFor="tempatPraktek2Alkes">Fasilitas Kesehatan</Label>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(2);
+                                  setFacilityDialogOpen(true);
+                                }}
+                                disabled={!formData.tempatPraktek2Tipe}
+                              >
+                                {facilities2.length > 0 
+                                  ? `${facilities2.length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                            </div>
+                            {facilities2.length > 0 && (
+                              <p className="text-xs text-muted-foreground">
+                                {facilities2.join(', ')}
+                              </p>
+                            )}
+                            <Input
                               id="tempatPraktek2Alkes"
                               value={formData.tempatPraktek2Alkes}
                               onChange={(e) => handleInputChange('tempatPraktek2Alkes', e.target.value)}
-                              placeholder="Spirometer, X-Ray, CT Scan, dll"
-                              rows={2}
+                              placeholder="Atau ketik manual jika diperlukan"
+                              className="mt-2"
                             />
                           </div>
                         </div>
@@ -1155,13 +1215,34 @@ export default function AdminMemberForm() {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek3Alkes">Alat Kesehatan Penunjang Paru</Label>
-                            <Textarea
+                            <Label htmlFor="tempatPraktek3Alkes">Fasilitas Kesehatan</Label>
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="flex-1"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(3);
+                                  setFacilityDialogOpen(true);
+                                }}
+                                disabled={!formData.tempatPraktek3Tipe}
+                              >
+                                {facilities3.length > 0 
+                                  ? `${facilities3.length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                            </div>
+                            {facilities3.length > 0 && (
+                              <p className="text-xs text-muted-foreground">
+                                {facilities3.join(', ')}
+                              </p>
+                            )}
+                            <Input
                               id="tempatPraktek3Alkes"
                               value={formData.tempatPraktek3Alkes}
                               onChange={(e) => handleInputChange('tempatPraktek3Alkes', e.target.value)}
-                              placeholder="Spirometer, X-Ray, CT Scan, dll"
-                              rows={2}
+                              placeholder="Atau ketik manual jika diperlukan"
+                              className="mt-2"
                             />
                           </div>
                         </div>
@@ -1423,6 +1504,30 @@ export default function AdminMemberForm() {
           </TabsContent>
         </Tabs>
       </form>
+
+      <FacilityDialog
+        open={facilityDialogOpen}
+        onOpenChange={setFacilityDialogOpen}
+        hospitalType={
+          currentPracticeIndex === 1 ? formData.tempatPraktek1Tipe :
+          currentPracticeIndex === 2 ? formData.tempatPraktek2Tipe :
+          formData.tempatPraktek3Tipe
+        }
+        selectedFacilities={
+          currentPracticeIndex === 1 ? facilities1 :
+          currentPracticeIndex === 2 ? facilities2 :
+          facilities3
+        }
+        onSave={(newFacilities) => {
+          if (currentPracticeIndex === 1) {
+            setFacilities1(newFacilities);
+          } else if (currentPracticeIndex === 2) {
+            setFacilities2(newFacilities);
+          } else {
+            setFacilities3(newFacilities);
+          }
+        }}
+      />
         </>
       )}
     </div>

@@ -135,6 +135,7 @@ export type Database = {
           cabang: string | null
           created_at: string
           email: string | null
+          fasilitas_kesehatan: Json | null
           foto: string | null
           gelar: string | null
           gelar2: string | null
@@ -173,6 +174,7 @@ export type Database = {
           cabang?: string | null
           created_at?: string
           email?: string | null
+          fasilitas_kesehatan?: Json | null
           foto?: string | null
           gelar?: string | null
           gelar2?: string | null
@@ -211,6 +213,7 @@ export type Database = {
           cabang?: string | null
           created_at?: string
           email?: string | null
+          fasilitas_kesehatan?: Json | null
           foto?: string | null
           gelar?: string | null
           gelar2?: string | null
