@@ -27,6 +27,7 @@ export interface Member {
   tempat_praktek_2_tipe?: string
   tempat_praktek_3?: string
   tempat_praktek_3_tipe?: string
+  fasilitas_kesehatan?: Record<string, string[]>
   created_at: string
   updated_at: string
   

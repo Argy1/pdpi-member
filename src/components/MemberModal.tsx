@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Member } from "@/types/member"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +16,7 @@ import {
   GraduationCap,
   X
 } from "lucide-react"
+import { FacilityViewDialog } from "@/components/admin/FacilityViewDialog"
 
 interface MemberModalProps {
   member: Member | null
@@ -23,6 +25,13 @@ interface MemberModalProps {
 }
 
 export function MemberModal({ member, open, onClose }: MemberModalProps) {
+  const [facilityDialogOpen, setFacilityDialogOpen] = useState(false);
+  const [selectedFacility, setSelectedFacility] = useState<{
+    name: string;
+    type: string;
+    facilities: string[];
+  } | null>(null);
+
   if (!member) return null
 
   const getStatusBadge = (status?: string) => {
@@ -48,6 +57,28 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
       day: "numeric"
     })
   }
+
+  const handleFacilityClick = (practiceName: string, practiceType: string, practiceIndex: number) => {
+    if (!member || !member.fasilitas_kesehatan) {
+      setSelectedFacility({
+        name: practiceName,
+        type: practiceType,
+        facilities: []
+      });
+      setFacilityDialogOpen(true);
+      return;
+    }
+
+    const facilitiesData = member.fasilitas_kesehatan as any;
+    const facilities = facilitiesData[`tempat_praktek_${practiceIndex}`] || [];
+    
+    setSelectedFacility({
+      name: practiceName,
+      type: practiceType,
+      facilities: Array.isArray(facilities) ? facilities : []
+    });
+    setFacilityDialogOpen(true);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -231,7 +262,17 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                   <p className="text-medical-body">
                     {member.tempat_praktek_1 || "-"}
                     {member.tempat_praktek_1 && member.tempat_praktek_1_tipe && (
-                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_1_tipe})</span>
+                      <Button
+                        variant="link"
+                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        onClick={() => handleFacilityClick(
+                          member.tempat_praktek_1 || '',
+                          member.tempat_praktek_1_tipe || '',
+                          1
+                        )}
+                      >
+                        ({member.tempat_praktek_1_tipe})
+                      </Button>
                     )}
                   </p>
                 </div>
@@ -240,7 +281,17 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                   <p className="text-medical-body">
                     {member.tempat_praktek_2 || "-"}
                     {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
-                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_2_tipe})</span>
+                      <Button
+                        variant="link"
+                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        onClick={() => handleFacilityClick(
+                          member.tempat_praktek_2 || '',
+                          member.tempat_praktek_2_tipe || '',
+                          2
+                        )}
+                      >
+                        ({member.tempat_praktek_2_tipe})
+                      </Button>
                     )}
                   </p>
                 </div>
@@ -249,7 +300,17 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                   <p className="text-medical-body">
                     {member.tempat_praktek_3 || "-"}
                     {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
-                      <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_3_tipe})</span>
+                      <Button
+                        variant="link"
+                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        onClick={() => handleFacilityClick(
+                          member.tempat_praktek_3 || '',
+                          member.tempat_praktek_3_tipe || '',
+                          3
+                        )}
+                      >
+                        ({member.tempat_praktek_3_tipe})
+                      </Button>
                     )}
                   </p>
                 </div>
@@ -312,6 +373,16 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
           </div>
         </div>
       </DialogContent>
+
+      {selectedFacility && (
+        <FacilityViewDialog
+          open={facilityDialogOpen}
+          onOpenChange={setFacilityDialogOpen}
+          hospitalName={selectedFacility.name}
+          hospitalType={selectedFacility.type}
+          facilities={selectedFacility.facilities}
+        />
+      )}
     </Dialog>
   )
 }

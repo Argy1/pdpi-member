@@ -9,6 +9,7 @@ import { Member } from '@/types/member';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { FacilityViewDialog } from '@/components/admin/FacilityViewDialog';
 
 export default function AdminMemberDetail() {
   const { id } = useParams();
@@ -18,6 +19,12 @@ export default function AdminMemberDetail() {
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [facilityDialogOpen, setFacilityDialogOpen] = useState(false);
+  const [selectedFacility, setSelectedFacility] = useState<{
+    name: string;
+    type: string;
+    facilities: string[];
+  } | null>(null);
 
   useEffect(() => {
     const fetchMember = async () => {
@@ -116,6 +123,28 @@ export default function AdminMemberDetail() {
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
+  };
+
+  const handleFacilityClick = (practiceName: string, practiceType: string, practiceIndex: number) => {
+    if (!member || !member.fasilitas_kesehatan) {
+      setSelectedFacility({
+        name: practiceName,
+        type: practiceType,
+        facilities: []
+      });
+      setFacilityDialogOpen(true);
+      return;
+    }
+
+    const facilitiesData = member.fasilitas_kesehatan as any;
+    const facilities = facilitiesData[`tempat_praktek_${practiceIndex}`] || [];
+    
+    setSelectedFacility({
+      name: practiceName,
+      type: practiceType,
+      facilities: Array.isArray(facilities) ? facilities : []
+    });
+    setFacilityDialogOpen(true);
   };
 
   return (
@@ -339,7 +368,17 @@ export default function AdminMemberDetail() {
                 <p className="mt-1">
                   {member.tempat_praktek_1 || '-'}
                   {member.tempat_praktek_1 && member.tempat_praktek_1_tipe && (
-                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_1_tipe})</span>
+                    <Button
+                      variant="link"
+                      className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                      onClick={() => handleFacilityClick(
+                        member.tempat_praktek_1 || '',
+                        member.tempat_praktek_1_tipe || '',
+                        1
+                      )}
+                    >
+                      ({member.tempat_praktek_1_tipe})
+                    </Button>
                   )}
                 </p>
               </div>
@@ -349,7 +388,17 @@ export default function AdminMemberDetail() {
                 <p className="mt-1">
                   {member.tempat_praktek_2 || '-'}
                   {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
-                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_2_tipe})</span>
+                    <Button
+                      variant="link"
+                      className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                      onClick={() => handleFacilityClick(
+                        member.tempat_praktek_2 || '',
+                        member.tempat_praktek_2_tipe || '',
+                        2
+                      )}
+                    >
+                      ({member.tempat_praktek_2_tipe})
+                    </Button>
                   )}
                 </p>
               </div>
@@ -359,7 +408,17 @@ export default function AdminMemberDetail() {
                 <p className="mt-1">
                   {member.tempat_praktek_3 || '-'}
                   {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
-                    <span className="text-xs text-muted-foreground ml-2">({member.tempat_praktek_3_tipe})</span>
+                    <Button
+                      variant="link"
+                      className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                      onClick={() => handleFacilityClick(
+                        member.tempat_praktek_3 || '',
+                        member.tempat_praktek_3_tipe || '',
+                        3
+                      )}
+                    >
+                      ({member.tempat_praktek_3_tipe})
+                    </Button>
                   )}
                 </p>
               </div>
@@ -489,6 +548,16 @@ export default function AdminMemberDetail() {
           </CardContent>
         </Card>
       </div>
+
+      {selectedFacility && (
+        <FacilityViewDialog
+          open={facilityDialogOpen}
+          onOpenChange={setFacilityDialogOpen}
+          hospitalName={selectedFacility.name}
+          hospitalType={selectedFacility.type}
+          facilities={selectedFacility.facilities}
+        />
+      )}
     </div>
   );
 }
