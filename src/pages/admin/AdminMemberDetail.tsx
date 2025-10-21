@@ -137,7 +137,7 @@ export default function AdminMemberDetail() {
     }
 
     const facilitiesData = member.fasilitas_kesehatan as any;
-    const facilities = facilitiesData[`tempat_praktek_${practiceIndex}`] || [];
+    const facilities = facilitiesData[`praktek${practiceIndex}`] || [];
     
     setSelectedFacility({
       name: practiceName,

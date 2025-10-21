@@ -14,58 +14,52 @@ interface FacilityDialogProps {
   onSave: (facilities: string[]) => void;
 }
 
-const FACILITIES = {
-  dasar: [
-    'USG',
-    'X-Ray',
-    'Set Minor',
-    'Set Bedah Plastik',
-    'Set Biopsi Gun',
-    'Set Operasi Mayor',
-    'Set Alat VTP',
-    'Ventilator',
-  ],
-  madya: [
-    'Peralatan Kesehatan di Dasar',
-    'CT Scan',
-    'CT Angiography',
-    'C-Arm',
-    'Mesin ESWL (Extracorporeal Shock Wave Lithotripsy)',
-    'USG Doppler',
-    'Mesin HD',
-    'Micro Set',
-    'Set Endourologi',
-    'Set laparotomi',
-    'Lithotriptor',
-    'Surgical Loupe',
-  ],
-  utama: [
-    'Peralatan Kesehatan di Madya',
-    'MRI',
-    'Flexible Ureteroscopy',
-    'Set Fluoroscopy',
-    'Laser',
-    'Monitor invasif dan noninvasive',
-    'Set Laparoskopi',
-    'Set Sitoskopi Fleksibel',
-    'Set vaskular',
-    'Set endourologi anak',
-    'Surgical Microscope',
-    'Peritoneoskop',
-    'Vascular Synthetic Graft',
-  ],
-  paripurna: [
-    'Peralatan Kesehatan di Utama',
-    'Mesin CRRT (Continuous Renal Replacement Therapy)',
-    'Mesin APD (Automated Peritoneal Dialysis)',
-    'Neurostimulator',
-    'Set Transplantasi Ginjal',
-    'Set Urodinamik',
-    'Alat radioterapi',
-    'Bone Scan',
-    'Mesin ESWT (Extracorporeal Shock Wave Therapy)',
-  ],
-};
+// All facilities in one list as requested
+const ALL_FACILITIES = [
+  // Dasar
+  'USG',
+  'X-Ray',
+  'Set Minor',
+  'Set Bedah Plastik',
+  'Set Biopsi Gun',
+  'Set Operasi Mayor',
+  'Set Alat VTP',
+  'Ventilator',
+  // Madya (ditambah)
+  'CT Scan',
+  'CT Angiography',
+  'C-Arm',
+  'Mesin ESWL (Extracorporeal Shock Wave Lithotripsy)',
+  'USG Doppler',
+  'Mesin HD',
+  'Micro Set',
+  'Set Endourologi',
+  'Set laparotomi',
+  'Lithotriptor',
+  'Surgical Loupe',
+  // Utama (ditambah)
+  'MRI',
+  'Flexible Ureteroscopy',
+  'Set Fluoroscopy',
+  'Laser',
+  'Monitor invasif dan noninvasive',
+  'Set Laparoskopi',
+  'Set Sitoskopi Fleksibel',
+  'Set vaskular',
+  'Set endourologi anak',
+  'Surgical Microscope',
+  'Peritoneoskop',
+  'Vascular Synthetic Graft',
+  // Paripurna (ditambah)
+  'Mesin CRRT (Continuous Renal Replacement Therapy)',
+  'Mesin APD (Automated Peritoneal Dialysis)',
+  'Neurostimulator',
+  'Set Transplantasi Ginjal',
+  'Set Urodinamik',
+  'Alat radioterapi',
+  'Bone Scan',
+  'Mesin ESWT (Extracorporeal Shock Wave Therapy)',
+];
 
 export function FacilityDialog({ open, onOpenChange, hospitalType, selectedFacilities, onSave }: FacilityDialogProps) {
   const [facilities, setFacilities] = useState<string[]>(selectedFacilities);
@@ -75,28 +69,8 @@ export function FacilityDialog({ open, onOpenChange, hospitalType, selectedFacil
     setFacilities(selectedFacilities);
   }, [selectedFacilities]);
 
-  const getFacilitiesByType = () => {
-    const type = hospitalType.toLowerCase();
-    if (type.includes('klinik') || type.includes('pribadi')) {
-      return null; // Will show custom input
-    }
-    if (type.includes('paripurna')) {
-      return FACILITIES.paripurna;
-    }
-    if (type.includes('utama')) {
-      return FACILITIES.utama;
-    }
-    if (type.includes('madya')) {
-      return FACILITIES.madya;
-    }
-    if (type.includes('dasar')) {
-      return FACILITIES.dasar;
-    }
-    return FACILITIES.dasar; // Default
-  };
-
-  const availableFacilities = getFacilitiesByType();
-  const isCustomInput = availableFacilities === null;
+  // Always show all facilities for all types
+  const availableFacilities = ALL_FACILITIES;
 
   const handleToggleFacility = (facility: string) => {
     setFacilities(prev => {
@@ -129,74 +103,28 @@ export function FacilityDialog({ open, onOpenChange, hospitalType, selectedFacil
         <DialogHeader>
           <DialogTitle>Pilih Fasilitas Kesehatan</DialogTitle>
           <DialogDescription>
-            {isCustomInput 
-              ? 'Masukkan fasilitas kesehatan yang tersedia di klinik pribadi'
-              : `Pilih fasilitas yang tersedia untuk ${hospitalType}`}
+            Pilih fasilitas kesehatan yang tersedia
           </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="h-[400px] pr-4">
-          {isCustomInput ? (
-            <div className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Masukkan nama fasilitas"
-                  value={customFacility}
-                  onChange={(e) => setCustomFacility(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddCustomFacility();
-                    }
-                  }}
+          <div className="space-y-3">
+            {availableFacilities.map((facility) => (
+              <div key={facility} className="flex items-center space-x-2">
+                <Checkbox
+                  id={facility}
+                  checked={facilities.includes(facility)}
+                  onCheckedChange={() => handleToggleFacility(facility)}
                 />
-                <Button type="button" onClick={handleAddCustomFacility}>
-                  Tambah
-                </Button>
+                <Label
+                  htmlFor={facility}
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  {facility}
+                </Label>
               </div>
-              
-              <div className="space-y-2">
-                <Label>Fasilitas yang Dipilih:</Label>
-                {facilities.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Belum ada fasilitas dipilih</p>
-                ) : (
-                  <div className="space-y-2">
-                    {facilities.map((facility) => (
-                      <div key={facility} className="flex items-center justify-between p-2 border rounded-md">
-                        <span className="text-sm">{facility}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRemoveCustomFacility(facility)}
-                        >
-                          Hapus
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {availableFacilities?.map((facility) => (
-                <div key={facility} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={facility}
-                    checked={facilities.includes(facility)}
-                    onCheckedChange={() => handleToggleFacility(facility)}
-                  />
-                  <Label
-                    htmlFor={facility}
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {facility}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </ScrollArea>
 
         <div className="flex justify-end gap-2 pt-4">

@@ -1061,25 +1061,24 @@ export default function AdminMemberForm() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Tipe">Tipe *</Label>
+                            <Label htmlFor="tempatPraktek1Tipe">Tipe RS 2 *</Label>
                             <Select 
                               value={formData.tempatPraktek1Tipe} 
                               onValueChange={(value) => handleInputChange('tempatPraktek1Tipe', value)}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe" />
+                                <SelectValue placeholder="Pilih tipe RS" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="Paripurna">Paripurna</SelectItem>
-                                <SelectItem value="Utama">Utama</SelectItem>
-                                <SelectItem value="Madya">Madya</SelectItem>
-                                <SelectItem value="Dasar">Dasar</SelectItem>
+                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Alkes">Fasilitas Kesehatan *</Label>
+                            <Label htmlFor="tempatPraktek1Alkes">Fasilitas Kesehatan 2 *</Label>
                             <div className="flex gap-2">
                               <Button
                                 type="button"
@@ -1129,25 +1128,24 @@ export default function AdminMemberForm() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek2Tipe">Tipe</Label>
+                            <Label htmlFor="tempatPraktek2Tipe">Tipe RS 2</Label>
                             <Select 
                               value={formData.tempatPraktek2Tipe} 
                               onValueChange={(value) => handleInputChange('tempatPraktek2Tipe', value)}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe" />
+                                <SelectValue placeholder="Pilih tipe RS" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="Paripurna">Paripurna</SelectItem>
-                                <SelectItem value="Utama">Utama</SelectItem>
-                                <SelectItem value="Madya">Madya</SelectItem>
-                                <SelectItem value="Dasar">Dasar</SelectItem>
+                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek2Alkes">Fasilitas Kesehatan</Label>
+                            <Label htmlFor="tempatPraktek2Alkes">Fasilitas Kesehatan 2</Label>
                             <div className="flex gap-2">
                               <Button
                                 type="button"
@@ -1197,25 +1195,24 @@ export default function AdminMemberForm() {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek3Tipe">Tipe</Label>
+                            <Label htmlFor="tempatPraktek3Tipe">Tipe RS 2</Label>
                             <Select 
                               value={formData.tempatPraktek3Tipe} 
                               onValueChange={(value) => handleInputChange('tempatPraktek3Tipe', value)}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe" />
+                                <SelectValue placeholder="Pilih tipe RS" />
                               </SelectTrigger>
                               <SelectContent className="bg-background z-50">
-                                <SelectItem value="Paripurna">Paripurna</SelectItem>
-                                <SelectItem value="Utama">Utama</SelectItem>
-                                <SelectItem value="Madya">Madya</SelectItem>
-                                <SelectItem value="Dasar">Dasar</SelectItem>
+                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
                                 <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek3Alkes">Fasilitas Kesehatan</Label>
+                            <Label htmlFor="tempatPraktek3Alkes">Fasilitas Kesehatan 2</Label>
                             <div className="flex gap-2">
                               <Button
                                 type="button"
