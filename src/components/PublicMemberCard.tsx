@@ -1,7 +1,7 @@
 import { Member } from "@/types/member"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Mail, MapPin, Building } from "lucide-react"
+import { MapPin, Building } from "lucide-react"
 
 interface PublicMemberCardProps {
   member: Member
@@ -58,6 +58,16 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
               </div>
 
               <div className="flex flex-col sm:flex-row sm:gap-2">
+                <span className="font-semibold text-sm sm:text-base mb-1 sm:mb-0 sm:w-36 lg:w-40 flex-shrink-0">NPA</span>
+                <div className="flex gap-2">
+                  <span className="hidden sm:inline">:</span>
+                  <span className="text-sm sm:text-base">
+                    {member.npa || '-'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:gap-2">
                 <span className="font-semibold text-sm sm:text-base mb-1 sm:mb-0 sm:w-36 lg:w-40 flex-shrink-0">Cabang</span>
                 <div className="flex gap-2">
                   <span className="hidden sm:inline">:</span>
@@ -90,23 +100,6 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                 </div>
               </div>
 
-              {member.email && (
-                <div className="flex flex-col sm:flex-row sm:gap-2">
-                  <span className="font-semibold text-sm sm:text-base mb-1 sm:mb-0 sm:w-36 lg:w-40 flex-shrink-0">Email</span>
-                  <div className="flex gap-2">
-                    <span className="hidden sm:inline">:</span>
-                    <span className="flex items-center gap-2 break-all text-sm sm:text-base">
-                      <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <a 
-                        href={`mailto:${member.email}`} 
-                        className="text-medical-primary hover:underline"
-                      >
-                        {member.email}
-                      </a>
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
