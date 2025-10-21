@@ -21,7 +21,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ExcelImport } from '@/components/admin/ExcelImport';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FacilityDialog } from '@/components/admin/FacilityDialog';
+import { FacilityDialog1 } from '@/components/admin/FacilityDialog1';
+import { FacilityDialog2 } from '@/components/admin/FacilityDialog2';
 
 interface MemberFormData {
   // Identitas
@@ -50,13 +51,19 @@ interface MemberFormData {
   jabatan: string;
   tempatPraktek1: string;
   tempatPraktek1Tipe: string;
+  tempatPraktek1Tipe2: string;
   tempatPraktek1Alkes: string;
+  tempatPraktek1Alkes2: string;
   tempatPraktek2: string;
   tempatPraktek2Tipe: string;
+  tempatPraktek2Tipe2: string;
   tempatPraktek2Alkes: string;
+  tempatPraktek2Alkes2: string;
   tempatPraktek3: string;
   tempatPraktek3Tipe: string;
+  tempatPraktek3Tipe2: string;
   tempatPraktek3Alkes: string;
+  tempatPraktek3Alkes2: string;
   
   // Legal
   nik: string;
@@ -100,13 +107,19 @@ const initialFormData: MemberFormData = {
   jabatan: '',
   tempatPraktek1: '',
   tempatPraktek1Tipe: '',
+  tempatPraktek1Tipe2: '',
   tempatPraktek1Alkes: '',
+  tempatPraktek1Alkes2: '',
   tempatPraktek2: '',
   tempatPraktek2Tipe: '',
+  tempatPraktek2Tipe2: '',
   tempatPraktek2Alkes: '',
+  tempatPraktek2Alkes2: '',
   tempatPraktek3: '',
   tempatPraktek3Tipe: '',
+  tempatPraktek3Tipe2: '',
   tempatPraktek3Alkes: '',
+  tempatPraktek3Alkes2: '',
   nik: '',
   noSTR: '',
   strBerlakuSampai: undefined,
@@ -130,11 +143,10 @@ export default function AdminMemberForm() {
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [originalMemberBranch, setOriginalMemberBranch] = useState<string>('');
-  const [facilityDialogOpen, setFacilityDialogOpen] = useState(false);
+  const [facilityDialog1Open, setFacilityDialog1Open] = useState(false);
+  const [facilityDialog2Open, setFacilityDialog2Open] = useState(false);
   const [currentPracticeIndex, setCurrentPracticeIndex] = useState<1 | 2 | 3>(1);
-  const [facilities1, setFacilities1] = useState<string[]>([]);
-  const [facilities2, setFacilities2] = useState<string[]>([]);
-  const [facilities3, setFacilities3] = useState<string[]>([]);
+  const [currentHospitalType, setCurrentHospitalType] = useState<string>('');
   
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
@@ -215,13 +227,19 @@ export default function AdminMemberForm() {
             jabatan: '', // Field doesn't exist in database, set to empty
             tempatPraktek1: existingMember.tempat_praktek_1 || '',
             tempatPraktek1Tipe: existingMember.tempat_praktek_1_tipe || '',
+            tempatPraktek1Tipe2: existingMember.tempat_praktek_1_tipe_2 || '',
             tempatPraktek1Alkes: existingMember.tempat_praktek_1_alkes || '',
+            tempatPraktek1Alkes2: existingMember.tempat_praktek_1_alkes_2 || '',
             tempatPraktek2: existingMember.tempat_praktek_2 || '',
             tempatPraktek2Tipe: existingMember.tempat_praktek_2_tipe || '',
+            tempatPraktek2Tipe2: existingMember.tempat_praktek_2_tipe_2 || '',
             tempatPraktek2Alkes: existingMember.tempat_praktek_2_alkes || '',
+            tempatPraktek2Alkes2: existingMember.tempat_praktek_2_alkes_2 || '',
             tempatPraktek3: existingMember.tempat_praktek_3 || '',
             tempatPraktek3Tipe: existingMember.tempat_praktek_3_tipe || '',
+            tempatPraktek3Tipe2: existingMember.tempat_praktek_3_tipe_2 || '',
             tempatPraktek3Alkes: existingMember.tempat_praktek_3_alkes || '',
+            tempatPraktek3Alkes2: existingMember.tempat_praktek_3_alkes_2 || '',
             nik: '', // Field doesn't exist in database, set to empty
             noSTR: '', // Field doesn't exist in database, set to empty
             strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
@@ -236,14 +254,6 @@ export default function AdminMemberForm() {
           };
           setFormData(memberFormData);
           setPhotoPreview(existingMember.foto || '');
-          
-          // Load facilities from fasilitas_kesehatan if exists
-          if (existingMember.fasilitas_kesehatan) {
-            const facilities = existingMember.fasilitas_kesehatan as any;
-            if (facilities.praktek1) setFacilities1(facilities.praktek1);
-            if (facilities.praktek2) setFacilities2(facilities.praktek2);
-            if (facilities.praktek3) setFacilities3(facilities.praktek3);
-          }
           
         } catch (error) {
           console.error('Error in fetchMemberForEdit:', error);
@@ -396,18 +406,19 @@ export default function AdminMemberForm() {
         cabang: formData.pd || null,
         tempat_praktek_1: formData.tempatPraktek1 || null,
         tempat_praktek_1_tipe: formData.tempatPraktek1Tipe || null,
+        tempat_praktek_1_tipe_2: formData.tempatPraktek1Tipe2 || null,
         tempat_praktek_1_alkes: formData.tempatPraktek1Alkes || null,
+        tempat_praktek_1_alkes_2: formData.tempatPraktek1Alkes2 || null,
         tempat_praktek_2: formData.tempatPraktek2 || null,
         tempat_praktek_2_tipe: formData.tempatPraktek2Tipe || null,
+        tempat_praktek_2_tipe_2: formData.tempatPraktek2Tipe2 || null,
         tempat_praktek_2_alkes: formData.tempatPraktek2Alkes || null,
+        tempat_praktek_2_alkes_2: formData.tempatPraktek2Alkes2 || null,
         tempat_praktek_3: formData.tempatPraktek3 || null,
         tempat_praktek_3_tipe: formData.tempatPraktek3Tipe || null,
+        tempat_praktek_3_tipe_2: formData.tempatPraktek3Tipe2 || null,
         tempat_praktek_3_alkes: formData.tempatPraktek3Alkes || null,
-        fasilitas_kesehatan: {
-          praktek1: facilities1,
-          praktek2: facilities2,
-          praktek3: facilities3,
-        },
+        tempat_praktek_3_alkes_2: formData.tempatPraktek3Alkes2 || null,
         keterangan: null // Can be added later if needed
       }
 
@@ -1502,26 +1513,41 @@ export default function AdminMemberForm() {
         </Tabs>
       </form>
 
-      <FacilityDialog
-        open={facilityDialogOpen}
-        onOpenChange={setFacilityDialogOpen}
-        hospitalType={
-          currentPracticeIndex === 1 ? formData.tempatPraktek1Tipe :
-          currentPracticeIndex === 2 ? formData.tempatPraktek2Tipe :
-          formData.tempatPraktek3Tipe
-        }
+      <FacilityDialog1
+        open={facilityDialog1Open}
+        onOpenChange={setFacilityDialog1Open}
+        hospitalType={currentHospitalType}
         selectedFacilities={
-          currentPracticeIndex === 1 ? facilities1 :
-          currentPracticeIndex === 2 ? facilities2 :
-          facilities3
+          currentPracticeIndex === 1 ? formData.tempatPraktek1Alkes :
+          currentPracticeIndex === 2 ? formData.tempatPraktek2Alkes :
+          formData.tempatPraktek3Alkes
         }
         onSave={(newFacilities) => {
           if (currentPracticeIndex === 1) {
-            setFacilities1(newFacilities);
+            handleInputChange('tempatPraktek1Alkes', newFacilities);
           } else if (currentPracticeIndex === 2) {
-            setFacilities2(newFacilities);
+            handleInputChange('tempatPraktek2Alkes', newFacilities);
           } else {
-            setFacilities3(newFacilities);
+            handleInputChange('tempatPraktek3Alkes', newFacilities);
+          }
+        }}
+      />
+      
+      <FacilityDialog2
+        open={facilityDialog2Open}
+        onOpenChange={setFacilityDialog2Open}
+        selectedFacilities={
+          currentPracticeIndex === 1 ? formData.tempatPraktek1Alkes2 :
+          currentPracticeIndex === 2 ? formData.tempatPraktek2Alkes2 :
+          formData.tempatPraktek3Alkes2
+        }
+        onSave={(newFacilities) => {
+          if (currentPracticeIndex === 1) {
+            handleInputChange('tempatPraktek1Alkes2', newFacilities);
+          } else if (currentPracticeIndex === 2) {
+            handleInputChange('tempatPraktek2Alkes2', newFacilities);
+          } else {
+            handleInputChange('tempatPraktek3Alkes2', newFacilities);
           }
         }}
       />

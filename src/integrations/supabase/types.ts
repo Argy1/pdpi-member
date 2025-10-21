@@ -156,13 +156,19 @@ export type Database = {
           tempat_lahir: string | null
           tempat_praktek_1: string | null
           tempat_praktek_1_alkes: string | null
+          tempat_praktek_1_alkes_2: string | null
           tempat_praktek_1_tipe: string | null
+          tempat_praktek_1_tipe_2: string | null
           tempat_praktek_2: string | null
           tempat_praktek_2_alkes: string | null
+          tempat_praktek_2_alkes_2: string | null
           tempat_praktek_2_tipe: string | null
+          tempat_praktek_2_tipe_2: string | null
           tempat_praktek_3: string | null
           tempat_praktek_3_alkes: string | null
+          tempat_praktek_3_alkes_2: string | null
           tempat_praktek_3_tipe: string | null
+          tempat_praktek_3_tipe_2: string | null
           tempat_tugas: string | null
           tgl_lahir: string | null
           thn_lulus: number | null
@@ -195,13 +201,19 @@ export type Database = {
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
           tempat_praktek_1_alkes?: string | null
+          tempat_praktek_1_alkes_2?: string | null
           tempat_praktek_1_tipe?: string | null
+          tempat_praktek_1_tipe_2?: string | null
           tempat_praktek_2?: string | null
           tempat_praktek_2_alkes?: string | null
+          tempat_praktek_2_alkes_2?: string | null
           tempat_praktek_2_tipe?: string | null
+          tempat_praktek_2_tipe_2?: string | null
           tempat_praktek_3?: string | null
           tempat_praktek_3_alkes?: string | null
+          tempat_praktek_3_alkes_2?: string | null
           tempat_praktek_3_tipe?: string | null
+          tempat_praktek_3_tipe_2?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
           thn_lulus?: number | null
@@ -234,13 +246,19 @@ export type Database = {
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
           tempat_praktek_1_alkes?: string | null
+          tempat_praktek_1_alkes_2?: string | null
           tempat_praktek_1_tipe?: string | null
+          tempat_praktek_1_tipe_2?: string | null
           tempat_praktek_2?: string | null
           tempat_praktek_2_alkes?: string | null
+          tempat_praktek_2_alkes_2?: string | null
           tempat_praktek_2_tipe?: string | null
+          tempat_praktek_2_tipe_2?: string | null
           tempat_praktek_3?: string | null
           tempat_praktek_3_alkes?: string | null
+          tempat_praktek_3_alkes_2?: string | null
           tempat_praktek_3_tipe?: string | null
+          tempat_praktek_3_tipe_2?: string | null
           tempat_tugas?: string | null
           tgl_lahir?: string | null
           thn_lulus?: number | null
