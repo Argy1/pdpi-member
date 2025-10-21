@@ -25,12 +25,17 @@ export default function AnggotaPage() {
   const [availableCities, setAvailableCities] = useState<string[]>([])
 
   // Initialize state from URL params
-  const [filters, setFilters] = useState<MemberFilters>(() => ({
-    query: searchParams.get("q") || undefined,
-    provinsi_kantor: searchParams.get("provinsi_kantor") ? [searchParams.get("provinsi_kantor")!] : undefined,
-    pd: searchParams.get("pd") ? [searchParams.get("pd")!] : undefined,
-    subspesialis: searchParams.get("subspesialis") ? [searchParams.get("subspesialis")!] : undefined,
-  }))
+  const [filters, setFilters] = useState<MemberFilters>(() => {
+    // Read both 'provinsi' (from map) and 'provinsi_kantor' (from filters)
+    const provinsiParam = searchParams.get("provinsi") || searchParams.get("provinsi_kantor")
+    
+    return {
+      query: searchParams.get("q") || undefined,
+      provinsi_kantor: provinsiParam ? [provinsiParam] : undefined,
+      pd: searchParams.get("pd") ? [searchParams.get("pd")!] : undefined,
+      subspesialis: searchParams.get("subspesialis") ? [searchParams.get("subspesialis")!] : undefined,
+    }
+  })
 
   const [sort, setSort] = useState<MemberSort>({
     field: "nama",
