@@ -1060,7 +1060,7 @@ export default function AdminMemberForm() {
                           <h5 className="font-medium text-sm">Tempat Praktek 1</h5>
                           <Badge variant="destructive" className="text-xs">WAJIB</Badge>
                         </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="tempatPraktek1">Nama RS / Klinik *</Label>
                             <Input
@@ -1071,31 +1071,80 @@ export default function AdminMemberForm() {
                               required
                             />
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Tipe">Tipe RS 2 *</Label>
-                            <Select 
-                              value={formData.tempatPraktek1Tipe} 
-                              onValueChange={(value) => handleInputChange('tempatPraktek1Tipe', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe RS" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background z-50">
-                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
-                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
-                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
-                                <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek1Alkes">Fasilitas Kesehatan 2 *</Label>
-                            <div className="flex gap-2">
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek1Tipe">Tipe RS 1 *</Label>
+                              <Select 
+                                value={formData.tempatPraktek1Tipe} 
+                                onValueChange={(value) => {
+                                  handleInputChange('tempatPraktek1Tipe', value);
+                                  setCurrentHospitalType(value);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 1" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                  <SelectItem value="Utama">Utama</SelectItem>
+                                  <SelectItem value="Madya">Madya</SelectItem>
+                                  <SelectItem value="Dasar">Dasar</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek1Alkes">Fasilitas Kesehatan 1</Label>
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="flex-1"
-                              onClick={() => {
+                                className="w-full"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(1);
+                                  setFacilityDialog1Open(true);
+                                }}
+                                disabled={!formData.tempatPraktek1Tipe}
+                              >
+                                {formData.tempatPraktek1Alkes 
+                                  ? `${formData.tempatPraktek1Alkes.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                              {formData.tempatPraktek1Alkes && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek1Alkes}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek1Tipe2">Tipe RS 2</Label>
+                              <Select 
+                                value={formData.tempatPraktek1Tipe2} 
+                                onValueChange={(value) => handleInputChange('tempatPraktek1Tipe2', value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 2" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                  <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                  <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek1Alkes2">Fasilitas Kesehatan 2</Label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
                                   setCurrentPracticeIndex(1);
                                   setFacilityDialog2Open(true);
                                 }}
@@ -1105,19 +1154,12 @@ export default function AdminMemberForm() {
                                   ? `${formData.tempatPraktek1Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
+                              {formData.tempatPraktek1Alkes2 && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek1Alkes2}
+                                </p>
+                              )}
                             </div>
-                            {formData.tempatPraktek1Alkes2 && (
-                              <p className="text-xs text-muted-foreground">
-                                {formData.tempatPraktek1Alkes2}
-                              </p>
-                            )}
-                            <Input
-                              id="tempatPraktek1Alkes"
-                              value={formData.tempatPraktek1Alkes}
-                              onChange={(e) => handleInputChange('tempatPraktek1Alkes', e.target.value)}
-                              placeholder="Atau ketik manual jika diperlukan"
-                              className="mt-2"
-                            />
                           </div>
                         </div>
                       </div>
@@ -1128,7 +1170,7 @@ export default function AdminMemberForm() {
                           <h5 className="font-medium text-sm">Tempat Praktek 2</h5>
                           <Badge variant="secondary" className="text-xs">OPSIONAL</Badge>
                         </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="tempatPraktek2">Nama RS / Klinik</Label>
                             <Input
@@ -1138,31 +1180,80 @@ export default function AdminMemberForm() {
                               placeholder="Nama RS / Klinik"
                             />
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek2Tipe">Tipe RS 2</Label>
-                            <Select 
-                              value={formData.tempatPraktek2Tipe} 
-                              onValueChange={(value) => handleInputChange('tempatPraktek2Tipe', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe RS" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background z-50">
-                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
-                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
-                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
-                                <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek2Alkes">Fasilitas Kesehatan 2</Label>
-                            <div className="flex gap-2">
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek2Tipe">Tipe RS 1</Label>
+                              <Select 
+                                value={formData.tempatPraktek2Tipe} 
+                                onValueChange={(value) => {
+                                  handleInputChange('tempatPraktek2Tipe', value);
+                                  setCurrentHospitalType(value);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 1" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                  <SelectItem value="Utama">Utama</SelectItem>
+                                  <SelectItem value="Madya">Madya</SelectItem>
+                                  <SelectItem value="Dasar">Dasar</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek2Alkes">Fasilitas Kesehatan 1</Label>
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="flex-1"
-                              onClick={() => {
+                                className="w-full"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(2);
+                                  setFacilityDialog1Open(true);
+                                }}
+                                disabled={!formData.tempatPraktek2Tipe}
+                              >
+                                {formData.tempatPraktek2Alkes 
+                                  ? `${formData.tempatPraktek2Alkes.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                              {formData.tempatPraktek2Alkes && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek2Alkes}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek2Tipe2">Tipe RS 2</Label>
+                              <Select 
+                                value={formData.tempatPraktek2Tipe2} 
+                                onValueChange={(value) => handleInputChange('tempatPraktek2Tipe2', value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 2" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                  <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                  <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek2Alkes2">Fasilitas Kesehatan 2</Label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
                                   setCurrentPracticeIndex(2);
                                   setFacilityDialog2Open(true);
                                 }}
@@ -1172,19 +1263,12 @@ export default function AdminMemberForm() {
                                   ? `${formData.tempatPraktek2Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
+                              {formData.tempatPraktek2Alkes2 && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek2Alkes2}
+                                </p>
+                              )}
                             </div>
-                            {formData.tempatPraktek2Alkes2 && (
-                              <p className="text-xs text-muted-foreground">
-                                {formData.tempatPraktek2Alkes2}
-                              </p>
-                            )}
-                            <Input
-                              id="tempatPraktek2Alkes"
-                              value={formData.tempatPraktek2Alkes}
-                              onChange={(e) => handleInputChange('tempatPraktek2Alkes', e.target.value)}
-                              placeholder="Atau ketik manual jika diperlukan"
-                              className="mt-2"
-                            />
                           </div>
                         </div>
                       </div>
@@ -1195,7 +1279,7 @@ export default function AdminMemberForm() {
                           <h5 className="font-medium text-sm">Tempat Praktek 3</h5>
                           <Badge variant="secondary" className="text-xs">OPSIONAL</Badge>
                         </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="tempatPraktek3">Nama RS / Klinik</Label>
                             <Input
@@ -1205,31 +1289,80 @@ export default function AdminMemberForm() {
                               placeholder="Nama RS / Klinik"
                             />
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek3Tipe">Tipe RS 2</Label>
-                            <Select 
-                              value={formData.tempatPraktek3Tipe} 
-                              onValueChange={(value) => handleInputChange('tempatPraktek3Tipe', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih tipe RS" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-background z-50">
-                                <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
-                                <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
-                                <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
-                                <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="tempatPraktek3Alkes">Fasilitas Kesehatan 2</Label>
-                            <div className="flex gap-2">
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek3Tipe">Tipe RS 1</Label>
+                              <Select 
+                                value={formData.tempatPraktek3Tipe} 
+                                onValueChange={(value) => {
+                                  handleInputChange('tempatPraktek3Tipe', value);
+                                  setCurrentHospitalType(value);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 1" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Paripurna">Paripurna</SelectItem>
+                                  <SelectItem value="Utama">Utama</SelectItem>
+                                  <SelectItem value="Madya">Madya</SelectItem>
+                                  <SelectItem value="Dasar">Dasar</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek3Alkes">Fasilitas Kesehatan 1</Label>
                               <Button
                                 type="button"
                                 variant="outline"
-                                className="flex-1"
-                              onClick={() => {
+                                className="w-full"
+                                onClick={() => {
+                                  setCurrentPracticeIndex(3);
+                                  setFacilityDialog1Open(true);
+                                }}
+                                disabled={!formData.tempatPraktek3Tipe}
+                              >
+                                {formData.tempatPraktek3Alkes 
+                                  ? `${formData.tempatPraktek3Alkes.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
+                                  : 'Pilih Fasilitas'}
+                              </Button>
+                              {formData.tempatPraktek3Alkes && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek3Alkes}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek3Tipe2">Tipe RS 2</Label>
+                              <Select 
+                                value={formData.tempatPraktek3Tipe2} 
+                                onValueChange={(value) => handleInputChange('tempatPraktek3Tipe2', value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Pilih Tipe RS 2" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-background z-50">
+                                  <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
+                                  <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
+                                  <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="tempatPraktek3Alkes2">Fasilitas Kesehatan 2</Label>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
                                   setCurrentPracticeIndex(3);
                                   setFacilityDialog2Open(true);
                                 }}
@@ -1239,19 +1372,12 @@ export default function AdminMemberForm() {
                                   ? `${formData.tempatPraktek3Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
+                              {formData.tempatPraktek3Alkes2 && (
+                                <p className="text-xs text-muted-foreground">
+                                  {formData.tempatPraktek3Alkes2}
+                                </p>
+                              )}
                             </div>
-                            {formData.tempatPraktek3Alkes2 && (
-                              <p className="text-xs text-muted-foreground">
-                                {formData.tempatPraktek3Alkes2}
-                              </p>
-                            )}
-                            <Input
-                              id="tempatPraktek3Alkes"
-                              value={formData.tempatPraktek3Alkes}
-                              onChange={(e) => handleInputChange('tempatPraktek3Alkes', e.target.value)}
-                              placeholder="Atau ketik manual jika diperlukan"
-                              className="mt-2"
-                            />
                           </div>
                         </div>
                       </div>
