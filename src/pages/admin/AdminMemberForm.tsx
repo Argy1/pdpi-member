@@ -1095,20 +1095,20 @@ export default function AdminMemberForm() {
                                 type="button"
                                 variant="outline"
                                 className="flex-1"
-                                onClick={() => {
+                              onClick={() => {
                                   setCurrentPracticeIndex(1);
-                                  setFacilityDialogOpen(true);
+                                  setFacilityDialog2Open(true);
                                 }}
-                                disabled={!formData.tempatPraktek1Tipe}
+                                disabled={!formData.tempatPraktek1Tipe2}
                               >
-                                {facilities1.length > 0 
-                                  ? `${facilities1.length} fasilitas dipilih` 
+                                {formData.tempatPraktek1Alkes2 
+                                  ? `${formData.tempatPraktek1Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
                             </div>
-                            {facilities1.length > 0 && (
+                            {formData.tempatPraktek1Alkes2 && (
                               <p className="text-xs text-muted-foreground">
-                                {facilities1.join(', ')}
+                                {formData.tempatPraktek1Alkes2}
                               </p>
                             )}
                             <Input
@@ -1162,20 +1162,20 @@ export default function AdminMemberForm() {
                                 type="button"
                                 variant="outline"
                                 className="flex-1"
-                                onClick={() => {
+                              onClick={() => {
                                   setCurrentPracticeIndex(2);
-                                  setFacilityDialogOpen(true);
+                                  setFacilityDialog2Open(true);
                                 }}
-                                disabled={!formData.tempatPraktek2Tipe}
+                                disabled={!formData.tempatPraktek2Tipe2}
                               >
-                                {facilities2.length > 0 
-                                  ? `${facilities2.length} fasilitas dipilih` 
+                                {formData.tempatPraktek2Alkes2 
+                                  ? `${formData.tempatPraktek2Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
                             </div>
-                            {facilities2.length > 0 && (
+                            {formData.tempatPraktek2Alkes2 && (
                               <p className="text-xs text-muted-foreground">
-                                {facilities2.join(', ')}
+                                {formData.tempatPraktek2Alkes2}
                               </p>
                             )}
                             <Input
@@ -1229,20 +1229,20 @@ export default function AdminMemberForm() {
                                 type="button"
                                 variant="outline"
                                 className="flex-1"
-                                onClick={() => {
+                              onClick={() => {
                                   setCurrentPracticeIndex(3);
-                                  setFacilityDialogOpen(true);
+                                  setFacilityDialog2Open(true);
                                 }}
-                                disabled={!formData.tempatPraktek3Tipe}
+                                disabled={!formData.tempatPraktek3Tipe2}
                               >
-                                {facilities3.length > 0 
-                                  ? `${facilities3.length} fasilitas dipilih` 
+                                {formData.tempatPraktek3Alkes2 
+                                  ? `${formData.tempatPraktek3Alkes2.split(',').filter(f => f.trim()).length} fasilitas dipilih` 
                                   : 'Pilih Fasilitas'}
                               </Button>
                             </div>
-                            {facilities3.length > 0 && (
+                            {formData.tempatPraktek3Alkes2 && (
                               <p className="text-xs text-muted-foreground">
-                                {facilities3.join(', ')}
+                                {formData.tempatPraktek3Alkes2}
                               </p>
                             )}
                             <Input
