@@ -30,6 +30,7 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
     name: string;
     type: string;
     facilities: string[];
+    facilityType: 'type1' | 'type2';
   } | null>(null);
 
   if (!member) return null
@@ -58,24 +59,59 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
     })
   }
 
-  const handleFacilityClick = (practiceName: string, practiceType: string, practiceIndex: number) => {
-    if (!member || !member.fasilitas_kesehatan) {
-      setSelectedFacility({
-        name: practiceName,
-        type: practiceType,
-        facilities: []
-      });
-      setFacilityDialogOpen(true);
-      return;
-    }
+  const handleFacilityClick = (
+    practiceName: string, 
+    practiceIndex: number,
+    facilityType: 'type1' | 'type2'
+  ) => {
+    if (!member) return;
 
-    const facilitiesData = member.fasilitas_kesehatan as any;
-    const facilities = facilitiesData[`tempat_praktek_${practiceIndex}`] || [];
+    let type = '';
+    let facilities: string[] = [];
+
+    if (facilityType === 'type1') {
+      // Tipe RS 1 dan Fasilitas Kesehatan 1
+      if (practiceIndex === 1) {
+        type = member.tempat_praktek_1_tipe || '';
+        facilities = member.tempat_praktek_1_alkes 
+          ? member.tempat_praktek_1_alkes.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      } else if (practiceIndex === 2) {
+        type = member.tempat_praktek_2_tipe || '';
+        facilities = member.tempat_praktek_2_alkes 
+          ? member.tempat_praktek_2_alkes.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      } else if (practiceIndex === 3) {
+        type = member.tempat_praktek_3_tipe || '';
+        facilities = member.tempat_praktek_3_alkes 
+          ? member.tempat_praktek_3_alkes.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      }
+    } else {
+      // Tipe RS 2 dan Fasilitas Kesehatan 2
+      if (practiceIndex === 1) {
+        type = member.tempat_praktek_1_tipe_2 || '';
+        facilities = member.tempat_praktek_1_alkes_2 
+          ? member.tempat_praktek_1_alkes_2.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      } else if (practiceIndex === 2) {
+        type = member.tempat_praktek_2_tipe_2 || '';
+        facilities = member.tempat_praktek_2_alkes_2 
+          ? member.tempat_praktek_2_alkes_2.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      } else if (practiceIndex === 3) {
+        type = member.tempat_praktek_3_tipe_2 || '';
+        facilities = member.tempat_praktek_3_alkes_2 
+          ? member.tempat_praktek_3_alkes_2.split(',').map(f => f.trim()).filter(Boolean)
+          : [];
+      }
+    }
     
     setSelectedFacility({
       name: practiceName,
-      type: practiceType,
-      facilities: Array.isArray(facilities) ? facilities : []
+      type: type,
+      facilities: facilities,
+      facilityType: facilityType
     });
     setFacilityDialogOpen(true);
   };
@@ -257,62 +293,115 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             {/* Hospital Practice Info */}
             <div className="space-y-3 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Tempat Praktek 1 */}
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 1</p>
-                  <p className="text-medical-body">
-                    {member.tempat_praktek_1 || "-"}
+                  <p className="text-medical-body">{member.tempat_praktek_1 || "-"}</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {member.tempat_praktek_1 && member.tempat_praktek_1_tipe && (
                       <Button
                         variant="link"
-                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        className="h-auto p-0 text-xs text-primary hover:underline"
                         onClick={() => handleFacilityClick(
                           member.tempat_praktek_1 || '',
-                          member.tempat_praktek_1_tipe || '',
-                          1
+                          1,
+                          'type1'
                         )}
                       >
-                        ({member.tempat_praktek_1_tipe})
+                        Tipe RS 1: {member.tempat_praktek_1_tipe}
                       </Button>
                     )}
-                  </p>
+                    {member.tempat_praktek_1 && member.tempat_praktek_1_tipe_2 && (
+                      <>
+                        {member.tempat_praktek_1_tipe && <span className="text-xs text-muted-foreground">|</span>}
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-xs text-primary hover:underline"
+                          onClick={() => handleFacilityClick(
+                            member.tempat_praktek_1 || '',
+                            1,
+                            'type2'
+                          )}
+                        >
+                          Tipe RS 2: {member.tempat_praktek_1_tipe_2}
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
+                
+                {/* Tempat Praktek 2 */}
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</p>
-                  <p className="text-medical-body">
-                    {member.tempat_praktek_2 || "-"}
+                  <p className="text-medical-body">{member.tempat_praktek_2 || "-"}</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
                       <Button
                         variant="link"
-                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        className="h-auto p-0 text-xs text-primary hover:underline"
                         onClick={() => handleFacilityClick(
                           member.tempat_praktek_2 || '',
-                          member.tempat_praktek_2_tipe || '',
-                          2
+                          2,
+                          'type1'
                         )}
                       >
-                        ({member.tempat_praktek_2_tipe})
+                        Tipe RS 1: {member.tempat_praktek_2_tipe}
                       </Button>
                     )}
-                  </p>
+                    {member.tempat_praktek_2 && member.tempat_praktek_2_tipe_2 && (
+                      <>
+                        {member.tempat_praktek_2_tipe && <span className="text-xs text-muted-foreground">|</span>}
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-xs text-primary hover:underline"
+                          onClick={() => handleFacilityClick(
+                            member.tempat_praktek_2 || '',
+                            2,
+                            'type2'
+                          )}
+                        >
+                          Tipe RS 2: {member.tempat_praktek_2_tipe_2}
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
+                
+                {/* Tempat Praktek 3 */}
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</p>
-                  <p className="text-medical-body">
-                    {member.tempat_praktek_3 || "-"}
+                  <p className="text-medical-body">{member.tempat_praktek_3 || "-"}</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
                       <Button
                         variant="link"
-                        className="h-auto p-0 text-xs text-primary hover:underline ml-2"
+                        className="h-auto p-0 text-xs text-primary hover:underline"
                         onClick={() => handleFacilityClick(
                           member.tempat_praktek_3 || '',
-                          member.tempat_praktek_3_tipe || '',
-                          3
+                          3,
+                          'type1'
                         )}
                       >
-                        ({member.tempat_praktek_3_tipe})
+                        Tipe RS 1: {member.tempat_praktek_3_tipe}
                       </Button>
                     )}
-                  </p>
+                    {member.tempat_praktek_3 && member.tempat_praktek_3_tipe_2 && (
+                      <>
+                        {member.tempat_praktek_3_tipe && <span className="text-xs text-muted-foreground">|</span>}
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-xs text-primary hover:underline"
+                          onClick={() => handleFacilityClick(
+                            member.tempat_praktek_3 || '',
+                            3,
+                            'type2'
+                          )}
+                        >
+                          Tipe RS 2: {member.tempat_praktek_3_tipe_2}
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -381,6 +470,7 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
           hospitalName={selectedFacility.name}
           hospitalType={selectedFacility.type}
           facilities={selectedFacility.facilities}
+          facilityType={selectedFacility.facilityType}
         />
       )}
     </Dialog>

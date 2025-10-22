@@ -9,6 +9,7 @@ interface FacilityViewDialogProps {
   hospitalName: string;
   hospitalType: string;
   facilities: string[];
+  facilityType?: 'type1' | 'type2';
 }
 
 export function FacilityViewDialog({ 
@@ -16,15 +17,19 @@ export function FacilityViewDialog({
   onOpenChange, 
   hospitalName, 
   hospitalType, 
-  facilities 
+  facilities,
+  facilityType = 'type1'
 }: FacilityViewDialogProps) {
+  const title = facilityType === 'type1' ? 'Fasilitas Kesehatan 1' : 'Fasilitas Kesehatan 2';
+  const typeLabel = facilityType === 'type1' ? 'Tipe RS 1' : 'Tipe RS 2';
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5" />
-            Fasilitas Kesehatan
+            {title}
           </DialogTitle>
           <DialogDescription>
             Detail fasilitas yang tersedia
@@ -39,7 +44,7 @@ export function FacilityViewDialog({
             </div>
             
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Jenis Rumah Sakit</label>
+              <label className="text-sm font-medium text-muted-foreground">{typeLabel}</label>
               <div className="mt-1">
                 <Badge variant="outline" className="text-sm">
                   {hospitalType}
