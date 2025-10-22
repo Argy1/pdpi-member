@@ -1642,7 +1642,11 @@ export default function AdminMemberForm() {
       <FacilityDialog1
         open={facilityDialog1Open}
         onOpenChange={setFacilityDialog1Open}
-        hospitalType={currentHospitalType}
+        hospitalType={
+          currentPracticeIndex === 1 ? formData.tempatPraktek1Tipe :
+          currentPracticeIndex === 2 ? formData.tempatPraktek2Tipe :
+          formData.tempatPraktek3Tipe
+        }
         selectedFacilities={
           currentPracticeIndex === 1 ? formData.tempatPraktek1Alkes :
           currentPracticeIndex === 2 ? formData.tempatPraktek2Alkes :
