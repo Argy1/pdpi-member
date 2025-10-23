@@ -29,10 +29,13 @@ interface ImportRow {
   foto?: string;
   tempat_praktek_1?: string;
   tempat_praktek_1_tipe?: string;
+  tempat_praktek_1_tipe_2?: string;
   tempat_praktek_2?: string;
   tempat_praktek_2_tipe?: string;
+  tempat_praktek_2_tipe_2?: string;
   tempat_praktek_3?: string;
   tempat_praktek_3_tipe?: string;
+  tempat_praktek_3_tipe_2?: string;
 }
 
 interface ImportRequest {
@@ -210,10 +213,13 @@ Deno.serve(async (req) => {
         // Add practice location fields
         if (row.tempat_praktek_1) memberData.tempat_praktek_1 = row.tempat_praktek_1;
         if (row.tempat_praktek_1_tipe) memberData.tempat_praktek_1_tipe = row.tempat_praktek_1_tipe;
+        if (row.tempat_praktek_1_tipe_2) memberData.tempat_praktek_1_tipe_2 = row.tempat_praktek_1_tipe_2;
         if (row.tempat_praktek_2) memberData.tempat_praktek_2 = row.tempat_praktek_2;
         if (row.tempat_praktek_2_tipe) memberData.tempat_praktek_2_tipe = row.tempat_praktek_2_tipe;
+        if (row.tempat_praktek_2_tipe_2) memberData.tempat_praktek_2_tipe_2 = row.tempat_praktek_2_tipe_2;
         if (row.tempat_praktek_3) memberData.tempat_praktek_3 = row.tempat_praktek_3;
         if (row.tempat_praktek_3_tipe) memberData.tempat_praktek_3_tipe = row.tempat_praktek_3_tipe;
+        if (row.tempat_praktek_3_tipe_2) memberData.tempat_praktek_3_tipe_2 = row.tempat_praktek_3_tipe_2;
 
         if (mode === 'upsert') {
           // Check if member exists - use more comprehensive matching
