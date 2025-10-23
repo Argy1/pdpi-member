@@ -112,7 +112,7 @@ const Index = () => {
                         Total Anggota
                       </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-emerald-600 to-emerald-800 dark:from-emerald-400 dark:to-emerald-600 bg-clip-text text-transparent">
-                        {1805}
+                        {(1805).toLocaleString("id-ID")}
                       </p>
                       <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Dokter Spesialis Paru</p>
                     </div>
