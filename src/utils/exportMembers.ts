@@ -7,45 +7,24 @@ interface ExportOptions {
 }
 
 export function exportMembersToExcel(members: Member[], options: ExportOptions = { format: 'xlsx' }) {
-  // Prepare data with complete biodata
+  // Prepare data with only required fields for sebaran page export
   const exportData = members.map((member, index) => ({
     'No': index + 1,
-    'NPA': member.npa || '-',
+    'NPA': member.npa || '',
     'Nama Lengkap': `${member.gelar || ''} ${member.nama} ${member.gelar2 || ''}`.trim(),
-    'Jenis Kelamin': member.jenis_kelamin === 'L' ? 'Laki-laki' : member.jenis_kelamin === 'P' ? 'Perempuan' : '-',
-    'Tempat Lahir': member.tempat_lahir || '-',
-    'Tanggal Lahir': member.tgl_lahir || '-',
-    'Alumni': member.alumni || '-',
-    'Tahun Lulus': member.thn_lulus || '-',
-    'Status': member.status || '-',
-    'Cabang/PD': member.cabang || '-',
-    
-    // Office/Work Location
-    'Tempat Tugas': member.tempat_tugas || '-',
-    'Kota/Kabupaten Kantor': member.kota_kabupaten_kantor || '-',
-    'Provinsi Kantor': member.provinsi_kantor || '-',
-    
-    // Home Address
-    'Alamat Rumah': member.alamat_rumah || '-',
-    'Kota/Kabupaten Rumah': member.kota_kabupaten_rumah || '-',
-    'Provinsi Rumah': member.provinsi_rumah || '-',
-    
-    // Practice Locations
-    'Tempat Praktik 1': member.tempat_praktek_1 || '-',
-    'Tipe RS Praktik 1': member.tempat_praktek_1_tipe || '-',
-    'Tempat Praktik 2': member.tempat_praktek_2 || '-',
-    'Tipe RS Praktik 2': member.tempat_praktek_2_tipe || '-',
-    'Tempat Praktik 3': member.tempat_praktek_3 || '-',
-    'Tipe RS Praktik 3': member.tempat_praktek_3_tipe || '-',
-    
-    // Contact Information
-    'Email': member.email || '-',
-    'No. HP': member.no_hp || '-',
-    
-    // Additional Information
-    'Keterangan': member.keterangan || '-',
-    'Tanggal Dibuat': member.created_at ? new Date(member.created_at).toLocaleDateString('id-ID') : '-',
-    'Terakhir Diperbarui': member.updated_at ? new Date(member.updated_at).toLocaleDateString('id-ID') : '-',
+    'Cabang': member.cabang || '',
+    'Tempat Tugas': member.tempat_tugas || '',
+    'Kabupaten': member.kota_kabupaten_kantor || '',
+    'Provinsi': member.provinsi_kantor || '',
+    'Tempat Praktik 1': member.tempat_praktek_1 || '',
+    'Tipe RS 1 (Praktik 1)': member.tempat_praktek_1_tipe || '',
+    'Tipe RS 2 (Praktik 1)': member.tempat_praktek_1_tipe_2 || '',
+    'Tempat Praktik 2': member.tempat_praktek_2 || '',
+    'Tipe RS 1 (Praktik 2)': member.tempat_praktek_2_tipe || '',
+    'Tipe RS 2 (Praktik 2)': member.tempat_praktek_2_tipe_2 || '',
+    'Tempat Praktik 3': member.tempat_praktek_3 || '',
+    'Tipe RS 1 (Praktik 3)': member.tempat_praktek_3_tipe || '',
+    'Tipe RS 2 (Praktik 3)': member.tempat_praktek_3_tipe_2 || '',
   }))
 
   // Create worksheet
@@ -56,30 +35,19 @@ export function exportMembersToExcel(members: Member[], options: ExportOptions =
     { wch: 5 },   // No
     { wch: 12 },  // NPA
     { wch: 35 },  // Nama Lengkap
-    { wch: 12 },  // Jenis Kelamin
-    { wch: 20 },  // Tempat Lahir
-    { wch: 15 },  // Tanggal Lahir
-    { wch: 25 },  // Alumni
-    { wch: 12 },  // Tahun Lulus
-    { wch: 12 },  // Status
-    { wch: 20 },  // Cabang/PD
+    { wch: 25 },  // Cabang
     { wch: 30 },  // Tempat Tugas
-    { wch: 25 },  // Kota/Kabupaten Kantor
-    { wch: 20 },  // Provinsi Kantor
-    { wch: 40 },  // Alamat Rumah
-    { wch: 25 },  // Kota/Kabupaten Rumah
-    { wch: 20 },  // Provinsi Rumah
+    { wch: 25 },  // Kabupaten
+    { wch: 20 },  // Provinsi
     { wch: 30 },  // Tempat Praktik 1
-    { wch: 15 },  // Tipe RS Praktik 1
+    { wch: 18 },  // Tipe RS 1 (Praktik 1)
+    { wch: 18 },  // Tipe RS 2 (Praktik 1)
     { wch: 30 },  // Tempat Praktik 2
-    { wch: 15 },  // Tipe RS Praktik 2
+    { wch: 18 },  // Tipe RS 1 (Praktik 2)
+    { wch: 18 },  // Tipe RS 2 (Praktik 2)
     { wch: 30 },  // Tempat Praktik 3
-    { wch: 15 },  // Tipe RS Praktik 3
-    { wch: 30 },  // Email
-    { wch: 15 },  // No. HP
-    { wch: 30 },  // Keterangan
-    { wch: 18 },  // Tanggal Dibuat
-    { wch: 20 },  // Terakhir Diperbarui
+    { wch: 18 },  // Tipe RS 1 (Praktik 3)
+    { wch: 18 },  // Tipe RS 2 (Praktik 3)
   ]
   worksheet['!cols'] = columnWidths
 
