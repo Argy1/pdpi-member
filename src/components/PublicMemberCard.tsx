@@ -18,9 +18,21 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
   }
 
   const practiceLocations = [
-    { name: member.tempat_praktek_1, type: member.tempat_praktek_1_tipe },
-    { name: member.tempat_praktek_2, type: member.tempat_praktek_2_tipe },
-    { name: member.tempat_praktek_3, type: member.tempat_praktek_3_tipe },
+    { 
+      name: member.tempat_praktek_1, 
+      type: member.tempat_praktek_1_tipe,
+      type2: member.tempat_praktek_1_tipe_2 
+    },
+    { 
+      name: member.tempat_praktek_2, 
+      type: member.tempat_praktek_2_tipe,
+      type2: member.tempat_praktek_2_tipe_2 
+    },
+    { 
+      name: member.tempat_praktek_3, 
+      type: member.tempat_praktek_3_tipe,
+      type2: member.tempat_praktek_3_tipe_2 
+    },
   ]
 
   return (
@@ -114,16 +126,26 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                     <div className="font-semibold text-base sm:text-lg text-medical-primary">
                       {location.name || '-'}
                     </div>
-                    {location.name && location.type && (
-                      <div className="space-y-1 text-sm sm:text-base text-muted-foreground">
-                        <div className="flex flex-wrap gap-x-2">
-                          <span className="font-medium">RS:</span>
-                          <span>.............. (Tipe RS: <span className="font-semibold">{location.type}</span>)</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <span className="font-medium">Kota/Kabupaten:</span>
-                          <span className="font-semibold">{member.kota_kabupaten_kantor || '-'}</span>
-                        </div>
+                    {location.name && (location.type || location.type2) && (
+                      <div className="space-y-2 text-sm sm:text-base">
+                        {location.type && (
+                          <div className="flex items-start gap-2">
+                            <Building className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-medium text-muted-foreground">Tipe RS 1:</span>{" "}
+                              <span className="font-semibold text-foreground">{location.type}</span>
+                            </div>
+                          </div>
+                        )}
+                        {location.type2 && (
+                          <div className="flex items-start gap-2">
+                            <Building className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-medium text-muted-foreground">Tipe RS 2:</span>{" "}
+                              <span className="font-semibold text-foreground">{location.type2}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
