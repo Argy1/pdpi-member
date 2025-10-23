@@ -346,10 +346,10 @@ export default function AdminMemberForm() {
     }
 
     // Validate Tempat Praktek 1 is required
-    if (!formData.tempatPraktek1.trim() || !formData.tempatPraktek1Tipe || !formData.tempatPraktek1Alkes.trim()) {
+    if (!formData.tempatPraktek1.trim()) {
       toast({
         title: 'Validasi Error',
-        description: 'Tempat Praktek 1 wajib diisi lengkap (Nama RS, Tipe, dan Alat Kesehatan).',
+        description: 'Tempat Praktek 1 wajib diisi.',
         variant: 'destructive',
       });
       return;
