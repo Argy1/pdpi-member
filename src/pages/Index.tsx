@@ -1,30 +1,30 @@
-import { useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { Users, MapPin, Building2, Search, ArrowRight, Sparkles, Filter, Eye } from "lucide-react"
-import { useStats } from "@/hooks/useStats"
-import { SearchBar } from "@/components/SearchBar"
-import { ProvinceChips } from "@/components/ProvinceChips"
-import { Footer } from "@/components/Footer"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import pdpiLogo from "@/assets/logo-pdpi.png"
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Users, MapPin, Building2, Search, ArrowRight, Sparkles, Filter, Eye } from "lucide-react";
+import { useStats } from "@/hooks/useStats";
+import { SearchBar } from "@/components/SearchBar";
+import { ProvinceChips } from "@/components/ProvinceChips";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import pdpiLogo from "@/assets/logo-pdpi.png";
 
 const Index = () => {
-  const navigate = useNavigate()
-  const { summary, loading } = useStats({})
+  const navigate = useNavigate();
+  const { summary, loading } = useStats({});
 
   const lastUpdated = useMemo(() => {
-    if (!summary) return new Date()
-    return new Date()
-  }, [summary])
+    if (!summary) return new Date();
+    return new Date();
+  }, [summary]);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('id-ID', { 
-      day: '2-digit', 
-      month: 'short', 
-      year: 'numeric' 
-    })
-  }
+    return date.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-sky-50 to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -41,7 +41,7 @@ const Index = () => {
             <div className="relative mx-auto max-w-5xl">
               {/* Animated Background Card */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 dark:from-slate-800/40 dark:to-slate-900/10 rounded-3xl backdrop-blur-xl shadow-2xl" />
-              
+
               <div className="relative p-8 md:p-14 text-center">
                 {/* Logo Badge with Update Time */}
                 <div className="mb-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -61,17 +61,18 @@ const Index = () => {
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 dark:from-emerald-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
                   Direktori Anggota PDPI
                 </h1>
-                
+
                 {/* Subtitle */}
                 <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150">
-                  Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi profesional di seluruh nusantara.
+                  Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi
+                  profesional di seluruh nusantara.
                 </p>
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
                   <Button
                     size="lg"
-                    onClick={() => navigate('/anggota')}
+                    onClick={() => navigate("/anggota")}
                     className="w-full sm:w-auto rounded-2xl px-8 py-6 text-base font-bold shadow-2xl hover:shadow-emerald-500/50 dark:hover:shadow-emerald-900/50 transition-all duration-300 hover:scale-105 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
                   >
                     Buka Tabel Anggota
@@ -80,7 +81,7 @@ const Index = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => navigate('/sebaran')}
+                    onClick={() => navigate("/sebaran")}
                     className="w-full sm:w-auto rounded-2xl px-8 py-6 text-base font-bold border-2 border-emerald-300 dark:border-emerald-700 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 hover:scale-105 shadow-lg"
                   >
                     <MapPin className="mr-2 h-5 w-5" />
@@ -107,9 +108,11 @@ const Index = () => {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/30 dark:bg-emerald-900/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
-                      <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">Total Anggota</p>
+                      <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
+                        Total Anggota
+                      </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-emerald-600 to-emerald-800 dark:from-emerald-400 dark:to-emerald-600 bg-clip-text text-transparent">
-                        {summary?.total.toLocaleString('id-ID') || "0"}
+                        {summary?.total.toLocaleString("id-ID")}
                       </p>
                       <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Dokter Spesialis Paru</p>
                     </div>
@@ -123,7 +126,9 @@ const Index = () => {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-sky-200/30 dark:bg-sky-900/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
-                      <p className="text-sm font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wide">Provinsi</p>
+                      <p className="text-sm font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wide">
+                        Provinsi
+                      </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-sky-600 to-sky-800 dark:from-sky-400 dark:to-sky-600 bg-clip-text text-transparent">
                         {summary?.byProvinsi.length || 0}
                       </p>
@@ -139,7 +144,9 @@ const Index = () => {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-slate-200/30 dark:bg-slate-700/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
-                      <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Cabang/PD</p>
+                      <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                        Cabang/PD
+                      </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-400 dark:to-slate-600 bg-clip-text text-transparent">
                         {summary?.byCabang.length || 0}
                       </p>
@@ -169,10 +176,7 @@ const Index = () => {
                     Cari Anggota
                   </h2>
                 </div>
-                <SearchBar 
-                  size="hero"
-                  placeholder="Cari nama, NPA, RS, kota, provinsi, atau PD..."
-                />
+                <SearchBar size="hero" placeholder="Cari nama, NPA, RS, kota, provinsi, atau PD..." />
               </div>
             </div>
 
@@ -237,7 +241,7 @@ const Index = () => {
         <Footer />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;
