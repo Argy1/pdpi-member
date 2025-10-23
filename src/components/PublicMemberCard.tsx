@@ -126,7 +126,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                     <div className="font-semibold text-base sm:text-lg text-medical-primary">
                       {location.name || '-'}
                     </div>
-                    {location.name && (location.type || location.type2) && (
+                    {location.name && (
                       <div className="space-y-2 text-sm sm:text-base">
                         {location.type && (
                           <div className="flex items-start gap-2">
@@ -146,6 +146,13 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                             </div>
                           </div>
                         )}
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-muted-foreground">Kota/Kabupaten:</span>{" "}
+                            <span className="font-semibold text-foreground">{member.kota_kabupaten_kantor || '-'}</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
