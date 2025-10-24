@@ -31,14 +31,14 @@ interface StatsParams {
 export class StatsAPI {
   static async getSummary(params: StatsParams = {}): Promise<StatsSummary> {
     try {
-      // Build base query with specific fields needed
+      // Build base query with specific fields needed - get ALL members without limit
       let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, cabang, kota_kabupaten_kantor', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
       
-      // Set limit to get all members (max ~10,000 members expected)
-      query = query.limit(10000)
+      // Set very high limit to ensure we get all members
+      query = query.limit(100000)
 
       const { data: members, error, count } = await query
 
@@ -109,8 +109,8 @@ export class StatsAPI {
 
     query = this.applyFilters(query, params)
     
-    // Set limit to get all members
-    query = query.limit(10000)
+    // Set very high limit to ensure we get all members
+    query = query.limit(100000)
 
     const { data, error } = await query
 
@@ -162,8 +162,8 @@ export class StatsAPI {
 
       query = this.applyFilters(query, params)
       
-      // Set limit to get all members
-      query = query.limit(10000)
+      // Set very high limit to ensure we get all members
+      query = query.limit(100000)
 
       const { data, error } = await query
 
