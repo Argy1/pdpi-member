@@ -36,6 +36,9 @@ export class StatsAPI {
 
       // Apply filters
       query = this.applyFilters(query, params)
+      
+      // Set limit to get all members (max ~10,000 members expected)
+      query = query.limit(10000)
 
       const { data: members, error, count } = await query
 
@@ -105,6 +108,9 @@ export class StatsAPI {
       .select('provinsi_kantor, jenis_kelamin')
 
     query = this.applyFilters(query, params)
+    
+    // Set limit to get all members
+    query = query.limit(10000)
 
     const { data, error } = await query
 
@@ -155,6 +161,9 @@ export class StatsAPI {
         .select('provinsi, provinsi_kantor, kota_kabupaten, kota_kabupaten_kantor, jenis_kelamin')
 
       query = this.applyFilters(query, params)
+      
+      // Set limit to get all members
+      query = query.limit(10000)
 
       const { data, error } = await query
 
