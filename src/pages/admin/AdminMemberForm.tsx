@@ -1078,14 +1078,20 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek1Tipe} 
                                 onValueChange={(value) => {
-                                  handleInputChange('tempatPraktek1Tipe', value);
-                                  setCurrentHospitalType(value);
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek1Tipe', '');
+                                    handleInputChange('tempatPraktek1Alkes', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek1Tipe', value);
+                                    setCurrentHospitalType(value);
+                                  }
                                 }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1124,12 +1130,20 @@ export default function AdminMemberForm() {
                               <Label htmlFor="tempatPraktek1Tipe2">Tipe RS 2</Label>
                               <Select 
                                 value={formData.tempatPraktek1Tipe2} 
-                                onValueChange={(value) => handleInputChange('tempatPraktek1Tipe2', value)}
+                                onValueChange={(value) => {
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek1Tipe2', '');
+                                    handleInputChange('tempatPraktek1Alkes2', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek1Tipe2', value);
+                                  }
+                                }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
@@ -1187,14 +1201,20 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek2Tipe} 
                                 onValueChange={(value) => {
-                                  handleInputChange('tempatPraktek2Tipe', value);
-                                  setCurrentHospitalType(value);
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek2Tipe', '');
+                                    handleInputChange('tempatPraktek2Alkes', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek2Tipe', value);
+                                    setCurrentHospitalType(value);
+                                  }
                                 }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1233,12 +1253,20 @@ export default function AdminMemberForm() {
                               <Label htmlFor="tempatPraktek2Tipe2">Tipe RS 2</Label>
                               <Select 
                                 value={formData.tempatPraktek2Tipe2} 
-                                onValueChange={(value) => handleInputChange('tempatPraktek2Tipe2', value)}
+                                onValueChange={(value) => {
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek2Tipe2', '');
+                                    handleInputChange('tempatPraktek2Alkes2', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek2Tipe2', value);
+                                  }
+                                }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
@@ -1296,14 +1324,20 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek3Tipe} 
                                 onValueChange={(value) => {
-                                  handleInputChange('tempatPraktek3Tipe', value);
-                                  setCurrentHospitalType(value);
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek3Tipe', '');
+                                    handleInputChange('tempatPraktek3Alkes', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek3Tipe', value);
+                                    setCurrentHospitalType(value);
+                                  }
                                 }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1342,12 +1376,20 @@ export default function AdminMemberForm() {
                               <Label htmlFor="tempatPraktek3Tipe2">Tipe RS 2</Label>
                               <Select 
                                 value={formData.tempatPraktek3Tipe2} 
-                                onValueChange={(value) => handleInputChange('tempatPraktek3Tipe2', value)}
+                                onValueChange={(value) => {
+                                  if (value === "") {
+                                    handleInputChange('tempatPraktek3Tipe2', '');
+                                    handleInputChange('tempatPraktek3Alkes2', '');
+                                  } else {
+                                    handleInputChange('tempatPraktek3Tipe2', value);
+                                  }
+                                }}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
+                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
