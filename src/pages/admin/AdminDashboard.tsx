@@ -66,7 +66,7 @@ export default function AdminDashboard() {
   const statCards = [
     {
       title: "Total Anggota",
-      value: "1805",
+      value: value: stats.totalMembers,
       description: "Semua anggota terdaftar",
       icon: Users,
       color: "text-blue-600",
