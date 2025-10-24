@@ -5,41 +5,13 @@ import { StatCard } from "@/components/StatCard"
 import { SearchBar } from "@/components/SearchBar"
 import { ProvinceChips } from "@/components/ProvinceChips"
 import { HowToUse } from "@/components/HowToUse"
-import { useMembers } from "@/hooks/useMembers"
+import { useStats } from "@/hooks/useStats"
 import logoImage from "@/assets/logo-pdpi.png"
-import { useMemo } from "react"
 
 export default function Homepage() {
-  // Fetch member data for statistics
-  const { members, loading } = useMembers({
-    scope: 'public',
-    limit: 10000 // Get all members for stats calculation
-  });
+  // Use Stats API to get accurate total from database
+  const { summary, loading } = useStats({})
 
-  // Calculate real-time statistics
-  const stats = useMemo(() => {
-    const totalMembers = members.length;
-    
-    // Calculate unique provinces - use provinsi_kantor field
-    const uniqueProvinces = new Set(
-      members
-        .map(m => m.provinsi_kantor || m.provinsi)
-        .filter(Boolean) // Remove null/undefined values
-    );
-    
-    // Calculate unique branches/cabang
-    const uniqueCabang = new Set(
-      members
-        .map(m => m.cabang || m.pd)
-        .filter(Boolean) // Remove null/undefined values
-    );
-
-    return {
-      totalMembers,
-      totalProvinces: uniqueProvinces.size,
-      totalCabang: uniqueCabang.size
-    };
-  }, [members]);
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -93,20 +65,20 @@ export default function Homepage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title="Total Anggota"
-              value={loading ? "..." : stats.totalMembers.toLocaleString('id-ID')}
+              value={loading ? "..." : (summary?.total || 0).toLocaleString('id-ID')}
               description="Dokter Spesialis Paru"
               icon={Users}
               trend={{ value: 12, isPositive: true }}
             />
             <StatCard
               title="Provinsi"
-              value={loading ? "..." : stats.totalProvinces.toString()}
+              value={loading ? "..." : (summary?.byProvinsi.length || 0).toString()}
               description="Seluruh Indonesia"
               icon={MapPin}
             />
             <StatCard
               title="Cabang/PD"
-              value={loading ? "..." : stats.totalCabang.toString()}
+              value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
               description="Pengurus Daerah"
               icon={Building2}
               trend={{ value: 3, isPositive: true }}
