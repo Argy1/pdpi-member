@@ -1078,7 +1078,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek1Tipe} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek1Tipe', '');
                                     handleInputChange('tempatPraktek1Alkes', '');
                                   } else {
@@ -1091,7 +1091,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1131,7 +1131,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek1Tipe2} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek1Tipe2', '');
                                     handleInputChange('tempatPraktek1Alkes2', '');
                                   } else {
@@ -1143,7 +1143,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
@@ -1201,7 +1201,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek2Tipe} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek2Tipe', '');
                                     handleInputChange('tempatPraktek2Alkes', '');
                                   } else {
@@ -1214,7 +1214,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1254,7 +1254,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek2Tipe2} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek2Tipe2', '');
                                     handleInputChange('tempatPraktek2Alkes2', '');
                                   } else {
@@ -1266,7 +1266,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
@@ -1324,7 +1324,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek3Tipe} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek3Tipe', '');
                                     handleInputChange('tempatPraktek3Alkes', '');
                                   } else {
@@ -1337,7 +1337,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 1" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Paripurna">Paripurna</SelectItem>
                                   <SelectItem value="Utama">Utama</SelectItem>
                                   <SelectItem value="Madya">Madya</SelectItem>
@@ -1377,7 +1377,7 @@ export default function AdminMemberForm() {
                               <Select 
                                 value={formData.tempatPraktek3Tipe2} 
                                 onValueChange={(value) => {
-                                  if (value === "") {
+                                  if (value === "CLEAR") {
                                     handleInputChange('tempatPraktek3Tipe2', '');
                                     handleInputChange('tempatPraktek3Alkes2', '');
                                   } else {
@@ -1389,7 +1389,7 @@ export default function AdminMemberForm() {
                                   <SelectValue placeholder="Pilih Tipe RS 2" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background z-50">
-                                  <SelectItem value="">Kosongkan Pilihan</SelectItem>
+                                  <SelectItem value="CLEAR">Kosongkan Pilihan</SelectItem>
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
