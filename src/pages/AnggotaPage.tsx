@@ -57,9 +57,12 @@ export default function AnggotaPage() {
 
     const fetchData = async () => {
       try {
-        const [hospitalTypesResult, provincesResult, citiesResult] = await Promise.all([
+        // Import getAllProvinces helper
+        const { getAllProvinces } = await import('@/utils/getAllProvinces')
+        
+        const [hospitalTypesResult, allProvinces, citiesResult] = await Promise.all([
           AnggotaAPI.getHospitalTypes(),
-          AnggotaAPI.getAvailableProvinces(),
+          getAllProvinces(), // Get all 39 provinces from centroids
           AnggotaAPI.getAvailableCities()
         ])
         
@@ -74,9 +77,8 @@ export default function AnggotaPage() {
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data)
         }
-        if (provincesResult.data) {
-          setAvailableProvinces(provincesResult.data)
-        }
+        // Use all provinces from centroids instead of just those with members
+        setAvailableProvinces(allProvinces)
         if (citiesResult.data) {
           setAvailableCities(citiesResult.data)
         }

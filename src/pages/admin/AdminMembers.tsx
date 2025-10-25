@@ -101,8 +101,14 @@ export default function AdminMembers() {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const provinceResult = await AnggotaAPI.getAvailableProvinces();
-        const cityResult = await AnggotaAPI.getAvailableCities();
+        // Import getAllProvinces helper
+        const { getAllProvinces } = await import('@/utils/getAllProvinces')
+        
+        const [allProvinces, cityResult, hospitalTypesResult] = await Promise.all([
+          getAllProvinces(), // Get all 39 provinces from centroids
+          AnggotaAPI.getAvailableCities(),
+          AnggotaAPI.getHospitalTypes()
+        ])
         
         const { data: branchData } = await supabase
           .from('members')
@@ -111,13 +117,12 @@ export default function AdminMembers() {
 
         const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[];
         
-        setAvailableProvinces(provinceResult.data || []);
+        // Use all provinces from centroids instead of just those with members
+        setAvailableProvinces(allProvinces);
         setAvailableBranches(branches.sort());
         setAvailableCities(cityResult.data || []);
         setAvailableSubspecialties([]); // Add subspecialty logic if needed
 
-        // Fetch hospital types
-        const hospitalTypesResult = await AnggotaAPI.getHospitalTypes();
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data);
         }

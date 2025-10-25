@@ -36,9 +36,30 @@ export default function SebaranPage() {
   })
 
   const { summary, provinceStats, loading, error, refresh } = useStats(filters)
+  const [allProvinces, setAllProvinces] = useState<string[]>([])
 
-  // Extract unique provinces, PDs, and cities from summary for filter options
-  const provinces = summary?.byProvinsi.map(p => p.provinsi).filter(p => p !== 'Tidak Diketahui') || []
+  // Load all 39 provinces from centroids for complete filter list
+  useEffect(() => {
+    const loadProvinces = async () => {
+      try {
+        const response = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
+        const centroids = await response.json()
+        const provinceNames = centroids
+          .map((c: any) => c.provinsi)
+          .filter((p: string) => p !== 'Kepulauan Bangka Belitung') // Remove duplicate
+          .sort((a: string, b: string) => a.localeCompare(b, 'id'))
+        setAllProvinces(provinceNames)
+      } catch (error) {
+        console.error('Failed to load provinces:', error)
+        // Fallback to summary data if centroids fail to load
+        setAllProvinces(summary?.byProvinsi.map(p => p.provinsi).filter(p => p !== 'Tidak Diketahui') || [])
+      }
+    }
+    loadProvinces()
+  }, [])
+
+  // Extract PDs and cities from summary for filter options
+  const provinces = allProvinces.length > 0 ? allProvinces : (summary?.byProvinsi.map(p => p.provinsi).filter(p => p !== 'Tidak Diketahui') || [])
   const pds = summary?.byCabang.map(c => c.pd).filter(pd => pd !== 'Tidak Diketahui') || []
   const cities = summary?.byKota.map(k => k.kota).filter(k => k !== 'Tidak Diketahui') || []
 

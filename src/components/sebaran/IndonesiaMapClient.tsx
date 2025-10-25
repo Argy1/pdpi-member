@@ -118,10 +118,8 @@ export default function IndonesiaMapClient({ filters }: IndonesiaMapClientProps)
       return
     }
 
-    // Add markers for provinces with data
+    // Add markers for ALL provinces (including those with 0 members)
     data.forEach((centroid) => {
-      if (centroid.total === 0) return
-
       const marker = L.marker([centroid.lat, centroid.lng], {
         icon: createLabelIcon(centroid.provinsi, centroid.total)
       })

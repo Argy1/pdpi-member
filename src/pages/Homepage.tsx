@@ -11,6 +11,9 @@ import logoImage from "@/assets/logo-pdpi.png"
 export default function Homepage() {
   // Use Stats API to get accurate total from database
   const { summary, loading } = useStats({})
+  
+  // Calculate total provinces from normalized database data (excluding "Tidak Diketahui")
+  const totalProvinces = summary?.byProvinsi.filter(p => p.provinsi !== 'Tidak Diketahui').length || 0
 
   return (
     <div className="min-h-screen">
@@ -72,7 +75,7 @@ export default function Homepage() {
             />
             <StatCard
               title="Provinsi"
-              value={loading ? "..." : (summary?.byProvinsi.length || 0).toString()}
+              value={loading ? "..." : totalProvinces.toString()}
               description="Seluruh Indonesia"
               icon={MapPin}
             />
