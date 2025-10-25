@@ -452,8 +452,21 @@ export class AnggotaAPI {
         return { error: 'Database error' }
       }
 
-      const provinces = [...new Set(data.map(item => item.provinsi_kantor).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b))
+      // Import normalizer
+      const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
+
+      // Normalize and deduplicate provinces
+      const provinceSet = new Set<string>()
+      data.forEach(item => {
+        if (item.provinsi_kantor) {
+          const normalized = normalizeProvinsi(item.provinsi_kantor)
+          if (normalized) {
+            provinceSet.add(normalized)
+          }
+        }
+      })
+
+      const provinces = Array.from(provinceSet).sort((a, b) => a.localeCompare(b))
 
       return { data: provinces }
 

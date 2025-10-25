@@ -31,6 +31,9 @@ interface StatsParams {
 export class StatsAPI {
   static async getSummary(params: StatsParams = {}): Promise<StatsSummary> {
     try {
+      // Import normalizer
+      const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
+
       // Build base query with specific fields needed - get ALL members without limit
       let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, cabang, kota_kabupaten_kantor', { count: 'exact' })
 
@@ -48,10 +51,11 @@ export class StatsAPI {
       const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
       const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
 
-      // Group by provinsi
+      // Group by provinsi with normalization
       const provinsiMap = new Map<string, number>()
       members?.forEach(m => {
-        const prov = m.provinsi_kantor || 'Tidak Diketahui'
+        const rawProv = m.provinsi_kantor || 'Tidak Diketahui'
+        const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         provinsiMap.set(prov, (provinsiMap.get(prov) || 0) + 1)
       })
       const byProvinsi = Array.from(provinsiMap.entries())
@@ -116,11 +120,16 @@ export class StatsAPI {
 
     if (error) throw new Error(error.message)
 
-    // Group by province
+    // Import normalizer
+    const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
+
+    // Group by province with normalization
     const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
     
     data?.forEach(member => {
-      const prov = member.provinsi_kantor || 'Tidak Diketahui'
+      // Normalize province name to handle duplicates like "JAWA TIMUR" vs "Jawa Timur"
+      const rawProv = member.provinsi_kantor || 'Tidak Diketahui'
+      const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
       const current = provinceMap.get(prov) || { count: 0, laki: 0, perempuan: 0 }
       
       current.count++

@@ -22,11 +22,11 @@ const PROVINCE_ALIASES: Record<string, string> = {
   
   // Bangka Belitung
   'babel': 'Kepulauan Bangka Belitung',
-  'bangka belitung': 'Kepulauan Bangka Belitung',
+  'bangka belitung': 'Bangka Belitung',
   'kep. bangka belitung': 'Kepulauan Bangka Belitung',
   'kepulauan bangka belitung': 'Kepulauan Bangka Belitung',
   
-  // Papua variants
+  // Papua variants - exact matches
   'papua barat daya': 'Papua Barat Daya',
   'papua pegunungan': 'Papua Pegunungan',
   'papua tengah': 'Papua Tengah',
