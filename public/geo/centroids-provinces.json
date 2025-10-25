@@ -9,6 +9,7 @@
   { "provinsi": "Bengkulu", "lat": -3.792621, "lng": 102.265540 },
   { "provinsi": "Lampung", "lat": -4.558830, "lng": 105.407150 },
   { "provinsi": "Bangka Belitung", "lat": -2.741000, "lng": 106.440000 },
+  { "provinsi": "Kepulauan Bangka Belitung", "lat": -2.741000, "lng": 106.440000 },
   { "provinsi": "DKI Jakarta", "lat": -6.208763, "lng": 106.845599 },
   { "provinsi": "Jawa Barat", "lat": -7.090911, "lng": 107.668887 },
   { "provinsi": "Jawa Tengah", "lat": -7.150975, "lng": 110.140259 },
@@ -32,5 +33,9 @@
   { "provinsi": "Maluku", "lat": -3.238570, "lng": 130.145160 },
   { "provinsi": "Maluku Utara", "lat": 1.570830, "lng": 127.808780 },
   { "provinsi": "Papua", "lat": -4.269928, "lng": 138.080353 },
-  { "provinsi": "Papua Barat", "lat": -1.336290, "lng": 133.174060 }
+  { "provinsi": "Papua Barat", "lat": -1.336290, "lng": 133.174060 },
+  { "provinsi": "Papua Barat Daya", "lat": -2.532849, "lng": 132.298355 },
+  { "provinsi": "Papua Pegunungan", "lat": -3.977600, "lng": 138.500000 },
+  { "provinsi": "Papua Selatan", "lat": -6.087100, "lng": 139.488800 },
+  { "provinsi": "Papua Tengah", "lat": -3.373056, "lng": 136.583611 }
 ]
