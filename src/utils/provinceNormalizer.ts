@@ -21,18 +21,39 @@ const PROVINCE_ALIASES: Record<string, string> = {
   'kepulauan riau': 'Kepulauan Riau',
   
   // Bangka Belitung
-  'babel': 'Kepulauan Bangka Belitung',
+  'babel': 'Bangka Belitung',
   'bangka belitung': 'Bangka Belitung',
-  'kep. bangka belitung': 'Kepulauan Bangka Belitung',
-  'kepulauan bangka belitung': 'Kepulauan Bangka Belitung',
+  'kep. bangka belitung': 'Bangka Belitung',
+  'kepulauan bangka belitung': 'Bangka Belitung',
   
-  // Papua variants - exact matches
+  // Papua variants - CRITICAL: Handle all Papua provinces with all variations
   'papua barat daya': 'Papua Barat Daya',
+  'pabar daya': 'Papua Barat Daya',
+  'pbd': 'Papua Barat Daya',
+  'papua baratdaya': 'Papua Barat Daya',
+  'papuabaratdaya': 'Papua Barat Daya',
+  
   'papua pegunungan': 'Papua Pegunungan',
+  'papua peg': 'Papua Pegunungan',
+  'ppeg': 'Papua Pegunungan',
+  'papuapegunungan': 'Papua Pegunungan',
+  
   'papua tengah': 'Papua Tengah',
+  'papua teng': 'Papua Tengah',
+  'pteng': 'Papua Tengah',
+  'papuatengah': 'Papua Tengah',
+  
   'papua selatan': 'Papua Selatan',
+  'papua sel': 'Papua Selatan',
+  'psel': 'Papua Selatan',
+  'papuaselatan': 'Papua Selatan',
+  
   'papua barat': 'Papua Barat',
+  'papbar': 'Papua Barat',
+  'pap barat': 'Papua Barat',
+  
   'papua': 'Papua',
+  'irian jaya': 'Papua',
   
   // Other common variants
   'aceh': 'Aceh',

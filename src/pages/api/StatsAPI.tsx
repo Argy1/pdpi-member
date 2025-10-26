@@ -72,11 +72,12 @@ export class StatsAPI {
         .map(([pd, count]) => ({ pd, count }))
         .sort((a, b) => b.count - a.count)
 
-      // Group by kota
+      // Group by kota with normalized province
       const kotaMap = new Map<string, { count: number; provinsi: string }>()
       members?.forEach(m => {
         const kota = m.kota_kabupaten_kantor || 'Tidak Diketahui'
-        const provinsi = m.provinsi_kantor || 'Tidak Diketahui'
+        const rawProv = m.provinsi_kantor || 'Tidak Diketahui'
+        const provinsi = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         const current = kotaMap.get(kota) || { count: 0, provinsi }
         kotaMap.set(kota, { count: current.count + 1, provinsi })
       })
