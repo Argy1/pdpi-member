@@ -215,7 +215,7 @@ export default function SebaranPage() {
               <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
                 <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
                   <DistributionTable
-                    title={`Distribusi Per Provinsi (${summary?.byProvinsi.filter(p => p.provinsi !== 'Tidak Diketahui').length || 0} Provinsi)`}
+                    title="Distribusi Per Provinsi"
                     data={summary?.byProvinsi
                       .filter(p => p.provinsi !== 'Tidak Diketahui')
                       .map(p => ({

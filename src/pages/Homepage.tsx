@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Users, MapPin, Building2, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -6,19 +7,23 @@ import { SearchBar } from "@/components/SearchBar"
 import { ProvinceChips } from "@/components/ProvinceChips"
 import { HowToUse } from "@/components/HowToUse"
 import { useStats } from "@/hooks/useStats"
+import { getAllProvinces } from "@/utils/getAllProvinces"
 import logoImage from "@/assets/logo-pdpi.png"
 
 export default function Homepage() {
-  // Use Stats API to get accurate total from database
+  // Use Stats API to get accurate totals from database
   const { summary, loading } = useStats({})
   
-  // Calculate total provinces from normalized database data (excluding "Tidak Diketahui")
-  const totalProvinces = summary?.byProvinsi.filter(p => p.provinsi !== 'Tidak Diketahui').length || 0
+  // Get total provinces from centroids (39 provinces) - not from database
+  const [totalProvinces, setTotalProvinces] = useState<number>(39)
   
-  console.log('Homepage stats:', { 
-    totalProvinces, 
-    allProvinces: summary?.byProvinsi.map(p => p.provinsi) 
-  })
+  useEffect(() => {
+    // Load all provinces from centroids to get accurate count
+    getAllProvinces().then(provinces => {
+      setTotalProvinces(provinces.length)
+      console.log('Total provinces from centroids:', provinces.length, provinces)
+    })
+  }, [])
 
   return (
     <div className="min-h-screen">
