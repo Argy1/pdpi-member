@@ -35,13 +35,16 @@ export class StatsAPI {
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
       // Build base query with specific fields needed - get ALL members without limit
-      let query = supabase.from('members').select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
+      // CRITICAL: Remove default 1000 row limit by using range
+      let query = supabase
+        .from('members')
+        .select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
       
-      // Set very high limit to ensure we get all members
-      query = query.limit(100000)
+      // Use range to get all data - set upper limit to 999999
+      query = query.range(0, 999999)
 
       const { data: members, error, count } = await query
 
@@ -129,8 +132,8 @@ export class StatsAPI {
 
     query = this.applyFilters(query, params)
     
-    // Set very high limit to ensure we get all members
-    query = query.limit(100000)
+    // Use range to get all data - remove default 1000 row limit
+    query = query.range(0, 999999)
 
     const { data, error } = await query
 
@@ -192,8 +195,8 @@ export class StatsAPI {
 
       query = this.applyFilters(query, params)
       
-      // Set very high limit to ensure we get all members
-      query = query.limit(100000)
+      // Use range to get all data - remove default 1000 row limit
+      query = query.range(0, 999999)
 
       const { data, error } = await query
 
@@ -351,6 +354,9 @@ export class StatsAPI {
 
       // Order by name
       query = query.order('nama', { ascending: true })
+
+      // Use range to get all data - remove default 1000 row limit
+      query = query.range(0, 999999)
 
       // Get all results (no pagination for export)
       const { data, error } = await query
