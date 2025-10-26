@@ -47,19 +47,15 @@ export class StatsAPI {
 
       if (error) throw error
 
-      console.log('Total members fetched:', members?.length)
-      console.log('Sample of Papua members:', members?.filter(m => 
-        m.provinsi_kantor?.toLowerCase().includes('papua') || 
-        m.provinsi?.toLowerCase().includes('papua')
-      ).map(m => ({ 
-        nama: m.nama, 
-        prov_kantor: m.provinsi_kantor, 
-        prov: m.provinsi 
-      })))
+      console.log('Total members fetched from DB:', count)
+      console.log('Total members in array:', members?.length)
 
-      const total = count || 0
+      // Calculate accurate totals from actual data
       const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
       const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
+      const total = laki + perempuan // Only count members with valid gender
+      
+      console.log('Gender breakdown:', { total, laki, perempuan, difference: (count || 0) - total })
 
       // Group by provinsi with normalization - prioritize provinsi_kantor
       const provinsiMap = new Map<string, number>()
@@ -147,6 +143,11 @@ export class StatsAPI {
     const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
     
     data?.forEach(member => {
+      // Skip members without valid gender
+      if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
+        return
+      }
+
       // Normalize province name to handle duplicates like "JAWA TIMUR" vs "Jawa Timur"
       const rawProv = member.provinsi_kantor || 'Tidak Diketahui'
       const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
@@ -205,6 +206,11 @@ export class StatsAPI {
       const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
       for (const member of data || []) {
+        // Skip members without valid gender - only count L and P
+        if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
+          continue
+        }
+
         // CRITICAL: Use provinsi_kantor as PRIMARY source and normalize it
         let provFinal = ''
         
