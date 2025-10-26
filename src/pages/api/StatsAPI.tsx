@@ -35,7 +35,7 @@ export class StatsAPI {
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
       // Build base query with specific fields needed - get ALL members without limit
-      let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
+      let query = supabase.from('members').select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
@@ -47,6 +47,16 @@ export class StatsAPI {
 
       if (error) throw error
 
+      console.log('Total members fetched:', members?.length)
+      console.log('Sample of Papua members:', members?.filter(m => 
+        m.provinsi_kantor?.toLowerCase().includes('papua') || 
+        m.provinsi?.toLowerCase().includes('papua')
+      ).map(m => ({ 
+        nama: m.nama, 
+        prov_kantor: m.provinsi_kantor, 
+        prov: m.provinsi 
+      })))
+
       const total = count || 0
       const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
       const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
@@ -57,9 +67,9 @@ export class StatsAPI {
         let rawProv = m.provinsi_kantor || m.provinsi || 'Tidak Diketahui'
         const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         
-        // Debug logging for Papua provinces
+        // Debug logging for ALL Papua provinces (not just those with 'papua' in rawProv)
         if (rawProv.toLowerCase().includes('papua')) {
-          console.log('Normalizing Papua province:', { raw: rawProv, normalized: prov })
+          console.log('Normalizing Papua province:', { raw: rawProv, normalized: prov, member: m.nama })
         }
         
         provinsiMap.set(prov, (provinsiMap.get(prov) || 0) + 1)
@@ -214,6 +224,16 @@ export class StatsAPI {
           }
         }
         
+        // Debug logging for Papua provinces
+        if (member.provinsi_kantor?.toLowerCase().includes('papua') || member.provinsi?.toLowerCase().includes('papua')) {
+          console.log('getCentroids - Papua member:', { 
+            prov_kantor: member.provinsi_kantor, 
+            prov: member.provinsi,
+            provFinal,
+            gender: member.jenis_kelamin
+          })
+        }
+        
         // Skip if still no province
         if (!provFinal) continue
         
@@ -226,7 +246,12 @@ export class StatsAPI {
       }
 
       // Log for debugging
-      console.log('Province counts after normalization:', Object.fromEntries(provinceMap))
+      console.log('getCentroids - Province counts after normalization:', Object.fromEntries(provinceMap))
+      console.log('getCentroids - Papua provinces in map:', 
+        Array.from(provinceMap.entries())
+          .filter(([prov]) => prov.toLowerCase().includes('papua'))
+          .map(([prov, stats]) => ({ provinsi: prov, ...stats }))
+      )
 
       // Merge with centroids - ALWAYS return all provinces, even with total=0
       const result = centroids
