@@ -75,10 +75,11 @@ export default function SebaranPage() {
     setSearchParams(params, { replace: true })
   }, [filters, setSearchParams])
 
-  // Auto-refresh when filters change
+  // Force refresh on mount and when filters change
   useEffect(() => {
+    console.log('Filters changed, refreshing stats:', filters)
     refresh()
-  }, [filters])
+  }, [filters.q, filters.provinsi, filters.pd, filters.kota, filters.status, filters.gender])
 
   const handleExport = async (format: 'xlsx' | 'csv') => {
     setIsExporting(true)
@@ -214,11 +215,13 @@ export default function SebaranPage() {
               <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
                 <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
                   <DistributionTable
-                    title="Distribusi Per Provinsi"
-                    data={summary?.byProvinsi.map(p => ({
-                      name: p.provinsi,
-                      count: p.count
-                    })) || []}
+                    title={`Distribusi Per Provinsi (${summary?.byProvinsi.filter(p => p.provinsi !== 'Tidak Diketahui').length || 0} Provinsi)`}
+                    data={summary?.byProvinsi
+                      .filter(p => p.provinsi !== 'Tidak Diketahui')
+                      .map(p => ({
+                        name: p.provinsi,
+                        count: p.count
+                      })) || []}
                     loading={loading}
                   />
                 </div>

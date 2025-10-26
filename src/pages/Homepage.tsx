@@ -14,6 +14,11 @@ export default function Homepage() {
   
   // Calculate total provinces from normalized database data (excluding "Tidak Diketahui")
   const totalProvinces = summary?.byProvinsi.filter(p => p.provinsi !== 'Tidak Diketahui').length || 0
+  
+  console.log('Homepage stats:', { 
+    totalProvinces, 
+    allProvinces: summary?.byProvinsi.map(p => p.provinsi) 
+  })
 
   return (
     <div className="min-h-screen">

@@ -56,11 +56,20 @@ export class StatsAPI {
       members?.forEach(m => {
         const rawProv = m.provinsi_kantor || 'Tidak Diketahui'
         const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
+        
+        // Debug logging for Papua provinces
+        if (rawProv.toLowerCase().includes('papua')) {
+          console.log('Normalizing Papua province:', { raw: rawProv, normalized: prov })
+        }
+        
         provinsiMap.set(prov, (provinsiMap.get(prov) || 0) + 1)
       })
       const byProvinsi = Array.from(provinsiMap.entries())
         .map(([provinsi, count]) => ({ provinsi, count }))
         .sort((a, b) => b.count - a.count)
+      
+      console.log('Total unique provinces in byProvinsi:', byProvinsi.length)
+      console.log('Papua provinces found:', byProvinsi.filter(p => p.provinsi.toLowerCase().includes('papua')))
 
       // Group by cabang/PD
       const cabangMap = new Map<string, number>()
