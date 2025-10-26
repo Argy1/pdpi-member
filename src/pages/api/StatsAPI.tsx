@@ -34,35 +34,49 @@ export class StatsAPI {
       // Import normalizer
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
-      // Build base query with specific fields needed - get ALL members without limit
-      // CRITICAL: Remove default 1000 row limit by using range
-      let query = supabase
-        .from('members')
-        .select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
+      // Build base query - fetch ALL data using pagination to bypass limits
+      const allMembers: any[] = []
+      let from = 0
+      const pageSize = 1000
+      let hasMore = true
 
-      // Apply filters
-      query = this.applyFilters(query, params)
-      
-      // Use range to get all data - set upper limit to 999999
-      query = query.range(0, 999999)
+      while (hasMore) {
+        let query = supabase
+          .from('members')
+          .select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
+          .range(from, from + pageSize - 1)
 
-      const { data: members, error, count } = await query
+        // Apply filters only on first iteration to get accurate count
+        query = this.applyFilters(query, params)
 
-      if (error) throw error
+        const { data, error, count } = await query
 
-      console.log('Total members fetched from DB:', count)
-      console.log('Total members in array:', members?.length)
+        if (error) throw error
+
+        if (data && data.length > 0) {
+          allMembers.push(...data)
+          from += pageSize
+          hasMore = data.length === pageSize
+        } else {
+          hasMore = false
+        }
+
+        // Log progress
+        console.log(`Fetched ${allMembers.length} members so far...`)
+      }
+
+      console.log('Total members fetched from DB:', allMembers.length)
 
       // Calculate accurate totals from actual data
-      const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
-      const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
+      const laki = allMembers.filter(m => m.jenis_kelamin === 'L').length
+      const perempuan = allMembers.filter(m => m.jenis_kelamin === 'P').length
       const total = laki + perempuan // Only count members with valid gender
       
-      console.log('Gender breakdown:', { total, laki, perempuan, difference: (count || 0) - total })
+      console.log('Gender breakdown:', { total, laki, perempuan, totalIncludingNull: allMembers.length })
 
       // Group by provinsi with normalization - prioritize provinsi_kantor
       const provinsiMap = new Map<string, number>()
-      members?.forEach(m => {
+      allMembers.forEach(m => {
         let rawProv = m.provinsi_kantor || m.provinsi || 'Tidak Diketahui'
         const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         
@@ -82,7 +96,7 @@ export class StatsAPI {
 
       // Group by cabang/PD
       const cabangMap = new Map<string, number>()
-      members?.forEach(m => {
+      allMembers.forEach(m => {
         const pd = m.cabang || 'Tidak Diketahui'
         cabangMap.set(pd, (cabangMap.get(pd) || 0) + 1)
       })
@@ -92,7 +106,7 @@ export class StatsAPI {
 
       // Group by kota with normalized province - prioritize provinsi_kantor
       const kotaMap = new Map<string, { count: number; provinsi: string }>()
-      members?.forEach(m => {
+      allMembers.forEach(m => {
         const kota = m.kota_kabupaten_kantor || m.kota_kabupaten || 'Tidak Diketahui'
         const rawProv = m.provinsi_kantor || m.provinsi || 'Tidak Diketahui'
         const provinsi = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
@@ -126,18 +140,34 @@ export class StatsAPI {
   }
 
   static async getProvinceStats(params: StatsParams = {}): Promise<ProvinceStats[]> {
-    let query = supabase
-      .from('members')
-      .select('provinsi_kantor, jenis_kelamin')
+    // Fetch ALL data using pagination to bypass Supabase limits
+    const allMembers: any[] = []
+    let from = 0
+    const pageSize = 1000
+    let hasMore = true
 
-    query = this.applyFilters(query, params)
-    
-    // Use range to get all data - remove default 1000 row limit
-    query = query.range(0, 999999)
+    while (hasMore) {
+      let query = supabase
+        .from('members')
+        .select('provinsi_kantor, jenis_kelamin')
+        .range(from, from + pageSize - 1)
 
-    const { data, error } = await query
+      query = this.applyFilters(query, params)
 
-    if (error) throw new Error(error.message)
+      const { data, error } = await query
+
+      if (error) throw new Error(error.message)
+
+      if (data && data.length > 0) {
+        allMembers.push(...data)
+        from += pageSize
+        hasMore = data.length === pageSize
+      } else {
+        hasMore = false
+      }
+    }
+
+    console.log('getProvinceStats - Total members fetched:', allMembers.length)
 
     // Import normalizer
     const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
@@ -145,7 +175,7 @@ export class StatsAPI {
     // Group by province with normalization
     const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
     
-    data?.forEach(member => {
+    allMembers.forEach(member => {
       // Skip members without valid gender
       if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
         return
@@ -188,19 +218,34 @@ export class StatsAPI {
       const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
       const centroids = await centroidsRes.json()
 
-      // Fetch member data with all needed fields
-      let query = supabase
-        .from('members')
-        .select('provinsi, provinsi_kantor, kota_kabupaten, kota_kabupaten_kantor, jenis_kelamin')
+      // Fetch member data with all needed fields using pagination
+      const allMembers: any[] = []
+      let from = 0
+      const pageSize = 1000
+      let hasMore = true
 
-      query = this.applyFilters(query, params)
-      
-      // Use range to get all data - remove default 1000 row limit
-      query = query.range(0, 999999)
+      while (hasMore) {
+        let query = supabase
+          .from('members')
+          .select('provinsi, provinsi_kantor, kota_kabupaten, kota_kabupaten_kantor, jenis_kelamin')
+          .range(from, from + pageSize - 1)
 
-      const { data, error } = await query
+        query = this.applyFilters(query, params)
 
-      if (error) throw new Error(error.message)
+        const { data, error } = await query
+
+        if (error) throw new Error(error.message)
+
+        if (data && data.length > 0) {
+          allMembers.push(...data)
+          from += pageSize
+          hasMore = data.length === pageSize
+        } else {
+          hasMore = false
+        }
+      }
+
+      console.log('getCentroids - Total members fetched:', allMembers.length)
 
       // Dynamically import normalization utilities
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
@@ -208,7 +253,7 @@ export class StatsAPI {
       // Group by province with normalization - use provinsi_kantor as primary field
       const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
-      for (const member of data || []) {
+      for (const member of allMembers) {
         // Skip members without valid gender - only count L and P
         if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
           continue
@@ -344,29 +389,39 @@ export class StatsAPI {
 
   static async getAllMembersForExport(params: StatsParams = {}): Promise<any[]> {
     try {
-      // Build query with all fields needed for export
-      let query = supabase
-        .from('members')
-        .select('*')
+      // Fetch ALL data using pagination
+      const allMembers: any[] = []
+      let from = 0
+      const pageSize = 1000
+      let hasMore = true
 
-      // Apply the same filters as stats
-      query = this.applyFilters(query, params)
+      while (hasMore) {
+        let query = supabase
+          .from('members')
+          .select('*')
+          .order('nama', { ascending: true })
+          .range(from, from + pageSize - 1)
 
-      // Order by name
-      query = query.order('nama', { ascending: true })
+        query = this.applyFilters(query, params)
 
-      // Use range to get all data - remove default 1000 row limit
-      query = query.range(0, 999999)
+        const { data, error } = await query
 
-      // Get all results (no pagination for export)
-      const { data, error } = await query
+        if (error) {
+          console.error('Error fetching members for export:', error)
+          throw new Error(`Failed to fetch members: ${error.message}`)
+        }
 
-      if (error) {
-        console.error('Error fetching members for export:', error)
-        throw new Error(`Failed to fetch members: ${error.message}`)
+        if (data && data.length > 0) {
+          allMembers.push(...data)
+          from += pageSize
+          hasMore = data.length === pageSize
+        } else {
+          hasMore = false
+        }
       }
 
-      return data || []
+      console.log('Export - Total members fetched:', allMembers.length)
+      return allMembers
     } catch (error) {
       console.error('Error in getAllMembersForExport:', error)
       throw error
