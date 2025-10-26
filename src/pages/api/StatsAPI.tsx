@@ -161,7 +161,7 @@ export class StatsAPI {
     perempuan: number
   }>> {
     try {
-      // Fetch centroids data - always return all 38 provinces
+      // Fetch centroids data - always return all provinces
       const centroidsRes = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
       const centroids = await centroidsRes.json()
 
@@ -180,27 +180,26 @@ export class StatsAPI {
       if (error) throw new Error(error.message)
 
       // Dynamically import normalization utilities
-      const { normalizeProvinsi, inferProvFromKota } = await import('@/utils/provinceNormalizer')
+      const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
-      // Group by province with normalization and inference
+      // Group by province with normalization - use provinsi_kantor as primary field
       const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
       for (const member of data || []) {
-        // Try multiple sources for province
-        let provFinal = normalizeProvinsi(member.provinsi)
+        // CRITICAL: Use provinsi_kantor as PRIMARY source and normalize it
+        let provFinal = ''
         
-        if (!provFinal) {
+        // Try provinsi_kantor first (most reliable field)
+        if (member.provinsi_kantor) {
           provFinal = normalizeProvinsi(member.provinsi_kantor)
         }
         
-        if (!provFinal) {
-          provFinal = await inferProvFromKota(member.kota_kabupaten)
+        // Fallback to provinsi field if provinsi_kantor is empty
+        if (!provFinal && member.provinsi) {
+          provFinal = normalizeProvinsi(member.provinsi)
         }
         
-        if (!provFinal) {
-          provFinal = await inferProvFromKota(member.kota_kabupaten_kantor)
-        }
-        
+        // Skip if still no province
         if (!provFinal) continue
         
         const current = provinceMap.get(provFinal) || { total: 0, laki: 0, perempuan: 0 }
@@ -210,6 +209,9 @@ export class StatsAPI {
         
         provinceMap.set(provFinal, current)
       }
+
+      // Log for debugging
+      console.log('Province counts after normalization:', Object.fromEntries(provinceMap))
 
       // Merge with centroids - ALWAYS return all provinces, even with total=0
       const result = centroids
@@ -224,7 +226,6 @@ export class StatsAPI {
             perempuan: stats.perempuan
           }
         })
-        // Only filter to show markers with data, but return all for the endpoint
         .sort((a: any, b: any) => b.total - a.total)
 
       return result
