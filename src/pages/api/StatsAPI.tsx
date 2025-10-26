@@ -35,7 +35,7 @@ export class StatsAPI {
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
       // Build base query with specific fields needed - get ALL members without limit
-      let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, cabang, kota_kabupaten_kantor', { count: 'exact' })
+      let query = supabase.from('members').select('jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
 
       // Apply filters
       query = this.applyFilters(query, params)
@@ -51,10 +51,10 @@ export class StatsAPI {
       const laki = members?.filter(m => m.jenis_kelamin === 'L').length || 0
       const perempuan = members?.filter(m => m.jenis_kelamin === 'P').length || 0
 
-      // Group by provinsi with normalization
+      // Group by provinsi with normalization - prioritize provinsi_kantor
       const provinsiMap = new Map<string, number>()
       members?.forEach(m => {
-        const rawProv = m.provinsi_kantor || 'Tidak Diketahui'
+        let rawProv = m.provinsi_kantor || m.provinsi || 'Tidak Diketahui'
         const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         
         // Debug logging for Papua provinces
@@ -81,11 +81,11 @@ export class StatsAPI {
         .map(([pd, count]) => ({ pd, count }))
         .sort((a, b) => b.count - a.count)
 
-      // Group by kota with normalized province
+      // Group by kota with normalized province - prioritize provinsi_kantor
       const kotaMap = new Map<string, { count: number; provinsi: string }>()
       members?.forEach(m => {
-        const kota = m.kota_kabupaten_kantor || 'Tidak Diketahui'
-        const rawProv = m.provinsi_kantor || 'Tidak Diketahui'
+        const kota = m.kota_kabupaten_kantor || m.kota_kabupaten || 'Tidak Diketahui'
+        const rawProv = m.provinsi_kantor || m.provinsi || 'Tidak Diketahui'
         const provinsi = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
         const current = kotaMap.get(kota) || { count: 0, provinsi }
         kotaMap.set(kota, { count: current.count + 1, provinsi })
@@ -200,12 +200,18 @@ export class StatsAPI {
         
         // Try provinsi_kantor first (most reliable field)
         if (member.provinsi_kantor) {
-          provFinal = normalizeProvinsi(member.provinsi_kantor)
+          const normalized = normalizeProvinsi(member.provinsi_kantor)
+          if (normalized && normalized !== '') {
+            provFinal = normalized
+          }
         }
         
         // Fallback to provinsi field if provinsi_kantor is empty
         if (!provFinal && member.provinsi) {
-          provFinal = normalizeProvinsi(member.provinsi)
+          const normalized = normalizeProvinsi(member.provinsi)
+          if (normalized && normalized !== '') {
+            provFinal = normalized
+          }
         }
         
         // Skip if still no province

@@ -27,31 +27,42 @@ const PROVINCE_ALIASES: Record<string, string> = {
   'kepulauan bangka belitung': 'Bangka Belitung',
   
   // Papua variants - CRITICAL: Handle all Papua provinces with all variations
+  // Papua Barat Daya (Southwest Papua)
   'papua barat daya': 'Papua Barat Daya',
   'pabar daya': 'Papua Barat Daya',
   'pbd': 'Papua Barat Daya',
   'papua baratdaya': 'Papua Barat Daya',
   'papuabaratdaya': 'Papua Barat Daya',
+  'southwest papua': 'Papua Barat Daya',
   
+  // Papua Pegunungan (Highland Papua)
   'papua pegunungan': 'Papua Pegunungan',
   'papua peg': 'Papua Pegunungan',
   'ppeg': 'Papua Pegunungan',
   'papuapegunungan': 'Papua Pegunungan',
+  'highland papua': 'Papua Pegunungan',
   
+  // Papua Tengah (Central Papua)
   'papua tengah': 'Papua Tengah',
   'papua teng': 'Papua Tengah',
   'pteng': 'Papua Tengah',
   'papuatengah': 'Papua Tengah',
+  'central papua': 'Papua Tengah',
   
+  // Papua Selatan (South Papua)
   'papua selatan': 'Papua Selatan',
   'papua sel': 'Papua Selatan',
   'psel': 'Papua Selatan',
   'papuaselatan': 'Papua Selatan',
+  'south papua': 'Papua Selatan',
   
+  // Papua Barat (West Papua)
   'papua barat': 'Papua Barat',
   'papbar': 'Papua Barat',
   'pap barat': 'Papua Barat',
+  'west papua': 'Papua Barat',
   
+  // Papua (main province)
   'papua': 'Papua',
   'irian jaya': 'Papua',
   
