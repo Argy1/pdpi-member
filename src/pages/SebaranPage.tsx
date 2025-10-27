@@ -22,7 +22,7 @@ export default function SebaranPage() {
   const [filters, setFilters] = useState<{
     q?: string;
     provinsi?: string;
-    cabang?: string;
+    pd?: string;
     kota?: string;
     status?: string;
     gender?: string;
