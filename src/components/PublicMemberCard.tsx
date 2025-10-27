@@ -118,19 +118,22 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
           {/* Right Side: Practice Locations */}
           <div className="lg:col-span-1 border-t lg:border-t-0 lg:border-l pt-6 lg:pt-0 lg:pl-8">
             <h3 className="font-bold text-base sm:text-lg mb-4 underline decoration-2 underline-offset-4">Tempat Praktik</h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {practiceLocations.map((location, index) => (
-                <div key={index} className="flex gap-3">
-                  <span className="font-bold flex-shrink-0 text-base sm:text-lg">{index + 1}.</span>
-                  <div className="flex-1 space-y-1.5">
-                    <div className="font-semibold text-base sm:text-lg text-medical-primary">
+                <div 
+                  key={index} 
+                  className={`flex gap-2.5 ${location.name ? 'bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg p-3 border border-primary/10' : ''}`}
+                >
+                  <span className="font-semibold flex-shrink-0 text-sm">{index + 1}.</span>
+                  <div className="flex-1 space-y-1">
+                    <div className="font-medium text-sm text-medical-primary">
                       {location.name || '-'}
                     </div>
                     {location.name && (
-                      <div className="space-y-2 text-sm sm:text-base">
+                      <div className="space-y-1.5 text-xs sm:text-sm">
                         {location.type && (
-                          <div className="flex items-start gap-2">
-                            <Building className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                          <div className="flex items-start gap-1.5">
+                            <Building className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                             <div>
                               <span className="font-medium text-muted-foreground">Tipe RS 1:</span>{" "}
                               <span className="font-semibold text-foreground">{location.type}</span>
@@ -138,16 +141,16 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                           </div>
                         )}
                         {location.type2 && (
-                          <div className="flex items-start gap-2">
-                            <Building className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                          <div className="flex items-start gap-1.5">
+                            <Building className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                             <div>
                               <span className="font-medium text-muted-foreground">Tipe RS 2:</span>{" "}
                               <span className="font-semibold text-foreground">{location.type2}</span>
                             </div>
                           </div>
                         )}
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                           <div>
                             <span className="font-medium text-muted-foreground">Kota/Kabupaten:</span>{" "}
                             <span className="font-semibold text-foreground">{member.kota_kabupaten_kantor || '-'}</span>
