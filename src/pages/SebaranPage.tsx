@@ -22,14 +22,14 @@ export default function SebaranPage() {
   const [filters, setFilters] = useState<{
     q?: string;
     provinsi?: string;
-    cabang?: string;
+    pd?: string;
     kota?: string;
     status?: string;
     gender?: string;
   }>({
     q: searchParams.get("q") || undefined,
     provinsi: searchParams.get("provinsi") || undefined,
-    cabang: searchParams.get("pd") || undefined,
+    pd: searchParams.get("pd") || undefined,
     kota: searchParams.get("kota") || undefined,
     status: searchParams.get("status") || undefined,
     gender: searchParams.get("gender") || undefined,
