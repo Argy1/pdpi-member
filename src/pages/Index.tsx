@@ -145,7 +145,7 @@ const Index = () => {
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                        Cabang/PD
+                        Cabang
                       </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-400 dark:to-slate-600 bg-clip-text text-transparent">
                         {summary?.byCabang.length || 0}
@@ -217,7 +217,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">2. Filter Data</h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Gunakan filter provinsi, cabang/PD, atau kota untuk mempersempit hasil pencarian
+                  Gunakan filter provinsi, cabang, atau kota untuk mempersempit hasil pencarian
                 </p>
               </div>
             </div>
