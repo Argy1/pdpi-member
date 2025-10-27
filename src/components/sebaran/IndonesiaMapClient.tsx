@@ -27,16 +27,25 @@ const fetcher = async (_key: string, filters: any) => {
   return await StatsAPI.getCentroids(filters)
 }
 
+function getCircleColor(total: number): string {
+  if (total >= 1 && total <= 10) return 'bg-red-500'
+  if (total >= 11 && total <= 50) return 'bg-yellow-400'
+  if (total > 50) return 'bg-green-500'
+  return 'bg-gray-400'
+}
+
 function createLabelIcon(provinsi: string, total: number) {
+  const circleColor = getCircleColor(total)
+  
   return L.divIcon({
     className: 'pdpi-map-marker',
     html: `
       <div class="flex flex-col items-center">
-        <div class="w-3 h-3 rounded-full bg-teal-600 shadow-md"></div>
+        <div class="w-3 h-3 rounded-full ${circleColor} shadow-md"></div>
         <div class="mt-1 px-2 py-0.5 rounded-md bg-white/95 text-[11px] font-bold text-slate-900 shadow-sm whitespace-nowrap">
           ${provinsi}
         </div>
-        <div class="mt-0.5 px-2 py-0.5 rounded-full bg-white/90 text-[11px] font-semibold text-teal-600 shadow-sm">
+        <div class="mt-0.5 px-2 py-0.5 rounded-full bg-white/90 text-[11px] font-semibold text-slate-700 shadow-sm">
           ${total.toLocaleString('id-ID')}
         </div>
       </div>

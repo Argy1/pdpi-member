@@ -42,7 +42,25 @@ export function IndonesiaStatsMap({ data, loading, filters = {} }: IndonesiaStat
           Peta Sebaran Anggota
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-4 relative">
+        {/* Legend */}
+        <div className="absolute top-2 right-2 z-[1000] bg-white/95 dark:bg-slate-800/95 backdrop-blur rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 p-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-red-500"></div>
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">1 – 10</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-yellow-400"></div>
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">11 – 50</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-green-500"></div>
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">&gt; 50</span>
+            </div>
+          </div>
+        </div>
+        
         <IndonesiaMap filters={filters} />
       </CardContent>
     </Card>
