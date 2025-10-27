@@ -115,57 +115,7 @@ export default function Homepage() {
       </section>
 
       {/* How to Use Section */}
-      <section className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-sky-600 dark:from-emerald-400 dark:to-sky-400 bg-clip-text text-transparent mb-4">
-            Panduan Menggunakan
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Ikuti langkah mudah untuk menemukan informasi anggota yang Anda butuhkan
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/70 to-white/40 dark:from-slate-800/70 dark:to-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 p-8 hover:scale-105">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-200/20 dark:bg-emerald-900/20 rounded-full blur-3xl" />
-            <div className="relative space-y-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Search className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">1. Cari Anggota</h3>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Masukkan nama, NPA, nama RS, atau lokasi di kolom pencarian untuk menemukan anggota
-              </p>
-            </div>
-          </div>
-
-          <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/70 to-white/40 dark:from-slate-800/70 dark:to-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 p-8 hover:scale-105">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-sky-200/20 dark:bg-sky-900/20 rounded-full blur-3xl" />
-            <div className="relative space-y-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Filter className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">2. Filter Data</h3>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Gunakan filter provinsi, cabang, atau kota untuk mempersempit hasil pencarian
-              </p>
-            </div>
-          </div>
-
-          <div className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/70 to-white/40 dark:from-slate-800/70 dark:to-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl hover:shadow-2xl transition-all duration-500 p-8 hover:scale-105">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-200/20 dark:bg-slate-700/20 rounded-full blur-3xl" />
-            <div className="relative space-y-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Eye className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">3. Lihat Detail</h3>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Klik pada nama anggota untuk melihat informasi lengkap dan kontak profesional
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HowToUse />
 
       {/* Data Source Note */}
       <section className="section-spacing bg-muted/20">
