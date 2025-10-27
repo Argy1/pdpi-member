@@ -151,21 +151,13 @@ export class AnggotaAPI {
                          sortField === 'kota' ? 'kota_kabupaten' : 
                          sortField === 'provinsi' ? 'provinsi' :
                          sortField === 'tahunLulus' ? 'thn_lulus' : 
-                         sortField === 'npa' ? 'npa' :
+                         sortField === 'npa' ? 'npa_numeric' : // Use numeric column for proper sorting
                          sortField === 'createdAt' ? 'created_at' : 'nama'
       
-      // For NPA, use numeric sorting by casting to integer
-      if (sortField === 'npa') {
-        // Use order with nullsFirst option and cast to numeric
-        query = query.order('npa', { 
-          ascending: sortDirection === 'asc',
-          nullsFirst: false
-        })
-      } else {
-        query = query.order(dbSortField, { 
-          ascending: sortDirection === 'asc' 
-        })
-      }
+      query = query.order(dbSortField, { 
+        ascending: sortDirection === 'asc',
+        nullsFirst: false // Put nulls at the end
+      })
 
       // Build count query with same filters
       let countQuery = supabase

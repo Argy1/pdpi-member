@@ -21,7 +21,7 @@ export type Database = {
           changed_by: string | null
           changed_fields: string[] | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_data: Json | null
           old_data: Json | null
           record_id: string
@@ -34,7 +34,7 @@ export type Database = {
           changed_by?: string | null
           changed_fields?: string[] | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_data?: Json | null
           old_data?: Json | null
           record_id: string
@@ -47,7 +47,7 @@ export type Database = {
           changed_by?: string | null
           changed_fields?: string[] | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_data?: Json | null
           old_data?: Json | null
           record_id?: string
@@ -148,6 +148,7 @@ export type Database = {
           nama: string
           no_hp: string | null
           npa: string | null
+          npa_numeric: number | null
           provinsi: string | null
           provinsi_kantor: string | null
           provinsi_rumah: string | null
@@ -193,6 +194,7 @@ export type Database = {
           nama: string
           no_hp?: string | null
           npa?: string | null
+          npa_numeric?: number | null
           provinsi?: string | null
           provinsi_kantor?: string | null
           provinsi_rumah?: string | null
@@ -238,6 +240,7 @@ export type Database = {
           nama?: string
           no_hp?: string | null
           npa?: string | null
+          npa_numeric?: number | null
           provinsi?: string | null
           provinsi_kantor?: string | null
           provinsi_rumah?: string | null
@@ -429,12 +432,9 @@ export type Database = {
         Args: { member_row: Database["public"]["Tables"]["members"]["Row"] }
         Returns: string
       }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       get_public_member_directory: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           alumni: string | null
           cabang: string | null
@@ -457,6 +457,12 @@ export type Database = {
           tempat_tugas: string | null
           thn_lulus: number | null
         }[]
+        SetofOptions: {
+          from: "*"
+          to: "public_member_directory"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_public_member_directory_paged: {
         Args: {
@@ -488,26 +494,12 @@ export type Database = {
           tempat_tugas: string | null
           thn_lulus: number | null
         }[]
-      }
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
+        SetofOptions: {
+          from: "*"
+          to: "public_member_directory"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       has_role: {
         Args: {
@@ -516,10 +508,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      normalize_text: {
-        Args: { input_text: string }
-        Returns: string
-      }
+      normalize_text: { Args: { input_text: string }; Returns: string }
       notify_super_admins: {
         Args: {
           p_message: string
@@ -530,26 +519,9 @@ export type Database = {
         }
         Returns: undefined
       }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
-      unaccent: {
-        Args: { "": string }
-        Returns: string
-      }
-      unaccent_init: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role:
