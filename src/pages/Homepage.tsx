@@ -90,7 +90,7 @@ export default function Homepage() {
               icon={MapPin}
             />
             <StatCard
-              title="Cabang/PD"
+              title="Cabang"
               value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
               description="Pengurus Daerah"
               icon={Building2}

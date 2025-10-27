@@ -941,7 +941,7 @@ export default function AdminMemberForm() {
 
                     <div className="space-y-2">
                       <Label htmlFor="pd" className="flex items-center gap-2">
-                        Cabang/Wilayah
+                        Cabang
                         {isCabangDisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
                       </Label>
                       <Select 

@@ -276,7 +276,7 @@ export const ExcelImport: React.FC = () => {
           <div className="text-sm text-blue-800 dark:text-blue-200">
             <p className="font-medium">Format Excel yang Sesuai:</p>
             <ul className="mt-1 text-xs space-y-1">
-              <li>• <strong>Cabang</strong> - Nama cabang/wilayah (contoh: 01-Aceh, 14-Jakarta)</li>
+              <li>• <strong>Cabang</strong> - Nama cabang (contoh: 01-Aceh, 14-Jakarta)</li>
               <li>• <strong>Status</strong> - Status keanggotaan (Biasa/Luar Biasa)</li>
               <li>• <strong>NPA</strong> - Nomor Peserta Anggota</li>
               <li>• <strong>Nama</strong> - Nama lengkap anggota</li>

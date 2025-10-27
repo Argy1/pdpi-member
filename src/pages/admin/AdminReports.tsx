@@ -279,10 +279,10 @@ export default function AdminReports() {
           </CardContent>
         </Card>
 
-        {/* Cabang/PD Distribution */}
+        {/* Cabang Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle>Distribusi Cabang/PD</CardTitle>
+            <CardTitle>Distribusi Cabang</CardTitle>
             <CardDescription>Top 5 cabang dengan anggota terbanyak</CardDescription>
           </CardHeader>
           <CardContent>

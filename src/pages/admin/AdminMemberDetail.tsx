@@ -385,7 +385,7 @@ export default function AdminMemberDetail() {
               </div>
               
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Cabang/PD</label>
+                <label className="text-sm font-medium text-muted-foreground">Cabang</label>
                 <p className="mt-1">{member.cabang || member.pd || '-'}</p>
               </div>
             </CardContent>

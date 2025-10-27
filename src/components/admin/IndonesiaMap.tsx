@@ -238,7 +238,7 @@ export function IndonesiaMap({ members }: IndonesiaMapProps) {
 
         {/* Top branches */}
         <div className="mt-6">
-          <h4 className="font-semibold mb-3">Cabang/PD Terbesar:</h4>
+          <h4 className="font-semibold mb-3">Cabang Terbesar:</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(mapData.branchCount)
               .sort(([,a], [,b]) => b - a)

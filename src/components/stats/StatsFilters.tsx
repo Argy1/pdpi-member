@@ -95,7 +95,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
                 <SelectValue placeholder="PD/Cabang" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
-                <SelectItem value="all">Semua PD</SelectItem>
+                <SelectItem value="all">Semua Cabang</SelectItem>
                 {pds.map(pd => (
                   <SelectItem key={pd} value={pd}>{pd}</SelectItem>
                 ))}

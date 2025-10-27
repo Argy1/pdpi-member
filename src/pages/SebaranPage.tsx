@@ -225,7 +225,7 @@ export default function SebaranPage() {
 
                 <div className="animate-fade-in" style={{ animationDelay: "500ms" }}>
                   <DistributionTable
-                    title="Distribusi Per Cabang/PD"
+                    title="Distribusi Per Cabang"
                     data={
                       summary?.byCabang.map((c) => ({
                         name: c.pd,

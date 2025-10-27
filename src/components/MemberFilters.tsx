@@ -152,7 +152,7 @@ export function MemberFiltersComponent({
          <FilterPopover
           open={openPD}
           setOpen={setOpenPD}
-          title="Cabang/Wilayah"
+          title="Cabang"
           options={pds}
           filterKey="pd"
           placeholder="Cari cabang..."

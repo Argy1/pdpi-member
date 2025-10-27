@@ -67,7 +67,7 @@ export function MemberTable({
                 <TableHead className="font-semibold min-w-[180px]">Alumni</TableHead>
                 <TableHead className="font-semibold min-w-[180px]">Kota/Kabupaten Kantor</TableHead>
                 <TableHead className="font-semibold min-w-[160px]">Provinsi Kantor</TableHead>
-                <TableHead className="font-semibold min-w-[150px]">Cabang/Wilayah</TableHead>
+                <TableHead className="font-semibold min-w-[150px]">Cabang</TableHead>
                 <TableHead className="font-semibold min-w-[120px]">Status</TableHead>
                 <TableHead className="font-semibold text-center min-w-[100px] sticky right-0 bg-muted/50 z-10">Aksi</TableHead>
               </TableRow>

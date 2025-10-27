@@ -18,7 +18,7 @@ const dbFields = {
   
   // Optional fields (but important)
   rumahSakit: { label: 'Rumah Sakit (alternatif)', required: false, type: 'text' },
-  cabang: { label: 'Cabang/PD/Wilayah', required: false, type: 'text' },
+  cabang: { label: 'Cabang', required: false, type: 'text' },
   
   // Other optional fields - using actual database column names
   npa: { label: 'NPA (Nomor Peserta Anggota)', required: false, type: 'text' },
