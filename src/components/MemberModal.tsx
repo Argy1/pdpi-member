@@ -52,7 +52,11 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-"
-    return new Date(dateString).toLocaleDateString("id-ID", {
+    // Handle YYYY-MM-DD format dari database tanpa timezone offset
+    const [year, month, day] = dateString.split('-').map(Number)
+    if (!year || !month || !day) return "-"
+    const date = new Date(year, month - 1, day)
+    return date.toLocaleDateString("id-ID", {
       year: "numeric",
       month: "long", 
       day: "numeric"
