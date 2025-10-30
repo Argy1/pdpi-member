@@ -58,6 +58,7 @@ export default function AdminMembers() {
   const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
+  const [itemsPerPage, setItemsPerPage] = useState(parseInt(searchParams.get("limit") || "50"));
   const [filters, setFilters] = useState<MemberFilters>({
     query: searchParams.get("q") || '',
     provinsi_kantor: [],
@@ -78,6 +79,7 @@ export default function AdminMembers() {
   const { 
     members, 
     total, 
+    totalPages,
     loading, 
     error, 
     refresh 
@@ -92,7 +94,7 @@ export default function AdminMembers() {
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     status: filters.status?.join(',') || selectedStatus || undefined,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
-    limit: 50,
+    limit: itemsPerPage,
     page: currentPage,
     scope: 'admin'
   });
@@ -139,8 +141,9 @@ export default function AdminMembers() {
     const params = new URLSearchParams();
     if (filters.query) params.set("q", filters.query);
     if (currentPage > 1) params.set("page", currentPage.toString());
+    if (itemsPerPage !== 50) params.set("limit", itemsPerPage.toString());
     setSearchParams(params);
-  }, [filters.query, currentPage, setSearchParams]);
+  }, [filters.query, currentPage, itemsPerPage, setSearchParams]);
 
   // Reset page when search or filter changes
   useEffect(() => {
@@ -148,6 +151,11 @@ export default function AdminMembers() {
       setCurrentPage(1);
     }
   }, [filters, selectedStatus]);
+
+  const handleLimitChange = (newLimit: number) => {
+    setItemsPerPage(newLimit);
+    setCurrentPage(1); // Reset to first page when changing limit
+  };
 
   const handleSort = (key: string) => {
     let direction = 'asc';
@@ -529,7 +537,7 @@ export default function AdminMembers() {
           {total > 0 && (
             <div className="flex items-center justify-between pt-4 border-t">
               <div className="text-sm text-muted-foreground">
-                Menampilkan {((currentPage - 1) * 50) + 1} - {Math.min(currentPage * 50, total)} dari {total} anggota
+                Menampilkan {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, total)} dari {total} anggota
               </div>
               
               <div className="flex items-center space-x-6">
@@ -537,11 +545,8 @@ export default function AdminMembers() {
                   <span className="text-sm">Tampilkan</span>
                   <select 
                     className="border border-border rounded px-2 py-1 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                    value={50}
-                    onChange={(e) => {
-                      // For now we'll keep 50 as default, but this can be made dynamic later
-                      console.log('Items per page:', e.target.value);
-                    }}
+                    value={itemsPerPage}
+                    onChange={(e) => handleLimitChange(Number(e.target.value))}
                   >
                     <option value={10}>10 per halaman</option>
                     <option value={25}>25 per halaman</option>
@@ -562,8 +567,7 @@ export default function AdminMembers() {
                   </Button>
 
                   <div className="flex items-center space-x-1">
-                    {Array.from({ length: Math.min(5, Math.ceil(total / 50)) }, (_, i) => {
-                      const totalPages = Math.ceil(total / 50);
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                       let pageNum;
                       if (totalPages <= 5) {
                         pageNum = i + 1;
@@ -593,7 +597,7 @@ export default function AdminMembers() {
                     variant="outline"
                     size="sm"
                     onClick={() => setCurrentPage(currentPage + 1)}
-                    disabled={currentPage >= Math.ceil(total / 50)}
+                    disabled={currentPage >= totalPages}
                     className="focus-visible"
                   >
                     <ChevronRight className="h-4 w-4" />
