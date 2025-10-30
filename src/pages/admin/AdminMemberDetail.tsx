@@ -28,6 +28,11 @@ export default function AdminMemberDetail() {
     facilityType: 'type1' | 'type2';
   } | null>(null);
 
+  // Get pagination params from URL to preserve page state
+  const searchParams = new URLSearchParams(window.location.search);
+  const returnPage = searchParams.get('page') || '1';
+  const returnLimit = searchParams.get('limit') || '50';
+
   useEffect(() => {
     const fetchMember = async () => {
       if (!id) return;
@@ -76,7 +81,7 @@ export default function AdminMemberDetail() {
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/admin/anggota">
+            <Link to={`/admin/anggota?page=${returnPage}&limit=${returnLimit}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali
             </Link>
@@ -95,7 +100,7 @@ export default function AdminMemberDetail() {
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/admin/anggota">
+            <Link to={`/admin/anggota?page=${returnPage}&limit=${returnLimit}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali
             </Link>
@@ -202,7 +207,7 @@ export default function AdminMemberDetail() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/admin/anggota">
+            <Link to={`/admin/anggota?page=${returnPage}&limit=${returnLimit}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali
             </Link>
@@ -215,7 +220,7 @@ export default function AdminMemberDetail() {
           </div>
         </div>
         <Button asChild>
-          <Link to={`/admin/anggota/${member.id}/edit`}>
+          <Link to={`/admin/anggota/${member.id}/edit?page=${returnPage}&limit=${returnLimit}`}>
             <Edit className="h-4 w-4 mr-2" />
             Edit Data
           </Link>

@@ -485,13 +485,13 @@ export default function AdminMembers() {
                             <DropdownMenuLabel>Aksi</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                              <Link to={`/admin/anggota/${member.id}`}>
+                              <Link to={`/admin/anggota/${member.id}?page=${currentPage}&limit=${itemsPerPage}`}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 Lihat Detail
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                              <Link to={`/admin/anggota/${member.id}/edit`}>
+                              <Link to={`/admin/anggota/${member.id}/edit?page=${currentPage}&limit=${itemsPerPage}`}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit
                               </Link>

@@ -148,6 +148,11 @@ export default function AdminMemberForm() {
   const [currentPracticeIndex, setCurrentPracticeIndex] = useState<1 | 2 | 3>(1);
   const [currentHospitalType, setCurrentHospitalType] = useState<string>('');
   
+  // Get pagination params from URL to preserve page state
+  const searchParams = new URLSearchParams(window.location.search);
+  const returnPage = searchParams.get('page') || '1';
+  const returnLimit = searchParams.get('limit') || '50';
+  
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
@@ -474,7 +479,7 @@ export default function AdminMemberForm() {
             description: 'Perubahan data akan diterapkan setelah disetujui Super Admin.',
           });
           
-          navigate('/admin/anggota');
+          navigate(`/admin/anggota?page=${returnPage}&limit=${returnLimit}`);
           return;
         }
 
@@ -513,7 +518,12 @@ export default function AdminMemberForm() {
         description: `Data ${formData.nama} berhasil ${isEditing ? 'diperbarui' : 'ditambahkan'}.`,
       });
       
-      navigate('/admin/anggota');
+      // Navigate back to the same page when editing, or page 1 when adding new
+      if (isEditing) {
+        navigate(`/admin/anggota?page=${returnPage}&limit=${returnLimit}`);
+      } else {
+        navigate('/admin/anggota');
+      }
     } catch (error) {
       console.error('Form submission error:', error);
       toast({
@@ -531,7 +541,7 @@ export default function AdminMemberForm() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/admin/anggota">
+            <Link to={isEditing ? `/admin/anggota?page=${returnPage}&limit=${returnLimit}` : '/admin/anggota'}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali
             </Link>
@@ -545,7 +555,7 @@ export default function AdminMemberForm() {
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" asChild>
-            <Link to="/admin/anggota">
+            <Link to={isEditing ? `/admin/anggota?page=${returnPage}&limit=${returnLimit}` : '/admin/anggota'}>
               <X className="h-4 w-4 mr-2" />
               Batal
             </Link>
