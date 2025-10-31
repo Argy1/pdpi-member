@@ -84,6 +84,7 @@ export interface MemberFilters {
   namaHurufDepan?: string[]
   hospitalType?: string[]
   namaRS?: string
+  npa?: string
   kota?: string[]
   // New office location filters
   provinsi_kantor?: string[]

@@ -11,6 +11,7 @@ interface UseMembersOptions {
   namaHurufDepan?: string[]
   hospitalType?: string[]
   namaRS?: string
+  npa?: string
   kota?: string[]
   kota_kabupaten_kantor?: string[]
   status?: string
@@ -47,6 +48,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         namaHurufDepan: options.namaHurufDepan?.join(','),
         hospitalType: options.hospitalType?.join(','),
         namaRS: options.namaRS,
+        npa: options.npa,
         kota: options.kota?.join(','),
         provinsi_kantor: options.provinsi_kantor?.join(','),
         kota_kabupaten_kantor: options.kota_kabupaten_kantor?.join(','),

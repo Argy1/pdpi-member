@@ -19,6 +19,7 @@ interface GetMembersParams {
   namaHurufDepan?: string
   hospitalType?: string
   namaRS?: string
+  npa?: string
   kota?: string
   kota_kabupaten_kantor?: string
   sort?: string
@@ -40,6 +41,7 @@ export class AnggotaAPI {
         namaHurufDepan,
         hospitalType,
         namaRS,
+        npa,
         kota,
         kota_kabupaten_kantor,
         sort = 'nama_asc', 
@@ -145,6 +147,12 @@ export class AnggotaAPI {
         query = query.or(hospitalNameConditions.join(','))
       }
 
+      // Apply NPA search filter
+      if (npa && npa.trim()) {
+        const searchTerm = npa.trim()
+        query = query.ilike('npa', `%${searchTerm}%`)
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -242,6 +250,12 @@ export class AnggotaAPI {
           `tempat_tugas.ilike.%${searchTerm}%`
         ]
         countQuery = countQuery.or(hospitalNameConditions.join(','))
+      }
+
+      // Apply NPA search filter for count query too
+      if (npa && npa.trim()) {
+        const searchTerm = npa.trim()
+        countQuery = countQuery.ilike('npa', `%${searchTerm}%`)
       }
 
       // Get total count

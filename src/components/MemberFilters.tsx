@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Check, ChevronDown, Filter, X, Hospital } from "lucide-react"
+import { Check, ChevronDown, Filter, X, Hospital, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -71,7 +71,14 @@ export function MemberFiltersComponent({
     })
   }
 
-  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS)
+  const handleNPAChange = (value: string) => {
+    onFiltersChange({
+      ...filters,
+      npa: value || undefined
+    })
+  }
+
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa)
 
   const FilterPopover = ({ 
     open, 
@@ -211,6 +218,28 @@ export function MemberFiltersComponent({
         )}
       </div>
 
+      {/* NPA Search Input */}
+      <div className="relative max-w-md">
+        <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder="Cari NPA..."
+          value={filters.npa || ''}
+          onChange={(e) => handleNPAChange(e.target.value)}
+          className="pl-9 focus-visible"
+        />
+        {filters.npa && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleNPAChange('')}
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
       {/* Alphabetical Filter */}
       <AlphabeticalFilter
         selectedLetters={filters.namaHurufDepan || []}
@@ -218,7 +247,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
@@ -271,6 +300,16 @@ export function MemberFiltersComponent({
               onClick={() => handleNamaRSChange('')}
             >
               RS: {filters.namaRS}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          )}
+          {filters.npa && (
+            <Badge 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleNPAChange('')}
+            >
+              NPA: {filters.npa}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           )}
