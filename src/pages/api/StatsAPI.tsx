@@ -67,12 +67,12 @@ export class StatsAPI {
 
       console.log('Total members fetched from DB:', allMembers.length)
 
-      // Calculate accurate totals from actual data
+      // Calculate accurate totals from actual data - count ALL members (matching public table)
+      const total = allMembers.length
       const laki = allMembers.filter(m => m.jenis_kelamin === 'L').length
       const perempuan = allMembers.filter(m => m.jenis_kelamin === 'P').length
-      const total = laki + perempuan // Only count members with valid gender
       
-      console.log('Gender breakdown:', { total, laki, perempuan, totalIncludingNull: allMembers.length })
+      console.log('Gender breakdown:', { total, laki, perempuan })
 
       // Group by provinsi with normalization - prioritize provinsi_kantor
       const provinsiMap = new Map<string, number>()
@@ -172,21 +172,18 @@ export class StatsAPI {
     // Import normalizer
     const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
-    // Group by province with normalization
+    // Group by province with normalization - count ALL members
     const provinceMap = new Map<string, { count: number; laki: number; perempuan: number }>()
     
     allMembers.forEach(member => {
-      // Skip members without valid gender
-      if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
-        return
-      }
-
       // Normalize province name to handle duplicates like "JAWA TIMUR" vs "Jawa Timur"
       const rawProv = member.provinsi_kantor || 'Tidak Diketahui'
       const prov = rawProv === 'Tidak Diketahui' ? rawProv : normalizeProvinsi(rawProv)
       const current = provinceMap.get(prov) || { count: 0, laki: 0, perempuan: 0 }
       
+      // Count all members
       current.count++
+      // Count gender breakdown separately
       if (member.jenis_kelamin === 'L') current.laki++
       if (member.jenis_kelamin === 'P') current.perempuan++
       
@@ -250,15 +247,10 @@ export class StatsAPI {
       // Dynamically import normalization utilities
       const { normalizeProvinsi } = await import('@/utils/provinceNormalizer')
 
-      // Group by province with normalization - use provinsi_kantor as primary field
+      // Group by province with normalization - use provinsi_kantor as primary field, count ALL members
       const provinceMap = new Map<string, { total: number; laki: number; perempuan: number }>()
       
       for (const member of allMembers) {
-        // Skip members without valid gender - only count L and P
-        if (!member.jenis_kelamin || (member.jenis_kelamin !== 'L' && member.jenis_kelamin !== 'P')) {
-          continue
-        }
-
         // CRITICAL: Use provinsi_kantor as PRIMARY source and normalize it
         let provFinal = ''
         
@@ -292,7 +284,9 @@ export class StatsAPI {
         if (!provFinal) continue
         
         const current = provinceMap.get(provFinal) || { total: 0, laki: 0, perempuan: 0 }
+        // Count all members
         current.total++
+        // Count gender breakdown separately
         if (member.jenis_kelamin === 'L') current.laki++
         if (member.jenis_kelamin === 'P') current.perempuan++
         
