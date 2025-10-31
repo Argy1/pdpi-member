@@ -33,7 +33,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
       type: member.tempat_praktek_3_tipe,
       type2: member.tempat_praktek_3_tipe_2 
     },
-  ]
+  ].filter(location => location.name) // Only show if location name exists
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -129,26 +129,8 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                     <div className="font-medium text-sm text-medical-primary">
                       {location.name || '-'}
                     </div>
-                    {location.name && (
+                     {location.name && (
                       <div className="space-y-1.5 text-xs sm:text-sm">
-                        {location.type && (
-                          <div className="flex items-start gap-1.5">
-                            <Building className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                            <div>
-                              <span className="font-medium text-muted-foreground">Tipe RS 1:</span>{" "}
-                              <span className="font-semibold text-foreground">{location.type}</span>
-                            </div>
-                          </div>
-                        )}
-                        {location.type2 && (
-                          <div className="flex items-start gap-1.5">
-                            <Building className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                            <div>
-                              <span className="font-medium text-muted-foreground">Tipe RS 2:</span>{" "}
-                              <span className="font-semibold text-foreground">{location.type2}</span>
-                            </div>
-                          </div>
-                        )}
                         <div className="flex items-start gap-1.5">
                           <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                           <div>
