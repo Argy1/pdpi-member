@@ -57,8 +57,14 @@ export default function AdminMembers() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || '');
   const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
-  const [itemsPerPage, setItemsPerPage] = useState(parseInt(searchParams.get("limit") || "50"));
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageParam = searchParams.get("page");
+    return pageParam ? parseInt(pageParam) : 1;
+  });
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const limitParam = searchParams.get("limit");
+    return limitParam ? parseInt(limitParam) : 50;
+  });
   const [filters, setFilters] = useState<MemberFilters>({
     query: searchParams.get("q") || '',
     provinsi_kantor: [],
@@ -74,6 +80,26 @@ export default function AdminMembers() {
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
   const { isPusatAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, profile } = useAuth();
   const { toast } = useToast();
+
+  // Sync state with URL params whenever they change
+  useEffect(() => {
+    const pageParam = searchParams.get("page");
+    const limitParam = searchParams.get("limit");
+    
+    if (pageParam) {
+      const newPage = parseInt(pageParam);
+      if (newPage !== currentPage) {
+        setCurrentPage(newPage);
+      }
+    }
+    
+    if (limitParam) {
+      const newLimit = parseInt(limitParam);
+      if (newLimit !== itemsPerPage) {
+        setItemsPerPage(newLimit);
+      }
+    }
+  }, [searchParams]);
 
   // Use the new hook for fetching data
   const { 
