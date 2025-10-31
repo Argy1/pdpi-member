@@ -81,26 +81,6 @@ export default function AdminMembers() {
   const { isPusatAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, profile } = useAuth();
   const { toast } = useToast();
 
-  // Sync state with URL params whenever they change
-  useEffect(() => {
-    const pageParam = searchParams.get("page");
-    const limitParam = searchParams.get("limit");
-    
-    if (pageParam) {
-      const newPage = parseInt(pageParam);
-      if (newPage !== currentPage) {
-        setCurrentPage(newPage);
-      }
-    }
-    
-    if (limitParam) {
-      const newLimit = parseInt(limitParam);
-      if (newLimit !== itemsPerPage) {
-        setItemsPerPage(newLimit);
-      }
-    }
-  }, [searchParams]);
-
   // Use the new hook for fetching data
   const { 
     members, 
@@ -162,21 +142,14 @@ export default function AdminMembers() {
     fetchFilterOptions();
   }, []);
 
-  // Update URL when search changes
+  // Update URL when search or pagination changes
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.query) params.set("q", filters.query);
     if (currentPage > 1) params.set("page", currentPage.toString());
     if (itemsPerPage !== 50) params.set("limit", itemsPerPage.toString());
-    setSearchParams(params);
-  }, [filters.query, currentPage, itemsPerPage, setSearchParams]);
-
-  // Reset page when search or filter changes
-  useEffect(() => {
-    if (currentPage !== 1) {
-      setCurrentPage(1);
-    }
-  }, [filters, selectedStatus]);
+    setSearchParams(params, { replace: true });
+  }, [filters.query, currentPage, itemsPerPage]);
 
   const handleLimitChange = (newLimit: number) => {
     setItemsPerPage(newLimit);
