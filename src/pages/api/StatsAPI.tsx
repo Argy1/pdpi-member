@@ -46,7 +46,7 @@ export class StatsAPI {
           .select('nama, jenis_kelamin, provinsi_kantor, provinsi, cabang, kota_kabupaten_kantor, kota_kabupaten', { count: 'exact' })
           .range(from, from + pageSize - 1)
 
-        // Apply filters only on first iteration to get accurate count
+        // CRITICAL: Apply filters to match AnggotaAPI (exclude certain statuses)
         query = this.applyFilters(query, params)
 
         const { data, error, count } = await query
@@ -152,6 +152,7 @@ export class StatsAPI {
         .select('provinsi_kantor, jenis_kelamin')
         .range(from, from + pageSize - 1)
 
+      // CRITICAL: Apply filters to match AnggotaAPI (exclude certain statuses)
       query = this.applyFilters(query, params)
 
       const { data, error } = await query
@@ -227,6 +228,7 @@ export class StatsAPI {
           .select('provinsi, provinsi_kantor, kota_kabupaten, kota_kabupaten_kantor, jenis_kelamin')
           .range(from, from + pageSize - 1)
 
+        // CRITICAL: Apply filters to match AnggotaAPI (exclude certain statuses)
         query = this.applyFilters(query, params)
 
         const { data, error } = await query
@@ -396,6 +398,7 @@ export class StatsAPI {
           .order('nama', { ascending: true })
           .range(from, from + pageSize - 1)
 
+        // CRITICAL: Apply filters to match AnggotaAPI (exclude certain statuses)
         query = this.applyFilters(query, params)
 
         const { data, error } = await query
