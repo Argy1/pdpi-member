@@ -112,6 +112,7 @@ export default function AnggotaPage() {
     namaHurufDepan: filters.namaHurufDepan,
     hospitalType: filters.hospitalType,
     namaRS: filters.namaRS,
+    npa: filters.npa,
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
