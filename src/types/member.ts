@@ -7,6 +7,7 @@ export interface Member {
   jenis_kelamin?: "L" | "P"
   gelar?: string
   gelar2?: string
+  gelar_fisr?: string
   tempat_lahir?: string
   tgl_lahir?: string
   alumni?: string

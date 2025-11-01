@@ -29,6 +29,7 @@ interface MemberFormData {
   nama: string;
   gelar: string;
   gelar2: string;
+  gelar_fisr: string;
   npa: string;
   subspesialis: string;
   tempatLahir: string;
@@ -88,6 +89,7 @@ const initialFormData: MemberFormData = {
   nama: '',
   gelar: '',
   gelar2: '',
+  gelar_fisr: '',
   npa: '',
   subspesialis: '',
   tempatLahir: '',
@@ -211,6 +213,7 @@ export default function AdminMemberForm() {
             nama: existingMember.nama || '',
             gelar: existingMember.gelar || '',
             gelar2: existingMember.gelar2 || '',
+            gelar_fisr: existingMember.gelar_fisr || '',
             npa: existingMember.npa || '',
             subspesialis: existingMember.subspesialis || '',
             tempatLahir: existingMember.tempat_lahir || '',
@@ -388,6 +391,7 @@ export default function AdminMemberForm() {
         nama: formData.nama,
         gelar: formData.gelar || null,
         gelar2: formData.gelar2 || null,
+        gelar_fisr: formData.gelar_fisr || null,
         npa: formData.npa || null,
         alumni: formData.alumni || null,
         subspesialis: formData.subspesialis || null,
@@ -681,24 +685,42 @@ export default function AdminMemberForm() {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="subspesialis">Sub Spesialis</Label>
-                      <Select 
-                        value={formData.subspesialis} 
-                        onValueChange={(value) => handleInputChange('subspesialis', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih sub spesialis" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Spesialis Paru Konsultan Asma PPOK">Spesialis Paru Konsultan Asma PPOK</SelectItem>
-                          <SelectItem value="Spesialis Paru Konsultan Infeksi">Spesialis Paru Konsultan Infeksi</SelectItem>
-                          <SelectItem value="Spesialis Paru Konsultan Onkologi Toraks">Spesialis Paru Konsultan Onkologi Toraks</SelectItem>
-                          <SelectItem value="Spesialis Paru Konsultan Paru Kerja">Spesialis Paru Konsultan Paru Kerja</SelectItem>
-                          <SelectItem value="Spesialis Paru Konsultan Intervensi & Gawat Napas">Spesialis Paru Konsultan Intervensi & Gawat Napas</SelectItem>
-                          <SelectItem value="Spesialis Paru Konsultan Imunologi">Spesialis Paru Konsultan Imunologi</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="subspesialis">Sub Spesialis</Label>
+                        <Select 
+                          value={formData.subspesialis} 
+                          onValueChange={(value) => handleInputChange('subspesialis', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih sub spesialis" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Spesialis Paru Konsultan Asma PPOK">Spesialis Paru Konsultan Asma PPOK</SelectItem>
+                            <SelectItem value="Spesialis Paru Konsultan Infeksi">Spesialis Paru Konsultan Infeksi</SelectItem>
+                            <SelectItem value="Spesialis Paru Konsultan Onkologi Toraks">Spesialis Paru Konsultan Onkologi Toraks</SelectItem>
+                            <SelectItem value="Spesialis Paru Konsultan Paru Kerja">Spesialis Paru Konsultan Paru Kerja</SelectItem>
+                            <SelectItem value="Spesialis Paru Konsultan Intervensi & Gawat Napas">Spesialis Paru Konsultan Intervensi & Gawat Napas</SelectItem>
+                            <SelectItem value="Spesialis Paru Konsultan Imunologi">Spesialis Paru Konsultan Imunologi</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="gelar_fisr">Gelar FISR</Label>
+                        <Select 
+                          value={formData.gelar_fisr || ''} 
+                          onValueChange={(value) => handleInputChange('gelar_fisr', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih status FISR" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Ya">Ya</SelectItem>
+                            <SelectItem value="Tidak">Tidak</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div className="space-y-2">

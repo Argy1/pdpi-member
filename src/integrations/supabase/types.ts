@@ -138,6 +138,7 @@ export type Database = {
           fasilitas_kesehatan: Json | null
           foto: string | null
           gelar: string | null
+          gelar_fisr: string | null
           gelar2: string | null
           id: string
           jenis_kelamin: string | null
@@ -185,6 +186,7 @@ export type Database = {
           fasilitas_kesehatan?: Json | null
           foto?: string | null
           gelar?: string | null
+          gelar_fisr?: string | null
           gelar2?: string | null
           id?: string
           jenis_kelamin?: string | null
@@ -232,6 +234,7 @@ export type Database = {
           fasilitas_kesehatan?: Json | null
           foto?: string | null
           gelar?: string | null
+          gelar_fisr?: string | null
           gelar2?: string | null
           id?: string
           jenis_kelamin?: string | null
