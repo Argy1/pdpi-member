@@ -132,7 +132,6 @@ export default function AdminMembers() {
         setAvailableProvinces(allProvinces);
         setAvailableBranches(branches.sort());
         setAvailableCities(cityResult.data || []);
-        setAvailableSubspecialties([]); // Add subspecialty logic if needed
 
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data);

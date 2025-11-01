@@ -153,6 +153,17 @@ export class AnggotaAPI {
         query = query.ilike('npa', `%${searchTerm}%`)
       }
 
+      // Apply subspecialty filter (OR within subspecialties)
+      if (subspesialis) {
+        const subspecialties = subspesialis.split(',').map(s => s.trim()).filter(s => s)
+        if (subspecialties.length > 0) {
+          const subspecialtyConditions = subspecialties.map(subspecialty => 
+            `subspesialis.eq.${subspecialty}`
+          ).join(',')
+          query = query.or(subspecialtyConditions)
+        }
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -258,6 +269,17 @@ export class AnggotaAPI {
         countQuery = countQuery.ilike('npa', `%${searchTerm}%`)
       }
 
+      // Apply subspecialty filter for count query too
+      if (subspesialis) {
+        const subspecialties = subspesialis.split(',').map(s => s.trim()).filter(s => s)
+        if (subspecialties.length > 0) {
+          const subspecialtyConditions = subspecialties.map(subspecialty => 
+            `subspesialis.eq.${subspecialty}`
+          ).join(',')
+          countQuery = countQuery.or(subspecialtyConditions)
+        }
+      }
+
       // Get total count
       const { count } = await countQuery
 
@@ -294,7 +316,7 @@ export class AnggotaAPI {
         kontakEmail: member.email,
         kontakTelepon: member.no_hp,
         spesialis: member.alumni || 'Pulmonologi',
-        subspesialis: '',
+        subspesialis: member.subspesialis || '',
         pd: member.cabang || `Cabang ${member.provinsi}`,
         createdAt: member.created_at,
         updatedAt: member.created_at
@@ -354,7 +376,7 @@ export class AnggotaAPI {
         kotaRumah: data.kota_kabupaten_rumah,
         provinsiRumah: data.provinsi_rumah,
         spesialis: data.alumni || 'Pulmonologi',
-        subspesialis: '',
+        subspesialis: data.subspesialis || '',
         pd: data.cabang || `Cabang ${data.provinsi}`,
         createdAt: data.created_at,
         updatedAt: data.updated_at

@@ -15,6 +15,7 @@ interface MemberFiltersProps {
   pds: string[]
   hospitalTypes: string[]
   cities: string[]
+  subspecialties?: string[]
   className?: string
   isPublicView?: boolean
 }
@@ -26,6 +27,14 @@ export function MemberFiltersComponent({
   pds,
   hospitalTypes,
   cities,
+  subspecialties = [
+    'Spesialis Paru Konsultan Asma PPOK',
+    'Spesialis Paru Konsultan Infeksi',
+    'Spesialis Paru Konsultan Onkologi Toraks',
+    'Spesialis Paru Konsultan Paru Kerja',
+    'Spesialis Paru Konsultan Intervensi & Gawat Napas',
+    'Spesialis Paru Konsultan Imunologi'
+  ],
   className = "",
   isPublicView = false
 }: MemberFiltersProps) {
@@ -33,6 +42,7 @@ export function MemberFiltersComponent({
   const [openPD, setOpenPD] = useState(false)
   const [openKotaKantor, setOpenKotaKantor] = useState(false)
   const [openHospitalType, setOpenHospitalType] = useState(false)
+  const [openSubspecialty, setOpenSubspecialty] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
     const currentValues = filters[type] as string[] || []
@@ -78,7 +88,7 @@ export function MemberFiltersComponent({
     })
   }
 
-  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa)
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa || filters.subspesialis?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -183,6 +193,15 @@ export function MemberFiltersComponent({
           placeholder="Cari tipe RS..."
         />
 
+        <FilterPopover
+          open={openSubspecialty}
+          setOpen={setOpenSubspecialty}
+          title="Subspesialis"
+          options={subspecialties}
+          filterKey="subspesialis"
+          placeholder="Cari subspesialis..."
+        />
+
         {hasActiveFilters && (
           <Button
             variant="ghost"
@@ -247,7 +266,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa || filters.subspesialis?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
@@ -313,6 +332,17 @@ export function MemberFiltersComponent({
               <X className="h-3 w-3 ml-1" />
             </Badge>
           )}
+          {filters.subspesialis?.map((subspecialty) => (
+            <Badge 
+              key={subspecialty} 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleFilterChange("subspesialis", subspecialty)}
+            >
+              {subspecialty}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          ))}
         </div>
       )}
     </div>
