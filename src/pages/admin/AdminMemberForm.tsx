@@ -664,18 +664,19 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="status">Status Keanggotaan</Label>
-                      <Select
-                        value={formData.status}
+                      <Label htmlFor="status">Status Keanggotaan *</Label>
+                      <Select 
+                        value={formData.status} 
                         onValueChange={(value) => handleInputChange('status', value)}
                       >
-                        <SelectTrigger id="status">
+                        <SelectTrigger>
                           <SelectValue placeholder="Pilih status" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="AKTIF">Aktif</SelectItem>
                           <SelectItem value="Biasa">Biasa</SelectItem>
-                          <SelectItem value="Nonaktif">Nonaktif</SelectItem>
+                          <SelectItem value="Luar Biasa">Luar Biasa</SelectItem>
+                          <SelectItem value="Meninggal">Meninggal</SelectItem>
+                          <SelectItem value="Muda">Muda</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1630,24 +1631,6 @@ export default function AdminMemberForm() {
                         <li>• Pisahkan setiap platform dengan baris baru</li>
                         <li>• Informasi ini akan ditampilkan di profil publik anggota</li>
                       </ul>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="status">Status Keanggotaan *</Label>
-                      <Select 
-                        value={formData.status} 
-                        onValueChange={(value) => handleInputChange('status', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Biasa">Biasa</SelectItem>
-                          <SelectItem value="Luar Biasa">Luar Biasa</SelectItem>
-                          <SelectItem value="Meninggal">Meninggal</SelectItem>
-                          <SelectItem value="Muda">Muda</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
                 </div>
