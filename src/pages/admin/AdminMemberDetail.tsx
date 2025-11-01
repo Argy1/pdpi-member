@@ -300,69 +300,69 @@ export default function AdminMemberDetail() {
                 </p>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Alumni</label>
-                <p className="mt-1">{member.alumni || '-'}</p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Tahun Lulus</label>
-                <p className="mt-1">{member.thn_lulus || member.tahunLulus || '-'}</p>
-              </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Alumni</label>
+                  <p className="mt-1">{member.alumni || '-'}</p>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Tahun Lulus</label>
+                  <p className="mt-1">{member.thn_lulus || member.tahunLulus || '-'}</p>
+                </div>
 
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">NIK</label>
-                <p className="mt-1">{member.nik || '-'}</p>
-              </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">NIK</label>
+                  <p className="mt-1">{member.nik || '-'}</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Phone className="h-5 w-5" />
+                  Informasi Kontak
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <p className="mt-1 flex items-center gap-2">
+                    {member.email || member.kontakEmail ? (
+                      <>
+                        <Mail className="h-4 w-4" />
+                        {member.email || member.kontakEmail}
+                      </>
+                    ) : '-'}
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">No. HP</label>
+                  <p className="mt-1 flex items-center gap-2">
+                    {member.no_hp || member.kontakTelepon ? (
+                      <>
+                        <Phone className="h-4 w-4" />
+                        {member.no_hp || member.kontakTelepon}
+                      </>
+                    ) : '-'}
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Website</label>
+                  <p className="mt-1">{member.website || '-'}</p>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Media Sosial</label>
+                  <p className="mt-1">{member.sosialMedia || '-'}</p>
+                </div>
             </CardContent>
           </Card>
 
-          {/* Contact Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5" />
-                Informasi Kontak
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Email</label>
-                <p className="mt-1 flex items-center gap-2">
-                  {member.email || member.kontakEmail ? (
-                    <>
-                      <Mail className="h-4 w-4" />
-                      {member.email || member.kontakEmail}
-                    </>
-                  ) : '-'}
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">No. HP</label>
-                <p className="mt-1 flex items-center gap-2">
-                  {member.no_hp || member.kontakTelepon ? (
-                    <>
-                      <Phone className="h-4 w-4" />
-                      {member.no_hp || member.kontakTelepon}
-                    </>
-                  ) : '-'}
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Website</label>
-                <p className="mt-1">{member.website || '-'}</p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Media Sosial</label>
-                <p className="mt-1">{member.sosialMedia || '-'}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Work Information */}
+            {/* Work Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -385,7 +385,7 @@ export default function AdminMemberDetail() {
                 <label className="text-sm font-medium text-muted-foreground">Provinsi Kantor</label>
                 <p className="mt-1">{member.provinsi_kantor || '-'}</p>
               </div>
-              
+
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Unit Kerja</label>
                 <p className="mt-1">{member.unitKerja || '-'}</p>

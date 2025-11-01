@@ -664,6 +664,23 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
+                      <Label htmlFor="status">Status Keanggotaan</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) => handleInputChange('status', value)}
+                      >
+                        <SelectTrigger id="status">
+                          <SelectValue placeholder="Pilih status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="AKTIF">Aktif</SelectItem>
+                          <SelectItem value="Biasa">Biasa</SelectItem>
+                          <SelectItem value="Nonaktif">Nonaktif</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="subspesialis">Sub Spesialis</Label>
                       <Select 
                         value={formData.subspesialis} 
@@ -690,6 +707,19 @@ export default function AdminMemberForm() {
                         value={formData.alumni}
                         onChange={(e) => handleInputChange('alumni', e.target.value)}
                         placeholder="Universitas/Kampus asal"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
+                      <Input
+                        id="tahunLulus"
+                        value={formData.tahunLulus}
+                        onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
+                        placeholder="2010"
+                        type="number"
+                        min="1970"
+                        max={new Date().getFullYear()}
                       />
                     </div>
                   </div>
@@ -815,16 +845,6 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="kotaKantor">Kota/Kabupaten Kantor</Label>
-                      <Input
-                        id="kotaKantor"
-                        value={formData.kotaKantor}
-                        onChange={(e) => handleInputChange('kotaKantor', e.target.value)}
-                        placeholder="Jakarta"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
                       <Label htmlFor="kotaRumah">Kota/Kabupaten Rumah</Label>
                       <Input
                         id="kotaRumah"
@@ -836,58 +856,6 @@ export default function AdminMemberForm() {
                   </div>
 
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="provinsiKantor">Provinsi Kantor</Label>
-                      <Select 
-                        value={formData.provinsiKantor} 
-                        onValueChange={(value) => handleInputChange('provinsiKantor', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih provinsi" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Aceh">Aceh</SelectItem>
-                          <SelectItem value="Sumatera Utara">Sumatera Utara</SelectItem>
-                          <SelectItem value="Sumatera Barat">Sumatera Barat</SelectItem>
-                          <SelectItem value="Riau">Riau</SelectItem>
-                          <SelectItem value="Kepulauan Riau">Kepulauan Riau</SelectItem>
-                          <SelectItem value="Jambi">Jambi</SelectItem>
-                          <SelectItem value="Sumatera Selatan">Sumatera Selatan</SelectItem>
-                          <SelectItem value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</SelectItem>
-                          <SelectItem value="Bengkulu">Bengkulu</SelectItem>
-                          <SelectItem value="Lampung">Lampung</SelectItem>
-                          <SelectItem value="DKI Jakarta">DKI Jakarta</SelectItem>
-                          <SelectItem value="Jawa Barat">Jawa Barat</SelectItem>
-                          <SelectItem value="Jawa Tengah">Jawa Tengah</SelectItem>
-                          <SelectItem value="DI Yogyakarta">DI Yogyakarta</SelectItem>
-                          <SelectItem value="Jawa Timur">Jawa Timur</SelectItem>
-                          <SelectItem value="Banten">Banten</SelectItem>
-                          <SelectItem value="Bali">Bali</SelectItem>
-                          <SelectItem value="Nusa Tenggara Barat (NTB)">Nusa Tenggara Barat (NTB)</SelectItem>
-                          <SelectItem value="Nusa Tenggara Timur (NTT)">Nusa Tenggara Timur (NTT)</SelectItem>
-                          <SelectItem value="Kalimantan Barat">Kalimantan Barat</SelectItem>
-                          <SelectItem value="Kalimantan Tengah">Kalimantan Tengah</SelectItem>
-                          <SelectItem value="Kalimantan Selatan">Kalimantan Selatan</SelectItem>
-                          <SelectItem value="Kalimantan Timur">Kalimantan Timur</SelectItem>
-                          <SelectItem value="Kalimantan Utara">Kalimantan Utara</SelectItem>
-                          <SelectItem value="Sulawesi Utara">Sulawesi Utara</SelectItem>
-                          <SelectItem value="Gorontalo">Gorontalo</SelectItem>
-                          <SelectItem value="Sulawesi Tengah">Sulawesi Tengah</SelectItem>
-                          <SelectItem value="Sulawesi Barat">Sulawesi Barat</SelectItem>
-                          <SelectItem value="Sulawesi Selatan">Sulawesi Selatan</SelectItem>
-                          <SelectItem value="Sulawesi Tenggara">Sulawesi Tenggara</SelectItem>
-                          <SelectItem value="Maluku">Maluku</SelectItem>
-                          <SelectItem value="Maluku Utara">Maluku Utara</SelectItem>
-                          <SelectItem value="Papua">Papua</SelectItem>
-                          <SelectItem value="Papua Barat">Papua Barat</SelectItem>
-                          <SelectItem value="Papua Selatan">Papua Selatan</SelectItem>
-                          <SelectItem value="Papua Tengah">Papua Tengah</SelectItem>
-                          <SelectItem value="Papua Pegunungan">Papua Pegunungan</SelectItem>
-                          <SelectItem value="Papua Barat Daya">Papua Barat Daya</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="provinsiRumah">Provinsi Rumah</Label>
                       <Select 
@@ -1026,27 +994,34 @@ export default function AdminMemberForm() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="jabatan">Jabatan</Label>
+                        <Label htmlFor="kotaKantor">Kota/Kabupaten Kantor</Label>
                         <Input
-                          id="jabatan"
-                          value={formData.jabatan}
-                          onChange={(e) => handleInputChange('jabatan', e.target.value)}
-                          placeholder="Dokter Spesialis"
+                          id="kotaKantor"
+                          value={formData.kotaKantor}
+                          onChange={(e) => handleInputChange('kotaKantor', e.target.value)}
+                          placeholder="Jakarta"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="provinsiKantor">Provinsi Kantor</Label>
+                        <Input
+                          id="provinsiKantor"
+                          value={formData.provinsiKantor}
+                          onChange={(e) => handleInputChange('provinsiKantor', e.target.value)}
+                          placeholder="DKI Jakarta"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="tahunLulus">Tahun Lulus</Label>
+                        <Label htmlFor="jabatan">Jabatan</Label>
                         <Input
-                          id="tahunLulus"
-                          value={formData.tahunLulus}
-                          onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
-                          placeholder="2010"
-                          type="number"
-                          min="1970"
-                          max={new Date().getFullYear()}
+                          id="jabatan"
+                          value={formData.jabatan}
+                          onChange={(e) => handleInputChange('jabatan', e.target.value)}
+                          placeholder="Dokter Spesialis"
                         />
                       </div>
                     </div>
