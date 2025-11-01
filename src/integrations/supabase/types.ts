@@ -154,6 +154,7 @@ export type Database = {
           provinsi_rumah: string | null
           search_text: string | null
           status: string | null
+          subspesialis: string | null
           tempat_lahir: string | null
           tempat_praktek_1: string | null
           tempat_praktek_1_alkes: string | null
@@ -200,6 +201,7 @@ export type Database = {
           provinsi_rumah?: string | null
           search_text?: string | null
           status?: string | null
+          subspesialis?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
           tempat_praktek_1_alkes?: string | null
@@ -246,6 +248,7 @@ export type Database = {
           provinsi_rumah?: string | null
           search_text?: string | null
           status?: string | null
+          subspesialis?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
           tempat_praktek_1_alkes?: string | null

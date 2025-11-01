@@ -212,6 +212,12 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <p className="text-sm font-medium text-muted-foreground">Tahun Lulus</p>
                 <p className="text-medical-body">{member.tahunLulus || member.thn_lulus || "-"}</p>
               </div>
+              {member.subspesialis && (
+                <div className="space-y-1 md:col-span-2">
+                  <p className="text-sm font-medium text-muted-foreground">Sub Spesialis</p>
+                  <p className="text-medical-body">{member.subspesialis}</p>
+                </div>
+              )}
             </div>
           </div>
 

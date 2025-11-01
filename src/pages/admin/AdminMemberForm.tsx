@@ -30,7 +30,6 @@ interface MemberFormData {
   gelar: string;
   gelar2: string;
   npa: string;
-  spesialis: string;
   subspesialis: string;
   tempatLahir: string;
   tanggalLahir: Date | undefined;
@@ -90,7 +89,6 @@ const initialFormData: MemberFormData = {
   gelar: '',
   gelar2: '',
   npa: '',
-  spesialis: '',
   subspesialis: '',
   tempatLahir: '',
   tanggalLahir: undefined,
@@ -214,8 +212,7 @@ export default function AdminMemberForm() {
             gelar: existingMember.gelar || '',
             gelar2: existingMember.gelar2 || '',
             npa: existingMember.npa || '',
-            spesialis: '', // Field doesn't exist in database, set to empty
-            subspesialis: '', // Field doesn't exist in database, set to empty
+            subspesialis: existingMember.subspesialis || '',
             tempatLahir: existingMember.tempat_lahir || '',
             tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : undefined,
             jenisKelamin: existingMember.jenis_kelamin === 'L' ? 'Laki-laki' : 
@@ -393,6 +390,7 @@ export default function AdminMemberForm() {
         gelar2: formData.gelar2 || null,
         npa: formData.npa || null,
         alumni: formData.alumni || null,
+        subspesialis: formData.subspesialis || null,
         // Map form fields to database fields
         tgl_lahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : null,
         tempat_lahir: formData.tempatLahir || null,
@@ -666,30 +664,23 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="spesialis">Spesialis *</Label>
+                      <Label htmlFor="subspesialis">Sub Spesialis</Label>
                       <Select 
-                        value={formData.spesialis} 
-                        onValueChange={(value) => handleInputChange('spesialis', value)}
+                        value={formData.subspesialis} 
+                        onValueChange={(value) => handleInputChange('subspesialis', value)}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih spesialis" />
+                          <SelectValue placeholder="Pilih sub spesialis" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Pulmonologi">Pulmonologi</SelectItem>
-                          <SelectItem value="Kedokteran Paru">Kedokteran Paru</SelectItem>
-                          <SelectItem value="Respirologi">Respirologi</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Asma PPOK">Spesialis Paru Konsultan Asma PPOK</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Infeksi">Spesialis Paru Konsultan Infeksi</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Onkologi Toraks">Spesialis Paru Konsultan Onkologi Toraks</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Paru Kerja">Spesialis Paru Konsultan Paru Kerja</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Intervensi & Gawat Napas">Spesialis Paru Konsultan Intervensi & Gawat Napas</SelectItem>
+                          <SelectItem value="Spesialis Paru Konsultan Imunologi">Spesialis Paru Konsultan Imunologi</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="subspesialis">Sub Spesialis</Label>
-                      <Input
-                        id="subspesialis"
-                        value={formData.subspesialis}
-                        onChange={(e) => handleInputChange('subspesialis', e.target.value)}
-                        placeholder="Sub spesialis (opsional)"
-                      />
                     </div>
 
                     <div className="space-y-2">

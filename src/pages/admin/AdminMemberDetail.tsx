@@ -258,14 +258,8 @@ export default function AdminMemberDetail() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm">Status: {getStatusBadge(member.status || 'Biasa')}</span>
                   </div>
-                  {member.spesialis && (
-                    <div className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">{member.spesialis}</span>
-                    </div>
-                  )}
                   {member.subspesialis && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 md:col-span-2">
                       <GraduationCap className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{member.subspesialis}</span>
                     </div>
