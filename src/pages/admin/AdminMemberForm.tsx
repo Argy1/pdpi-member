@@ -724,13 +724,34 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="alumni">Alumni</Label>
-                      <Input
-                        id="alumni"
-                        value={formData.alumni}
-                        onChange={(e) => handleInputChange('alumni', e.target.value)}
-                        placeholder="Universitas/Kampus asal"
-                      />
+                      <Label htmlFor="alumni">Alumni Sp-1 (Spesialis) FK</Label>
+                      <Select 
+                        value={formData.alumni || ''} 
+                        onValueChange={(value) => handleInputChange('alumni', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih universitas" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="UNSYIAH">UNSYIAH</SelectItem>
+                          <SelectItem value="USU">USU</SelectItem>
+                          <SelectItem value="UNAND">UNAND</SelectItem>
+                          <SelectItem value="UNRI">UNRI</SelectItem>
+                          <SelectItem value="UNILA">UNILA</SelectItem>
+                          <SelectItem value="UI">UI</SelectItem>
+                          <SelectItem value="UIN">UIN</SelectItem>
+                          <SelectItem value="UNS">UNS</SelectItem>
+                          <SelectItem value="UNSOED">UNSOED</SelectItem>
+                          <SelectItem value="UGM">UGM</SelectItem>
+                          <SelectItem value="UA">UA</SelectItem>
+                          <SelectItem value="UNUSA">UNUSA</SelectItem>
+                          <SelectItem value="UB">UB</SelectItem>
+                          <SelectItem value="UNRAM">UNRAM</SelectItem>
+                          <SelectItem value="ULM">ULM</SelectItem>
+                          <SelectItem value="UNMUL">UNMUL</SelectItem>
+                          <SelectItem value="UNHAS">UNHAS</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="space-y-2">
