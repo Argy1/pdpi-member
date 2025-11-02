@@ -156,10 +156,22 @@ export default function AdminMemberForm() {
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
-  // Field protections based on role - admin_cabang cannot edit NPA and Status when editing
-  const isNPADisabled = isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin);
-  const isStatusDisabled = isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin);
+  // Field protections based on role - admin_cabang cannot edit NPA and Status at all
+  const isNPAHidden = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  const isStatusHidden = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
   const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  
+  // Admin cabang cannot add new members - redirect if they try
+  useEffect(() => {
+    if (!isEditing && !isPusatAdmin) {
+      toast({
+        title: 'Akses Ditolak',
+        description: 'Hanya Super Admin yang dapat menambah anggota baru.',
+        variant: 'destructive',
+      });
+      navigate('/admin/anggota');
+    }
+  }, [isEditing, isPusatAdmin, navigate, toast]);
 
   useEffect(() => {
     const fetchMemberForEdit = async () => {
@@ -393,22 +405,21 @@ export default function AdminMemberForm() {
         gelar: formData.gelar || null,
         gelar2: formData.gelar2 || null,
         gelar_fisr: formData.gelar_fisr || null,
-        npa: formData.npa || null,
-        status: formData.status || 'Biasa',
-        cabang: formData.pd || null,
         alumni: formData.alumni || null,
         subspesialis: formData.subspesialis || null,
         // Map form fields to database fields
-        tgl_lahir: formData.tanggalLahir ? formData.tanggalLahir.toISOString().split('T')[0] : null,
         tempat_lahir: formData.tempatLahir || null,
-        jenis_kelamin: formData.jenisKelamin === 'Laki-laki' ? 'L' as const : formData.jenisKelamin === 'Perempuan' ? 'P' as const : null,
-        thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus.toString()) : null,
-        tempat_tugas: formData.unitKerja || null, // Save unitKerja as tempat_tugas
-        kota_kabupaten_kantor: formData.kotaKantor || null,
-        provinsi_kantor: formData.provinsiKantor || null,
+        tgl_lahir: formData.tanggalLahir || null,
+        jenis_kelamin: formData.jenisKelamin || null,
+        thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus) : null,
+        kota_kabupaten: formData.kotaRumah || null,
+        provinsi: formData.provinsiRumah || null,
         alamat_rumah: formData.alamat || null,
         kota_kabupaten_rumah: formData.kotaRumah || null,
         provinsi_rumah: formData.provinsiRumah || null,
+        tempat_tugas: formData.unitKerja || null,
+        kota_kabupaten_kantor: formData.kotaKantor || null,
+        provinsi_kantor: formData.provinsiKantor || null,
         no_hp: formData.kontakTelepon || null,
         email: formData.kontakEmail || null,
         foto: formData.foto || null,
@@ -430,11 +441,14 @@ export default function AdminMemberForm() {
         keterangan: null // Can be added later if needed
       }
       
-      // Remove NPA, Status, and Cabang from update payload if admin_cabang is editing
-      if (isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) && !isPusatAdmin) {
-        delete memberData.npa;
-        delete memberData.status;
-        // Keep cabang for validation but will be forced later
+      // Only include NPA, Status, and Cabang if user is Pusat Admin
+      if (isPusatAdmin) {
+        memberData.npa = formData.npa || null;
+        memberData.status = formData.status || 'Biasa';
+        memberData.cabang = formData.pd || null;
+      } else if (isCabangMalukuAdmin || isCabangKaltengAdmin) {
+        // Admin cabang specific: force their branch, don't allow NPA/status changes
+        memberData.cabang = userBranch;
       }
 
       console.log('Mapped member data:', memberData);
@@ -483,33 +497,40 @@ export default function AdminMemberForm() {
         }
 
         // Super Admin or Admin Cabang Maluku/Kalteng: Direct update
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('members')
           .update(memberData)
-          .eq('id', id)
-          .select()
-          .single();
+          .eq('id', id);
 
         if (error) {
           console.error('Supabase update error:', error);
           throw new Error(`Database error: ${error.message}`);
         }
 
-        console.log('Update successful:', data);
+        console.log('Update successful');
       } else {
+        // Only Pusat Admin can add new members
+        if (!isPusatAdmin) {
+          toast({
+            title: 'Akses Ditolak',
+            description: 'Hanya Super Admin yang dapat menambah anggota baru.',
+            variant: 'destructive',
+          });
+          setLoading(false);
+          return;
+        }
+        
         // Direct Supabase insert for new members
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('members')
-          .insert([memberData])
-          .select()
-          .single();
+          .insert([memberData]);
 
         if (error) {
           console.error('Supabase insert error:', error);
           throw new Error(`Database error: ${error.message}`);
         }
 
-        console.log('Insert successful:', data);
+        console.log('Insert successful');
       }
       
       toast({
@@ -643,53 +664,42 @@ export default function AdminMemberForm() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="npa" className="flex items-center gap-2">
-                        Nomor Peserta Anggota (NPA) *
-                        {isNPADisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
-                      </Label>
-                      <Input
-                        id="npa"
-                        value={formData.npa}
-                        onChange={(e) => handleInputChange('npa', e.target.value)}
-                        placeholder="NPA123456"
-                        required
-                        disabled={isNPADisabled}
-                        className={cn(isNPADisabled && "bg-muted cursor-not-allowed")}
-                      />
-                      {isNPADisabled && (
-                        <p className="text-xs text-muted-foreground">
-                          Field ini hanya dapat diedit oleh Super Admin
-                        </p>
-                      )}
-                    </div>
+                    {!isNPAHidden && (
+                      <div className="space-y-2">
+                        <Label htmlFor="npa">
+                          Nomor Peserta Anggota (NPA) *
+                        </Label>
+                        <Input
+                          id="npa"
+                          value={formData.npa}
+                          onChange={(e) => handleInputChange('npa', e.target.value)}
+                          placeholder="NPA123456"
+                          required
+                        />
+                      </div>
+                    )}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="status" className="flex items-center gap-2">
-                        Status Keanggotaan *
-                        {isStatusDisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
-                      </Label>
-                      <Select 
-                        value={formData.status} 
-                        onValueChange={(value) => handleInputChange('status', value)}
-                        disabled={isStatusDisabled}
-                      >
-                        <SelectTrigger className={cn(isStatusDisabled && "bg-muted cursor-not-allowed")}>
-                          <SelectValue placeholder="Pilih status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Biasa">Biasa</SelectItem>
-                          <SelectItem value="Luar Biasa">Luar Biasa</SelectItem>
-                          <SelectItem value="Meninggal">Meninggal</SelectItem>
-                          <SelectItem value="Muda">Muda</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {isStatusDisabled && (
-                        <p className="text-xs text-muted-foreground">
-                          Field ini hanya dapat diedit oleh Super Admin
-                        </p>
-                      )}
-                    </div>
+                    {!isStatusHidden && (
+                      <div className="space-y-2">
+                        <Label htmlFor="status">
+                          Status Keanggotaan *
+                        </Label>
+                        <Select 
+                          value={formData.status} 
+                          onValueChange={(value) => handleInputChange('status', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Biasa">Biasa</SelectItem>
+                            <SelectItem value="Luar Biasa">Luar Biasa</SelectItem>
+                            <SelectItem value="Meninggal">Meninggal</SelectItem>
+                            <SelectItem value="Muda">Muda</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
