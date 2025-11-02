@@ -158,6 +158,7 @@ export default function AdminMemberForm() {
   
   // Field protections based on role
   const isNPADisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  const isStatusDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
   const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
 
   useEffect(() => {
@@ -668,12 +669,16 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="status">Status Keanggotaan *</Label>
+                      <Label htmlFor="status" className="flex items-center gap-2">
+                        Status Keanggotaan *
+                        {isStatusDisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Select 
                         value={formData.status} 
                         onValueChange={(value) => handleInputChange('status', value)}
+                        disabled={isStatusDisabled}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className={cn(isStatusDisabled && "bg-muted cursor-not-allowed")}>
                           <SelectValue placeholder="Pilih status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -683,6 +688,11 @@ export default function AdminMemberForm() {
                           <SelectItem value="Muda">Muda</SelectItem>
                         </SelectContent>
                       </Select>
+                      {isStatusDisabled && (
+                        <p className="text-xs text-muted-foreground">
+                          Field ini hanya dapat diedit oleh Super Admin
+                        </p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
