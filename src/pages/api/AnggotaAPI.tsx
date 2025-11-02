@@ -22,10 +22,11 @@ interface GetMembersParams {
   npa?: string
   kota?: string
   kota_kabupaten_kantor?: string
+  status?: string
+  gelar_fisr?: string
   sort?: string
   limit?: number
   page?: number
-  status?: string
   scope?: 'public' | 'admin'
 }
 
@@ -44,10 +45,11 @@ export class AnggotaAPI {
         npa,
         kota,
         kota_kabupaten_kantor,
+        status,
+        gelar_fisr,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
-        status,
         scope = 'public'
       } = params
 
@@ -164,6 +166,17 @@ export class AnggotaAPI {
         }
       }
 
+      // Apply Gelar FISR filter
+      if (gelar_fisr) {
+        const fisrValues = gelar_fisr.split(',').map(f => f.trim()).filter(f => f)
+        if (fisrValues.length > 0) {
+          const fisrConditions = fisrValues.map(fisr => 
+            `gelar_fisr.eq.${fisr}`
+          ).join(',')
+          query = query.or(fisrConditions)
+        }
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -277,6 +290,17 @@ export class AnggotaAPI {
             `subspesialis.eq.${subspecialty}`
           ).join(',')
           countQuery = countQuery.or(subspecialtyConditions)
+        }
+      }
+
+      // Apply Gelar FISR filter for count query too
+      if (gelar_fisr) {
+        const fisrValues = gelar_fisr.split(',').map(f => f.trim()).filter(f => f)
+        if (fisrValues.length > 0) {
+          const fisrConditions = fisrValues.map(fisr => 
+            `gelar_fisr.eq.${fisr}`
+          ).join(',')
+          countQuery = countQuery.or(fisrConditions)
         }
       }
 

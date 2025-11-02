@@ -73,7 +73,8 @@ export default function AdminMembers() {
     kota_kabupaten_kantor: [],
     pd: [],
     subspesialis: [],
-    status: []
+    status: [],
+    gelar_fisr: []
   });
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([]);
   const [availableBranches, setAvailableBranches] = useState<string[]>([]);
@@ -102,6 +103,7 @@ export default function AdminMembers() {
     npa: filters.npa,
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     status: filters.status?.join(',') || selectedStatus || undefined,
+    gelar_fisr: filters.gelar_fisr?.join(','),
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: itemsPerPage,
     page: currentPage,

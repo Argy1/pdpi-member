@@ -43,6 +43,7 @@ export function MemberFiltersComponent({
   const [openKotaKantor, setOpenKotaKantor] = useState(false)
   const [openHospitalType, setOpenHospitalType] = useState(false)
   const [openSubspecialty, setOpenSubspecialty] = useState(false)
+  const [openGelarFISR, setOpenGelarFISR] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
     const currentValues = filters[type] as string[] || []
@@ -88,7 +89,7 @@ export function MemberFiltersComponent({
     })
   }
 
-  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa || filters.subspesialis?.length)
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -202,6 +203,15 @@ export function MemberFiltersComponent({
           placeholder="Cari subspesialis..."
         />
 
+        <FilterPopover
+          open={openGelarFISR}
+          setOpen={setOpenGelarFISR}
+          title="Gelar FISR"
+          options={['Ya', 'Tidak']}
+          filterKey="gelar_fisr"
+          placeholder="Pilih Gelar FISR..."
+        />
+
         {hasActiveFilters && (
           <Button
             variant="ghost"
@@ -266,7 +276,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa || filters.subspesialis?.length) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
@@ -340,6 +350,17 @@ export function MemberFiltersComponent({
               onClick={() => handleFilterChange("subspesialis", subspecialty)}
             >
               {subspecialty}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          ))}
+          {filters.gelar_fisr?.map((fisr) => (
+            <Badge 
+              key={fisr} 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleFilterChange("gelar_fisr", fisr)}
+            >
+              Gelar FISR: {fisr}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}

@@ -90,6 +90,7 @@ export interface MemberFilters {
   // New office location filters
   provinsi_kantor?: string[]
   kota_kabupaten_kantor?: string[]
+  gelar_fisr?: string[]
 }
 
 export interface MemberSort {
