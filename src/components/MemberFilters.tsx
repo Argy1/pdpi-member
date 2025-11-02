@@ -16,6 +16,7 @@ interface MemberFiltersProps {
   hospitalTypes: string[]
   cities: string[]
   subspecialties?: string[]
+  alumniOptions?: string[]
   className?: string
   isPublicView?: boolean
 }
@@ -35,6 +36,26 @@ export function MemberFiltersComponent({
     'Spesialis Paru Konsultan Intervensi & Gawat Napas',
     'Spesialis Paru Konsultan Imunologi'
   ],
+  alumniOptions = [
+    'UNSYIAH',
+    'USU',
+    'UNAND',
+    'UNRI',
+    'UNILA',
+    'UI',
+    'UIN',
+    'UNS',
+    'UNSOED',
+    'UGM',
+    'UDAYANA',
+    'UA',
+    'UNUSA',
+    'UB',
+    'UNRAM',
+    'ULM',
+    'UNMUL',
+    'UNHAS'
+  ],
   className = "",
   isPublicView = false
 }: MemberFiltersProps) {
@@ -44,6 +65,7 @@ export function MemberFiltersComponent({
   const [openHospitalType, setOpenHospitalType] = useState(false)
   const [openSubspecialty, setOpenSubspecialty] = useState(false)
   const [openGelarFISR, setOpenGelarFISR] = useState(false)
+  const [openAlumni, setOpenAlumni] = useState(false)
 
   const handleFilterChange = (type: keyof MemberFilters, value: string) => {
     const currentValues = filters[type] as string[] || []
@@ -89,7 +111,7 @@ export function MemberFiltersComponent({
     })
   }
 
-  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length)
+  const hasActiveFilters = !!(filters.provinsi_kantor?.length || filters.pd?.length || filters.namaHurufDepan?.length || filters.hospitalType?.length || filters.kota_kabupaten_kantor?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length || filters.alumni?.length)
 
   const FilterPopover = ({ 
     open, 
@@ -204,6 +226,15 @@ export function MemberFiltersComponent({
         />
 
         <FilterPopover
+          open={openAlumni}
+          setOpen={setOpenAlumni}
+          title="Alumni Sp-1 FK"
+          options={alumniOptions}
+          filterKey="alumni"
+          placeholder="Cari universitas..."
+        />
+
+        <FilterPopover
           open={openGelarFISR}
           setOpen={setOpenGelarFISR}
           title="Gelar FISR"
@@ -276,7 +307,7 @@ export function MemberFiltersComponent({
       />
 
       {/* Active Filter Tags */}
-      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length) && (
+      {(filters.provinsi_kantor?.length || filters.pd?.length || filters.kota_kabupaten_kantor?.length || filters.hospitalType?.length || filters.namaRS || filters.npa || filters.subspesialis?.length || filters.gelar_fisr?.length || filters.alumni?.length) && (
         <div className="flex flex-wrap gap-2">
           {filters.provinsi_kantor?.map((province) => (
             <Badge 
@@ -350,6 +381,17 @@ export function MemberFiltersComponent({
               onClick={() => handleFilterChange("subspesialis", subspecialty)}
             >
               {subspecialty}
+              <X className="h-3 w-3 ml-1" />
+            </Badge>
+          ))}
+          {filters.alumni?.map((alumni) => (
+            <Badge 
+              key={alumni} 
+              variant="secondary" 
+              className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+              onClick={() => handleFilterChange("alumni", alumni)}
+            >
+              Alumni: {alumni}
               <X className="h-3 w-3 ml-1" />
             </Badge>
           ))}

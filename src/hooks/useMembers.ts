@@ -16,6 +16,7 @@ interface UseMembersOptions {
   kota_kabupaten_kantor?: string[]
   status?: string
   gelar_fisr?: string
+  alumni?: string
   sort?: string
   limit?: number
   page?: number
@@ -54,6 +55,7 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         provinsi_kantor: options.provinsi_kantor?.join(','),
         kota_kabupaten_kantor: options.kota_kabupaten_kantor?.join(','),
         gelar_fisr: options.gelar_fisr,
+        alumni: options.alumni,
         scope: options.scope || 'public'
       })
       

@@ -24,6 +24,7 @@ interface GetMembersParams {
   kota_kabupaten_kantor?: string
   status?: string
   gelar_fisr?: string
+  alumni?: string
   sort?: string
   limit?: number
   page?: number
@@ -47,6 +48,7 @@ export class AnggotaAPI {
         kota_kabupaten_kantor,
         status,
         gelar_fisr,
+        alumni,
         sort = 'nama_asc', 
         limit = 25, 
         page = 1, 
@@ -177,6 +179,17 @@ export class AnggotaAPI {
         }
       }
 
+      // Apply Alumni filter
+      if (alumni) {
+        const alumniValues = alumni.split(',').map(a => a.trim()).filter(a => a)
+        if (alumniValues.length > 0) {
+          const alumniConditions = alumniValues.map(alum => 
+            `alumni.eq.${alum}`
+          ).join(',')
+          query = query.or(alumniConditions)
+        }
+      }
+
       // Apply sorting
       const [sortField, sortDirection] = sort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
@@ -301,6 +314,17 @@ export class AnggotaAPI {
             `gelar_fisr.eq.${fisr}`
           ).join(',')
           countQuery = countQuery.or(fisrConditions)
+        }
+      }
+
+      // Apply Alumni filter for count query too
+      if (alumni) {
+        const alumniValues = alumni.split(',').map(a => a.trim()).filter(a => a)
+        if (alumniValues.length > 0) {
+          const alumniConditions = alumniValues.map(alum => 
+            `alumni.eq.${alum}`
+          ).join(',')
+          countQuery = countQuery.or(alumniConditions)
         }
       }
 

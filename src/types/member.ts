@@ -91,6 +91,7 @@ export interface MemberFilters {
   provinsi_kantor?: string[]
   kota_kabupaten_kantor?: string[]
   gelar_fisr?: string[]
+  alumni?: string[]
 }
 
 export interface MemberSort {
