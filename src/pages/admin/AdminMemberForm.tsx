@@ -156,9 +156,9 @@ export default function AdminMemberForm() {
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
-  // Field protections based on role
-  const isNPADisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
-  const isStatusDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  // Field protections based on role - admin_cabang cannot edit NPA and Status when editing
+  const isNPADisabled = isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin);
+  const isStatusDisabled = isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin);
   const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
 
   useEffect(() => {
@@ -388,12 +388,14 @@ export default function AdminMemberForm() {
     try {
       console.log('Submitting form data:', formData);
       
-      const memberData = {
+      const memberData: any = {
         nama: formData.nama,
         gelar: formData.gelar || null,
         gelar2: formData.gelar2 || null,
         gelar_fisr: formData.gelar_fisr || null,
         npa: formData.npa || null,
+        status: formData.status || 'Biasa',
+        cabang: formData.pd || null,
         alumni: formData.alumni || null,
         subspesialis: formData.subspesialis || null,
         // Map form fields to database fields
@@ -410,8 +412,6 @@ export default function AdminMemberForm() {
         no_hp: formData.kontakTelepon || null,
         email: formData.kontakEmail || null,
         foto: formData.foto || null,
-        status: formData.status || 'Biasa',
-        cabang: formData.pd || null,
         tempat_praktek_1: formData.tempatPraktek1 || null,
         tempat_praktek_1_tipe: formData.tempatPraktek1Tipe || null,
         tempat_praktek_1_tipe_2: formData.tempatPraktek1Tipe2 || null,
@@ -429,23 +429,19 @@ export default function AdminMemberForm() {
         tempat_praktek_3_alkes_2: formData.tempatPraktek3Alkes2 || null,
         keterangan: null // Can be added later if needed
       }
+      
+      // Remove NPA, Status, and Cabang from update payload if admin_cabang is editing
+      if (isEditing && (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) && !isPusatAdmin) {
+        delete memberData.npa;
+        delete memberData.status;
+        // Keep cabang for validation but will be forced later
+      }
 
       console.log('Mapped member data:', memberData);
       
       if (isEditing && id) {
         // Validate branch admin can only edit their branch
         if (isCabangMalukuAdmin || isCabangKaltengAdmin) {
-          // Prevent changing NPA and Cabang
-          if (formData.npa !== memberData.npa || formData.pd !== originalMemberBranch) {
-            toast({
-              title: 'Validasi Error',
-              description: 'Admin Cabang tidak dapat mengubah NPA dan Cabang.',
-              variant: 'destructive',
-            });
-            setLoading(false);
-            return;
-          }
-          
           // Ensure member belongs to correct branch
           if (originalMemberBranch !== userBranch) {
             toast({
@@ -457,7 +453,7 @@ export default function AdminMemberForm() {
             return;
           }
           
-          // Force cabang to stay the same
+          // Force cabang to stay the same (don't change NPA, Status, Cabang)
           memberData.cabang = originalMemberBranch;
         }
         
