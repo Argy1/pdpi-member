@@ -743,6 +743,7 @@ export default function AdminMemberForm() {
                           <SelectItem value="UNS">UNS</SelectItem>
                           <SelectItem value="UNSOED">UNSOED</SelectItem>
                           <SelectItem value="UGM">UGM</SelectItem>
+                          <SelectItem value="UDAYANA">UDAYANA</SelectItem>
                           <SelectItem value="UA">UA</SelectItem>
                           <SelectItem value="UNUSA">UNUSA</SelectItem>
                           <SelectItem value="UB">UB</SelectItem>
