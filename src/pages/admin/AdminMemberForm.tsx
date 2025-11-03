@@ -138,7 +138,7 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
-  const { isPusatAdmin, isCabangAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, user } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, user } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -157,9 +157,9 @@ export default function AdminMemberForm() {
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
   // Field protections based on role - admin_cabang cannot edit NPA and Status at all
-  const isNPAHidden = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
-  const isStatusHidden = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
-  const isCabangDisabled = isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin;
+  const isNPAHidden = isCabangAdmin;
+  const isStatusHidden = isCabangAdmin;
+  const isCabangDisabled = isCabangAdmin;
   
   // Admin cabang cannot add new members - redirect if they try
   useEffect(() => {
@@ -210,17 +210,6 @@ export default function AdminMemberForm() {
           
           // Store original branch for validation
           setOriginalMemberBranch(existingMember.cabang || '');
-          
-          // Check if branch admin is trying to edit member from different branch
-          if ((isCabangMalukuAdmin || isCabangKaltengAdmin) && existingMember.cabang !== userBranch) {
-            toast({
-              title: 'Akses Ditolak',
-              description: `Anda hanya dapat mengedit anggota dari ${userBranch}.`,
-              variant: 'destructive',
-            });
-            navigate('/admin/anggota');
-            return;
-          }
           
           const memberFormData = {
             nama: existingMember.nama || '',
@@ -447,7 +436,7 @@ export default function AdminMemberForm() {
         memberData.npa = formData.npa || null;
         memberData.status = formData.status || 'Biasa';
         memberData.cabang = formData.pd || null;
-      } else if (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) {
+      } else if (isCabangAdmin) {
         // Admin cabang: don't allow NPA/status changes, preserve cabang
         // Cabang will be preserved from original data during edit
       }
