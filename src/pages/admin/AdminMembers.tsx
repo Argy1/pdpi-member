@@ -82,7 +82,7 @@ export default function AdminMembers() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
-  const { isPusatAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, profile } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, profile } = useAuth();
   const { toast } = useToast();
 
   // Use the new hook for fetching data
@@ -96,7 +96,7 @@ export default function AdminMembers() {
   } = useMembers({
     query: filters.query,
     provinsi_kantor: filters.provinsi_kantor,
-    pd: (isCabangMalukuAdmin || isCabangKaltengAdmin) ? userBranch || undefined : filters.pd?.join(','),
+    pd: filters.pd?.join(','),
     subspesialis: filters.subspesialis?.join(','),
     namaHurufDepan: filters.namaHurufDepan,
     hospitalType: filters.hospitalType,
@@ -264,18 +264,22 @@ export default function AdminMembers() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button asChild>
-            <Link to="/admin/anggota/new">
-              <UserPlus className="mr-2 h-4 w-4" />
-              Tambah Anggota
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/admin/import">
-              <Upload className="mr-2 h-4 w-4" />
-              Import Excel
-            </Link>
-          </Button>
+          {isPusatAdmin && (
+            <>
+              <Button asChild>
+                <Link to="/admin/anggota/new">
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Tambah Anggota
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/admin/import">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import Excel
+                </Link>
+              </Button>
+            </>
+          )}
           <div className="flex flex-col gap-2">
             <Button 
               variant="outline" 
@@ -286,36 +290,38 @@ export default function AdminMembers() {
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh Data
             </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Trash2 className="h-3 w-3" />
-                  Hapus Semua Data
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Konfirmasi Hapus Semua Data</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Apakah Anda yakin ingin menghapus SEMUA data anggota beserta biodatanya? 
-                    Tindakan ini tidak dapat dibatalkan dan akan menghapus seluruh database anggota.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAllMembers}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            {isPusatAdmin && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    size="sm"
+                    className="flex items-center gap-2"
                   >
-                    Ya, Hapus Semua
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    <Trash2 className="h-3 w-3" />
+                    Hapus Semua Data
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Konfirmasi Hapus Semua Data</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Apakah Anda yakin ingin menghapus SEMUA data anggota beserta biodatanya? 
+                      Tindakan ini tidak dapat dibatalkan dan akan menghapus seluruh database anggota.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAllMembers}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Ya, Hapus Semua
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </div>
       </div>
@@ -509,33 +515,37 @@ export default function AdminMembers() {
                                 Edit
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Hapus
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Apakah Anda yakin ingin menghapus data anggota "{member.nama}"? 
-                                    Tindakan ini tidak dapat dibatalkan.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteMember(member.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Hapus
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                            {isPusatAdmin && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                      <Trash2 className="mr-2 h-4 w-4" />
+                                      Hapus
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Konfirmasi Hapus</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Apakah Anda yakin ingin menghapus data anggota "{member.nama}"? 
+                                        Tindakan ini tidak dapat dibatalkan.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Batal</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteMember(member.id)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Hapus
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

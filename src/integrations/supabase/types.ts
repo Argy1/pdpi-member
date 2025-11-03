@@ -344,19 +344,19 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: Database["public"]["Enums"]["app_role"] | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["app_role"] | null
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["app_role"] | null
           user_id?: string
         }
         Relationships: []
@@ -532,7 +532,7 @@ export type Database = {
     Enums: {
       app_role:
         | "admin_pusat"
-        | "admin_cabang_aceh"
+        | "admin_cabang"
         | "user"
         | "admin_cabang_sumut"
         | "admin_cabang_sumbar"
@@ -692,7 +692,7 @@ export const Constants = {
     Enums: {
       app_role: [
         "admin_pusat",
-        "admin_cabang_aceh",
+        "admin_cabang",
         "user",
         "admin_cabang_sumut",
         "admin_cabang_sumbar",

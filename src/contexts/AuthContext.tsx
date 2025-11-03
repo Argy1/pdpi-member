@@ -20,9 +20,6 @@ interface AuthContextType {
   isAdmin: boolean;
   isPusatAdmin: boolean;
   isCabangAdmin: boolean;
-  isCabangMalukuAdmin: boolean;
-  isCabangKaltengAdmin: boolean;
-  userBranch: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -108,18 +105,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return profile ? roles.includes(profile.role) : false;
   };
 
-  const isAdmin = hasRole(['admin', 'admin_pusat', 'admin_cabang', 'admin_cabang_maluku', 'admin_cabang_kalteng', 'ADMIN_PUSAT', 'ADMIN_CABANG']);
+  const isAdmin = hasRole(['admin', 'admin_pusat', 'admin_cabang', 'ADMIN_PUSAT', 'ADMIN_CABANG']);
   const isPusatAdmin = hasRole(['admin_pusat', 'ADMIN_PUSAT']);
-  const isCabangAdmin = hasRole(['admin_cabang', 'ADMIN_CABANG', 'admin_cabang_maluku', 'admin_cabang_kalteng']);
-  const isCabangMalukuAdmin = hasRole(['admin_cabang_maluku']);
-  const isCabangKaltengAdmin = hasRole(['admin_cabang_kalteng']);
-  
-  // Get user's branch from profile (this would need to be fetched along with profile)
-  const userBranch = isCabangMalukuAdmin 
-    ? 'Cabang Maluku Selatan dan Utara' 
-    : isCabangKaltengAdmin
-    ? 'Cabang Kalimantan Tengah'
-    : null;
+  const isCabangAdmin = hasRole(['admin_cabang', 'ADMIN_CABANG']);
 
   const value = {
     user,
@@ -131,9 +119,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin,
     isPusatAdmin,
     isCabangAdmin,
-    isCabangMalukuAdmin,
-    isCabangKaltengAdmin,
-    userBranch,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
