@@ -82,7 +82,17 @@ export default function AdminMembers() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
-  const { isPusatAdmin, isCabangAdmin, profile } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, profile, loading: authLoading } = useAuth();
+  
+  // Debug logging to check role
+  useEffect(() => {
+    console.log('Auth State:', { 
+      isPusatAdmin, 
+      isCabangAdmin, 
+      profileRole: profile?.role,
+      authLoading 
+    });
+  }, [isPusatAdmin, isCabangAdmin, profile, authLoading]);
   const { toast } = useToast();
 
   // Use the new hook for fetching data
@@ -264,7 +274,7 @@ export default function AdminMembers() {
           </p>
         </div>
         <div className="flex gap-2">
-          {isPusatAdmin && (
+          {!isCabangAdmin && (
             <>
               <Button asChild>
                 <Link to="/admin/anggota/new">
@@ -290,7 +300,7 @@ export default function AdminMembers() {
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh Data
             </Button>
-            {isPusatAdmin && (
+            {!isCabangAdmin && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button 
@@ -515,7 +525,7 @@ export default function AdminMembers() {
                                 Edit
                               </Link>
                             </DropdownMenuItem>
-                            {isPusatAdmin && (
+                            {!isCabangAdmin && (
                               <>
                                 <DropdownMenuSeparator />
                                 <AlertDialog>

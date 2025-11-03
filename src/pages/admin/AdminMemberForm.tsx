@@ -138,7 +138,7 @@ export default function AdminMemberForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { members, addMember, updateMember } = useMemberContext();
-  const { isPusatAdmin, isCabangAdmin, user } = useAuth();
+  const { isPusatAdmin, isCabangAdmin, user, profile } = useAuth();
   const [formData, setFormData] = useState<MemberFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string>('');
@@ -156,10 +156,23 @@ export default function AdminMemberForm() {
   const isEditing = Boolean(id && id !== 'new');
   const pageTitle = isEditing ? 'Edit Anggota' : 'Tambah Anggota Baru';
   
+  // Debug logging for role checks
+  useEffect(() => {
+    console.log('AdminMemberForm - Auth State:', {
+      isPusatAdmin,
+      isCabangAdmin,
+      profileRole: profile?.role,
+      isEditing,
+      memberId: id
+    });
+  }, [isPusatAdmin, isCabangAdmin, profile, isEditing, id]);
+  
   // Field protections based on role - admin_cabang cannot edit NPA and Status at all
   const isNPAHidden = isCabangAdmin;
   const isStatusHidden = isCabangAdmin;
   const isCabangDisabled = isCabangAdmin;
+  
+  console.log('Field visibility:', { isNPAHidden, isStatusHidden, isCabangDisabled });
   
   // Admin cabang cannot add new members - redirect if they try
   useEffect(() => {
@@ -211,6 +224,13 @@ export default function AdminMemberForm() {
           // Store original branch for validation
           setOriginalMemberBranch(existingMember.cabang || '');
           
+          // Debug log the loaded member data
+          console.log('Loaded existing member:', {
+            jenis_kelamin: existingMember.jenis_kelamin,
+            npa: existingMember.npa,
+            status: existingMember.status
+          });
+          
           const memberFormData = {
             nama: existingMember.nama || '',
             gelar: existingMember.gelar || '',
@@ -220,6 +240,7 @@ export default function AdminMemberForm() {
             subspesialis: existingMember.subspesialis || '',
             tempatLahir: existingMember.tempat_lahir || '',
             tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : undefined,
+            // Ensure jenis_kelamin is stored as 'L' or 'P' in database
             jenisKelamin: existingMember.jenis_kelamin || '',
             foto: existingMember.foto || '',
             alumni: existingMember.alumni || '',
@@ -436,20 +457,27 @@ export default function AdminMemberForm() {
         memberData.status = formData.status || 'Biasa';
         memberData.cabang = formData.pd || null;
       }
+      
       // Admin cabang: don't send NPA/status in the update payload
       // Preserve original cabang during edit
+      if (isCabangAdmin && isEditing && id) {
+        // Force cabang to stay the same - preserve original branch
+        memberData.cabang = originalMemberBranch;
+        // Explicitly remove NPA and status from update payload for admin_cabang
+        delete memberData.npa;
+        delete memberData.status;
+      }
 
-      console.log('Mapped member data:', memberData);
+      console.log('Mapped member data before save:', {
+        ...memberData,
+        isPusatAdmin,
+        isCabangAdmin,
+        isEditing,
+        hasNPA: 'npa' in memberData,
+        hasStatus: 'status' in memberData
+      });
       
       if (isEditing && id) {
-        // For non-pusat admin: preserve original cabang, don't allow changes
-        if (!isPusatAdmin) {
-          // Force cabang to stay the same - preserve original branch
-          memberData.cabang = originalMemberBranch;
-          // Explicitly remove NPA and status from update payload for admin_cabang
-          delete memberData.npa;
-          delete memberData.status;
-        }
         
         // All admins (Pusat and Cabang) can directly update members
         // Admin Cabang has NPA and Status excluded from memberData
