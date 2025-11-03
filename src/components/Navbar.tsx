@@ -22,7 +22,7 @@ import {
 import { useState } from "react"
 
 export function Navbar() {
-  const { user, profile, signOut, isAdmin, isCabangMalukuAdmin, isCabangKaltengAdmin } = useAuth()
+  const { user, profile, signOut, isAdmin } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (

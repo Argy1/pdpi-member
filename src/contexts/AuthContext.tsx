@@ -20,9 +20,6 @@ interface AuthContextType {
   isAdmin: boolean;
   isPusatAdmin: boolean;
   isCabangAdmin: boolean;
-  isCabangMalukuAdmin: boolean;
-  isCabangKaltengAdmin: boolean;
-  userBranch: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -111,11 +108,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = hasRole(['admin', 'admin_pusat', 'admin_cabang', 'ADMIN_PUSAT', 'ADMIN_CABANG']);
   const isPusatAdmin = hasRole(['admin_pusat', 'ADMIN_PUSAT']);
   const isCabangAdmin = hasRole(['admin_cabang', 'ADMIN_CABANG']);
-  
-  // No specific branch admin roles anymore
-  const isCabangMalukuAdmin = false;
-  const isCabangKaltengAdmin = false;
-  const userBranch = null;
 
   const value = {
     user,
@@ -127,9 +119,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin,
     isPusatAdmin,
     isCabangAdmin,
-    isCabangMalukuAdmin,
-    isCabangKaltengAdmin,
-    userBranch,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

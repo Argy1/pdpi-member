@@ -220,8 +220,7 @@ export default function AdminMemberForm() {
             subspesialis: existingMember.subspesialis || '',
             tempatLahir: existingMember.tempat_lahir || '',
             tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : undefined,
-            jenisKelamin: existingMember.jenis_kelamin === 'L' ? 'Laki-laki' : 
-                         existingMember.jenis_kelamin === 'P' ? 'Perempuan' : '',
+            jenisKelamin: existingMember.jenis_kelamin || '',
             foto: existingMember.foto || '',
             alumni: existingMember.alumni || '',
             alamat: existingMember.alamat_rumah || '',
@@ -400,7 +399,7 @@ export default function AdminMemberForm() {
       // Map form fields to database fields
         tempat_lahir: formData.tempatLahir || null,
         tgl_lahir: formData.tanggalLahir || null,
-        jenis_kelamin: formData.jenisKelamin && formData.jenisKelamin !== '' ? formData.jenisKelamin : null,
+        jenis_kelamin: formData.jenisKelamin || null,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus) : null,
         kota_kabupaten: formData.kotaRumah || null,
         provinsi: formData.provinsiRumah || null,
