@@ -49,13 +49,17 @@ export class AnggotaAPI {
         status,
         gelar_fisr,
         alumni,
-        sort = 'nama_asc', 
+        sort, 
         limit = 25, 
         page = 1, 
         scope = 'public'
       } = params
 
       const isAdmin = scope === 'admin'
+      
+      // Set default sort based on scope - public uses NPA, admin uses nama
+      const defaultSort = isAdmin ? 'nama_asc' : 'npa_numeric_asc'
+      const finalSort = sort || defaultSort
 
       // Define field selection based on scope - only include existing columns
       const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_1_tipe_2, tempat_praktek_1_alkes, tempat_praktek_1_alkes_2, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_2_tipe_2, tempat_praktek_2_alkes, tempat_praktek_2_alkes_2, tempat_praktek_3, tempat_praktek_3_tipe, tempat_praktek_3_tipe_2, tempat_praktek_3_alkes, tempat_praktek_3_alkes_2, email, foto, jenis_kelamin'
@@ -191,7 +195,7 @@ export class AnggotaAPI {
       }
 
       // Apply sorting
-      const [sortField, sortDirection] = sort.split('_')
+      const [sortField, sortDirection] = finalSort.split('_')
       const dbSortField = sortField === 'nama' ? 'nama' : 
                          sortField === 'kota' ? 'kota_kabupaten' : 
                          sortField === 'provinsi' ? 'provinsi' :

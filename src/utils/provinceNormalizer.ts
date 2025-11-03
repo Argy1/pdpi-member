@@ -8,11 +8,12 @@ const PROVINCE_ALIASES: Record<string, string> = {
   'jakarta raya': 'DKI Jakarta',
   
   // Yogyakarta variants
-  'yogyakarta': 'DI Yogyakarta',
-  'diy': 'DI Yogyakarta',
-  'di yogyakarta': 'DI Yogyakarta',
-  'jogja': 'DI Yogyakarta',
-  'jogjakarta': 'DI Yogyakarta',
+  'yogyakarta': 'Yogyakarta',
+  'diy': 'Yogyakarta',
+  'di yogyakarta': 'Yogyakarta',
+  'daerah istimewa yogyakarta': 'Yogyakarta',
+  'jogja': 'Yogyakarta',
+  'jogjakarta': 'Yogyakarta',
   
   // Kepulauan Riau
   'kepri': 'Kepulauan Riau',

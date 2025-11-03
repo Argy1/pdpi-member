@@ -37,6 +37,7 @@ export default function AnggotaPage() {
     }
   })
 
+  // Default sort based on auth state - will be updated in useEffect
   const [sort, setSort] = useState<MemberSort>({
     field: "nama",
     direction: "asc"
@@ -51,7 +52,17 @@ export default function AnggotaPage() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      setIsAuthenticated(!!user)
+      const authenticated = !!user
+      setIsAuthenticated(authenticated)
+      
+      // Set default sort based on authentication status
+      if (!authenticated) {
+        // Public users default to NPA sort
+        setSort({
+          field: "npa",
+          direction: "asc"
+        })
+      }
     }
     checkAuth()
 
