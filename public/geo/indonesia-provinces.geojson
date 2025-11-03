@@ -107,7 +107,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "DI Yogyakarta" },
+      "properties": { "name": "Yogyakarta" },
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[110.0, -7.5], [110.8, -7.5], [110.8, -8.2], [110.0, -8.2], [110.0, -7.5]]]
