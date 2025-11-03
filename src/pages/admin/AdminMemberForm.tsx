@@ -354,7 +354,8 @@ export default function AdminMemberForm() {
       return;
     }
     
-    if (!formData.npa.trim()) {
+    // NPA only required for Pusat Admin (hidden for Cabang Admin)
+    if (isPusatAdmin && !formData.npa.trim()) {
       toast({
         title: 'Validasi Error',
         description: 'NPA (Nomor Peserta Anggota) wajib diisi.',
@@ -446,57 +447,22 @@ export default function AdminMemberForm() {
         memberData.npa = formData.npa || null;
         memberData.status = formData.status || 'Biasa';
         memberData.cabang = formData.pd || null;
-      } else if (isCabangMalukuAdmin || isCabangKaltengAdmin) {
-        // Admin cabang specific: force their branch, don't allow NPA/status changes
-        memberData.cabang = userBranch;
+      } else if (isCabangAdmin || isCabangMalukuAdmin || isCabangKaltengAdmin) {
+        // Admin cabang: don't allow NPA/status changes, preserve cabang
+        // Cabang will be preserved from original data during edit
       }
 
       console.log('Mapped member data:', memberData);
       
       if (isEditing && id) {
-        // Validate branch admin can only edit their branch
-        if (isCabangMalukuAdmin || isCabangKaltengAdmin) {
-          // Ensure member belongs to correct branch
-          if (originalMemberBranch !== userBranch) {
-            toast({
-              title: 'Akses Ditolak',
-              description: `Anda hanya dapat mengedit anggota dari ${userBranch}.`,
-              variant: 'destructive',
-            });
-            setLoading(false);
-            return;
-          }
-          
-          // Force cabang to stay the same (don't change NPA, Status, Cabang)
+        // For non-pusat admin: preserve original cabang, don't allow changes
+        if (!isPusatAdmin) {
+          // Force cabang to stay the same - preserve original branch
           memberData.cabang = originalMemberBranch;
         }
         
-        // Admin Cabang (non-Maluku/Kalteng): Create change request instead of direct update
-        if (isCabangAdmin && !isPusatAdmin && !isCabangMalukuAdmin && !isCabangKaltengAdmin) {
-          const { error } = await supabase
-            .from('member_change_requests')
-            .insert({
-              member_id: id,
-              requested_by: user?.id,
-              changes: memberData,
-              status: 'pending',
-            });
-
-          if (error) {
-            console.error('Supabase change request error:', error);
-            throw new Error(`Database error: ${error.message}`);
-          }
-
-          toast({
-            title: 'Usulan Perubahan Dikirim',
-            description: 'Perubahan data akan diterapkan setelah disetujui Super Admin.',
-          });
-          
-          navigate(`/admin/anggota?page=${returnPage}&limit=${returnLimit}`);
-          return;
-        }
-
-        // Super Admin or Admin Cabang Maluku/Kalteng: Direct update
+        // All admins (Pusat and Cabang) can directly update members
+        // Admin Cabang has NPA and Status excluded from memberData already
         const { error } = await supabase
           .from('members')
           .update(memberData)
