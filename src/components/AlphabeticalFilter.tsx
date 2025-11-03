@@ -39,7 +39,14 @@ export function AlphabeticalFilter({
               variant="outline" 
               className="justify-between focus-visible bg-background border-input hover:bg-accent hover:text-accent-foreground"
             >
-              <span>Filter Huruf Nama</span>
+              <div className="flex items-center space-x-2">
+                <span>Filter Huruf Nama</span>
+                {selectedLetters.length > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {selectedLetters.length}
+                  </Badge>
+                )}
+              </div>
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>

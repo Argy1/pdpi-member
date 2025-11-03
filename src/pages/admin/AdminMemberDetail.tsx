@@ -14,7 +14,7 @@ import { FacilityViewDialog } from '@/components/admin/FacilityViewDialog';
 export default function AdminMemberDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isPusatAdmin, isCabangAdmin } = useAuth();
+  const { isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch } = useAuth();
   const { toast } = useToast();
   const [member, setMember] = useState<Member | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,17 @@ export default function AdminMemberDetail() {
           throw new Error('Member not found');
         }
         
-        // All admins can view any member now
+        // Check if branch admin is trying to view member from different branch
+        if ((isCabangMalukuAdmin || isCabangKaltengAdmin) && data.cabang !== userBranch) {
+          toast({
+            title: 'Akses Ditolak',
+            description: `Anda hanya dapat melihat detail anggota dari ${userBranch}.`,
+            variant: 'destructive',
+          });
+          navigate('/admin/anggota');
+          return;
+        }
+        
         setMember(data as Member);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch member');
@@ -64,7 +74,7 @@ export default function AdminMemberDetail() {
     };
 
     fetchMember();
-  }, [id, navigate, toast]);
+  }, [id, isCabangMalukuAdmin, isCabangKaltengAdmin, userBranch, navigate, toast]);
 
   if (loading) {
     return (
