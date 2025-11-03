@@ -397,10 +397,10 @@ export default function AdminMemberForm() {
         gelar_fisr: formData.gelar_fisr || null,
         alumni: formData.alumni || null,
         subspesialis: formData.subspesialis || null,
-        // Map form fields to database fields
+      // Map form fields to database fields
         tempat_lahir: formData.tempatLahir || null,
         tgl_lahir: formData.tanggalLahir || null,
-        jenis_kelamin: formData.jenisKelamin || null,
+        jenis_kelamin: formData.jenisKelamin && formData.jenisKelamin !== '' ? formData.jenisKelamin : null,
         thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus) : null,
         kota_kabupaten: formData.kotaRumah || null,
         provinsi: formData.provinsiRumah || null,
@@ -436,10 +436,9 @@ export default function AdminMemberForm() {
         memberData.npa = formData.npa || null;
         memberData.status = formData.status || 'Biasa';
         memberData.cabang = formData.pd || null;
-      } else if (isCabangAdmin) {
-        // Admin cabang: don't allow NPA/status changes, preserve cabang
-        // Cabang will be preserved from original data during edit
       }
+      // Admin cabang: don't send NPA/status in the update payload
+      // Preserve original cabang during edit
 
       console.log('Mapped member data:', memberData);
       
@@ -448,10 +447,13 @@ export default function AdminMemberForm() {
         if (!isPusatAdmin) {
           // Force cabang to stay the same - preserve original branch
           memberData.cabang = originalMemberBranch;
+          // Explicitly remove NPA and status from update payload for admin_cabang
+          delete memberData.npa;
+          delete memberData.status;
         }
         
         // All admins (Pusat and Cabang) can directly update members
-        // Admin Cabang has NPA and Status excluded from memberData already
+        // Admin Cabang has NPA and Status excluded from memberData
         const { error } = await supabase
           .from('members')
           .update(memberData)
@@ -826,8 +828,8 @@ export default function AdminMemberForm() {
                           <SelectValue placeholder="Pilih jenis kelamin" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Laki-laki">Laki-laki</SelectItem>
-                          <SelectItem value="Perempuan">Perempuan</SelectItem>
+                          <SelectItem value="L">Laki-laki</SelectItem>
+                          <SelectItem value="P">Perempuan</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
