@@ -5,23 +5,49 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-
-import { Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import logoImage from "@/assets/logo-pdpi.png"
+import { z } from "zod"
+
+// Validation schema
+const registerSchema = z.object({
+  name: z.string().min(3, "Nama minimal 3 karakter").max(100, "Nama maksimal 100 karakter"),
+  email: z.string().email("Email tidak valid").max(255, "Email maksimal 255 karakter"),
+  password: z.string().min(6, "Password minimal 6 karakter").max(100, "Password maksimal 100 karakter"),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Password tidak cocok",
+  path: ["confirmPassword"]
+})
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { isAdmin, user } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const [activeTab, setActiveTab] = useState("login")
+  const [verificationStep, setVerificationStep] = useState<"form" | "verify">("form")
+  const [verificationCode, setVerificationCode] = useState("")
+  const [registeredEmail, setRegisteredEmail] = useState("")
+  
   const [formData, setFormData] = useState({
     email: "",
     password: ""
+  })
+
+  const [registerData, setRegisterData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
   })
 
   // Redirect after successful login
@@ -66,15 +92,128 @@ export default function LoginPage() {
     }
   }
 
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setSuccess("")
+    setIsLoading(true)
+
+    try {
+      // Validate form data
+      registerSchema.parse(registerData)
+
+      // Sign up with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: registerData.email,
+        password: registerData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            name: registerData.name
+          }
+        }
+      })
+
+      if (error) {
+        if (error.message.includes("User already registered")) {
+          setError("Email sudah terdaftar. Silakan gunakan email lain atau login.")
+        } else {
+          setError(error.message)
+        }
+      } else if (data.user) {
+        setRegisteredEmail(registerData.email)
+        setVerificationStep("verify")
+        setSuccess("Kode verifikasi 6 digit telah dikirim ke email Anda. Silakan cek inbox atau folder spam.")
+        toast({
+          title: "Email verifikasi terkirim",
+          description: "Silakan cek email Anda dan masukkan kode verifikasi 6 digit.",
+        })
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        setError(err.errors[0].message)
+      } else {
+        setError("Terjadi kesalahan yang tidak terduga")
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email: registeredEmail,
+        token: verificationCode,
+        type: 'signup'
+      })
+
+      if (error) {
+        setError("Kode verifikasi tidak valid atau sudah kadaluarsa")
+      } else {
+        toast({
+          title: "Email berhasil diverifikasi",
+          description: "Akun Anda telah aktif. Silakan login.",
+        })
+        setActiveTab("login")
+        setVerificationStep("form")
+        setRegisterData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: ""
+        })
+        setVerificationCode("")
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan saat verifikasi")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendCode = async () => {
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: registeredEmail,
+      })
+
+      if (error) {
+        setError("Gagal mengirim ulang kode verifikasi")
+      } else {
+        toast({
+          title: "Kode verifikasi terkirim ulang",
+          description: "Silakan cek email Anda.",
+        })
+      }
+    } catch (err) {
+      setError("Terjadi kesalahan saat mengirim ulang kode")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleRegisterInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setRegisterData(prev => ({ ...prev, [name]: value }))
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle bg-grid">
-      <div className="container-pdpi">
+      <div className="container-pdpi py-8">
         <div className="flex justify-center">
           <Card className="w-full max-w-md card-glass">
             <CardHeader className="text-center space-y-4">
@@ -89,86 +228,290 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-bold heading-medical">
-                  Login Admin
+                  Admin PDPI
                 </CardTitle>
                 <CardDescription className="text-medical-body">
-                  Masuk ke panel admin PDPI Directory
+                  Masuk atau daftar untuk mengakses panel admin
                 </CardDescription>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {error && (
-                <Alert className="border-warning/20 bg-warning/10">
-                  <AlertCircle className="h-4 w-4 text-warning" />
-                  <AlertDescription className="text-warning">
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              )}
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="register">Registrasi</TabsTrigger>
+                </TabsList>
 
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="admin@pdpi.org"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="focus-visible"
-                  />
-                </div>
+                <TabsContent value="login" className="space-y-4 mt-6">
+                  {error && activeTab === "login" && (
+                    <Alert className="border-warning/20 bg-warning/10">
+                      <AlertCircle className="h-4 w-4 text-warning" />
+                      <AlertDescription className="text-warning">
+                        {error}
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-medium">
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Masukkan password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      className="pr-10 focus-visible"
-                    />
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Email
+                      </Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="admin@pdpi.org"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="focus-visible"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-sm font-medium">
+                        Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Masukkan password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          required
+                          className="pr-10 focus-visible"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
                     <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
+                      type="submit"
+                      className="w-full h-11 font-semibold focus-visible"
+                      disabled={isLoading}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
+                      {isLoading ? "Memproses..." : "Masuk"}
+                    </Button>
+                  </form>
+
+                  <div className="text-center">
+                    <Button variant="link" size="sm" className="text-muted-foreground">
+                      Lupa password?
                     </Button>
                   </div>
-                </div>
+                </TabsContent>
 
-                <Button
-                  type="submit"
-                  className="w-full h-11 font-semibold focus-visible"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Memproses..." : "Masuk"}
-                </Button>
-              </form>
+                <TabsContent value="register" className="space-y-4 mt-6">
+                  {verificationStep === "form" ? (
+                    <>
+                      {error && activeTab === "register" && (
+                        <Alert className="border-warning/20 bg-warning/10">
+                          <AlertCircle className="h-4 w-4 text-warning" />
+                          <AlertDescription className="text-warning">
+                            {error}
+                          </AlertDescription>
+                        </Alert>
+                      )}
 
-              <div className="text-center">
-                <Button variant="link" size="sm" className="text-muted-foreground">
-                  Lupa password?
-                </Button>
-              </div>
+                      <form onSubmit={handleRegister} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="register-name" className="text-sm font-medium">
+                            Nama Lengkap
+                          </Label>
+                          <Input
+                            id="register-name"
+                            name="name"
+                            type="text"
+                            placeholder="Dr. John Doe, Sp.P"
+                            value={registerData.name}
+                            onChange={handleRegisterInputChange}
+                            required
+                            className="focus-visible"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="register-email" className="text-sm font-medium">
+                            Email
+                          </Label>
+                          <Input
+                            id="register-email"
+                            name="email"
+                            type="email"
+                            placeholder="admin@pdpi.org"
+                            value={registerData.email}
+                            onChange={handleRegisterInputChange}
+                            required
+                            className="focus-visible"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="register-password" className="text-sm font-medium">
+                            Password
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="register-password"
+                              name="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Minimal 6 karakter"
+                              value={registerData.password}
+                              onChange={handleRegisterInputChange}
+                              required
+                              className="pr-10 focus-visible"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <Eye className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="register-confirm-password" className="text-sm font-medium">
+                            Konfirmasi Password
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="register-confirm-password"
+                              name="confirmPassword"
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="Ketik ulang password"
+                              value={registerData.confirmPassword}
+                              onChange={handleRegisterInputChange}
+                              required
+                              className="pr-10 focus-visible"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-transparent"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                              {showConfirmPassword ? (
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <Eye className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+
+                        <Button
+                          type="submit"
+                          className="w-full h-11 font-semibold focus-visible"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Memproses..." : "Daftar"}
+                        </Button>
+                      </form>
+                    </>
+                  ) : (
+                    <>
+                      {error && (
+                        <Alert className="border-warning/20 bg-warning/10">
+                          <AlertCircle className="h-4 w-4 text-warning" />
+                          <AlertDescription className="text-warning">
+                            {error}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      {success && (
+                        <Alert className="border-green-200 bg-green-50">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <AlertDescription className="text-green-800">
+                            {success}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      <form onSubmit={handleVerifyCode} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="verification-code" className="text-sm font-medium">
+                            Kode Verifikasi (6 digit)
+                          </Label>
+                          <Input
+                            id="verification-code"
+                            name="verificationCode"
+                            type="text"
+                            placeholder="000000"
+                            value={verificationCode}
+                            onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                            required
+                            maxLength={6}
+                            className="focus-visible text-center text-2xl tracking-widest font-mono"
+                          />
+                          <p className="text-xs text-muted-foreground text-center">
+                            Email dikirim ke: <strong>{registeredEmail}</strong>
+                          </p>
+                        </div>
+
+                        <Button
+                          type="submit"
+                          className="w-full h-11 font-semibold focus-visible"
+                          disabled={isLoading || verificationCode.length !== 6}
+                        >
+                          {isLoading ? "Memverifikasi..." : "Verifikasi Email"}
+                        </Button>
+
+                        <div className="text-center space-y-2">
+                          <Button
+                            type="button"
+                            variant="link"
+                            size="sm"
+                            onClick={handleResendCode}
+                            disabled={isLoading}
+                            className="text-muted-foreground"
+                          >
+                            Kirim ulang kode verifikasi
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setVerificationStep("form")
+                              setVerificationCode("")
+                              setError("")
+                              setSuccess("")
+                            }}
+                          >
+                            ← Kembali ke form registrasi
+                          </Button>
+                        </div>
+                      </form>
+                    </>
+                  )}
+                </TabsContent>
+              </Tabs>
 
               <div className="text-center">
                 <Button variant="ghost" size="sm" asChild>
