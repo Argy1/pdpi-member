@@ -23,8 +23,29 @@ export default function AnggotaPage() {
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([])
   const [availableBranches, setAvailableBranches] = useState<string[]>([])
   const [availableCities, setAvailableCities] = useState<string[]>([])
-  const [alumniOptions, setAlumniOptions] = useState<string[]>([])
   const [fisrOptions] = useState<string[]>(['Ya', 'Tidak'])
+  
+  // Hardcoded alumni options as specified
+  const alumniOptions = [
+    'UNSYIAH',
+    'USU',
+    'UNAND',
+    'UNRI',
+    'UNILA',
+    'UI',
+    'UIN',
+    'UNS',
+    'UNSOED',
+    'UGM',
+    'UA',
+    'UNUSA',
+    'UDAYANA',
+    'UB',
+    'UNRAM',
+    'ULM',
+    'UNMUL',
+    'UNHAS'
+  ]
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => {
@@ -79,21 +100,13 @@ export default function AnggotaPage() {
           AnggotaAPI.getAvailableCities()
         ])
         
-        // Fetch branches and alumni separately since we don't have a dedicated API method for it yet
-        const [branchData, alumniData] = await Promise.all([
-          supabase
-            .from('members')
-            .select('cabang')
-            .not('cabang', 'is', null),
-          supabase
-            .from('members')
-            .select('alumni')
-            .not('alumni', 'is', null)
-            .neq('alumni', '')
-        ])
+        // Fetch branches only
+        const { data: branchData } = await supabase
+          .from('members')
+          .select('cabang')
+          .not('cabang', 'is', null)
         
-        const branches = [...new Set(branchData.data?.map(m => m.cabang).filter(Boolean))] as string[]
-        const alumniList = [...new Set(alumniData.data?.map(m => m.alumni).filter(Boolean))] as string[]
+        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
         
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data)
@@ -104,7 +117,6 @@ export default function AnggotaPage() {
           setAvailableCities(citiesResult.data)
         }
         setAvailableBranches(branches.sort())
-        setAlumniOptions(alumniList.sort())
       } catch (error) {
         console.error('Error fetching filter data:', error)
       }

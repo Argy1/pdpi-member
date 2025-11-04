@@ -82,7 +82,28 @@ export default function AdminMembers() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
-  const [alumniOptions, setAlumniOptions] = useState<string[]>([]);
+  
+  // Hardcoded alumni options as specified
+  const alumniOptions = [
+    'UNSYIAH',
+    'USU',
+    'UNAND',
+    'UNRI',
+    'UNILA',
+    'UI',
+    'UIN',
+    'UNS',
+    'UNSOED',
+    'UGM',
+    'UA',
+    'UNUSA',
+    'UDAYANA',
+    'UB',
+    'UNRAM',
+    'ULM',
+    'UNMUL',
+    'UNHAS'
+  ];
   const { isPusatAdmin, isCabangAdmin, profile, loading: authLoading } = useAuth();
   
   // Debug logging to check role
@@ -136,26 +157,18 @@ export default function AdminMembers() {
           AnggotaAPI.getHospitalTypes()
         ])
         
-        const [branchData, alumniData] = await Promise.all([
-          supabase
-            .from('members')
-            .select('cabang')
-            .not('cabang', 'is', null),
-          supabase
-            .from('members')
-            .select('alumni')
-            .not('alumni', 'is', null)
-            .neq('alumni', '')
-        ]);
+        // Fetch branches only
+        const { data: branchData } = await supabase
+          .from('members')
+          .select('cabang')
+          .not('cabang', 'is', null)
 
-        const branches = [...new Set(branchData.data?.map(m => m.cabang).filter(Boolean))] as string[];
-        const alumniList = [...new Set(alumniData.data?.map(m => m.alumni).filter(Boolean))] as string[];
+        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
         
         // Use all provinces from centroids instead of just those with members
         setAvailableProvinces(allProvinces);
         setAvailableBranches(branches.sort());
         setAvailableCities(cityResult.data || []);
-        setAlumniOptions(alumniList.sort());
 
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data);
