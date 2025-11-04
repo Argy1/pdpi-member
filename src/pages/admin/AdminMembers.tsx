@@ -82,6 +82,7 @@ export default function AdminMembers() {
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
   const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
+  const [alumniOptions, setAlumniOptions] = useState<string[]>([]);
   const { isPusatAdmin, isCabangAdmin, profile, loading: authLoading } = useAuth();
   
   // Debug logging to check role
@@ -114,8 +115,8 @@ export default function AdminMembers() {
     npa: filters.npa,
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
     status: filters.status?.join(',') || selectedStatus || undefined,
-    gelar_fisr: filters.gelar_fisr?.join(','),
-    alumni: filters.alumni?.join(','),
+    gelar_fisr: filters.gelar_fisr,
+    alumni: filters.alumni,
     sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
     limit: itemsPerPage,
     page: currentPage,
@@ -135,17 +136,26 @@ export default function AdminMembers() {
           AnggotaAPI.getHospitalTypes()
         ])
         
-        const { data: branchData } = await supabase
-          .from('members')
-          .select('cabang')
-          .not('cabang', 'is', null);
+        const [branchData, alumniData] = await Promise.all([
+          supabase
+            .from('members')
+            .select('cabang')
+            .not('cabang', 'is', null),
+          supabase
+            .from('members')
+            .select('alumni')
+            .not('alumni', 'is', null)
+            .neq('alumni', '')
+        ]);
 
-        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[];
+        const branches = [...new Set(branchData.data?.map(m => m.cabang).filter(Boolean))] as string[];
+        const alumniList = [...new Set(alumniData.data?.map(m => m.alumni).filter(Boolean))] as string[];
         
         // Use all provinces from centroids instead of just those with members
         setAvailableProvinces(allProvinces);
         setAvailableBranches(branches.sort());
         setAvailableCities(cityResult.data || []);
+        setAlumniOptions(alumniList.sort());
 
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data);
@@ -399,6 +409,7 @@ export default function AdminMembers() {
               pds={availableBranches}
               cities={availableCities}
               hospitalTypes={hospitalTypes}
+              alumniOptions={alumniOptions}
             />
           </div>
         </CardContent>

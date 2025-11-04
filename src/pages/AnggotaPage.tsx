@@ -23,6 +23,8 @@ export default function AnggotaPage() {
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([])
   const [availableBranches, setAvailableBranches] = useState<string[]>([])
   const [availableCities, setAvailableCities] = useState<string[]>([])
+  const [alumniOptions, setAlumniOptions] = useState<string[]>([])
+  const [fisrOptions] = useState<string[]>(['Ya', 'Tidak'])
 
   // Initialize state from URL params
   const [filters, setFilters] = useState<MemberFilters>(() => {
@@ -77,13 +79,21 @@ export default function AnggotaPage() {
           AnggotaAPI.getAvailableCities()
         ])
         
-        // Fetch branches separately since we don't have a dedicated API method for it yet
-        const { data: branchData } = await supabase
-          .from('members')
-          .select('cabang')
-          .not('cabang', 'is', null)
+        // Fetch branches and alumni separately since we don't have a dedicated API method for it yet
+        const [branchData, alumniData] = await Promise.all([
+          supabase
+            .from('members')
+            .select('cabang')
+            .not('cabang', 'is', null),
+          supabase
+            .from('members')
+            .select('alumni')
+            .not('alumni', 'is', null)
+            .neq('alumni', '')
+        ])
         
-        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
+        const branches = [...new Set(branchData.data?.map(m => m.cabang).filter(Boolean))] as string[]
+        const alumniList = [...new Set(alumniData.data?.map(m => m.alumni).filter(Boolean))] as string[]
         
         if (hospitalTypesResult.data) {
           setHospitalTypes(hospitalTypesResult.data)
@@ -94,6 +104,7 @@ export default function AnggotaPage() {
           setAvailableCities(citiesResult.data)
         }
         setAvailableBranches(branches.sort())
+        setAlumniOptions(alumniList.sort())
       } catch (error) {
         console.error('Error fetching filter data:', error)
       }
@@ -125,6 +136,8 @@ export default function AnggotaPage() {
     namaRS: filters.namaRS,
     npa: filters.npa,
     kota_kabupaten_kantor: filters.kota_kabupaten_kantor,
+    alumni: filters.alumni,
+    gelar_fisr: filters.gelar_fisr,
     sort: `${sort.field}_${sort.direction}`,
     limit: pagination.limit,
     page: pagination.page,
@@ -140,6 +153,8 @@ export default function AnggotaPage() {
     if (filters.pd?.length) params.set("pd", filters.pd.join(","))
     if (filters.subspesialis?.length) params.set("subspesialis", filters.subspesialis.join(","))
     if (filters.hospitalType?.length) params.set("hospitalType", filters.hospitalType.join(","))
+    if (filters.alumni?.length) params.set("alumni", filters.alumni.join(","))
+    if (filters.gelar_fisr?.length) params.set("gelar_fisr", filters.gelar_fisr.join(","))
     if (pagination.page > 1) params.set("page", pagination.page.toString())
     if (pagination.limit !== 25) params.set("limit", pagination.limit.toString())
     if (sort.field !== "nama" || sort.direction !== "asc") {
@@ -256,6 +271,7 @@ export default function AnggotaPage() {
             pds={availableBranches}
             cities={availableCities}
             hospitalTypes={hospitalTypes}
+            alumniOptions={alumniOptions}
             isPublicView={!isAuthenticated}
           />
 

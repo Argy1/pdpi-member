@@ -15,8 +15,8 @@ interface UseMembersOptions {
   kota?: string[]
   kota_kabupaten_kantor?: string[]
   status?: string
-  gelar_fisr?: string
-  alumni?: string
+  gelar_fisr?: string[]
+  alumni?: string[]
   sort?: string
   limit?: number
   page?: number
@@ -54,8 +54,8 @@ export function useMembers(options: UseMembersOptions = {}): UseMembersResult {
         kota: options.kota?.join(','),
         provinsi_kantor: options.provinsi_kantor?.join(','),
         kota_kabupaten_kantor: options.kota_kabupaten_kantor?.join(','),
-        gelar_fisr: options.gelar_fisr,
-        alumni: options.alumni,
+        alumni: options.alumni?.join(','), // Pass alumni filter as comma-separated
+        gelar_fisr: options.gelar_fisr?.join(','), // Pass gelar_fisr filter as comma-separated
         scope: options.scope || 'public'
       })
       
