@@ -73,18 +73,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Fetch profile data
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        // If profile doesn't exist, that's okay - user might not have a profile yet
-        setProfile(null);
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      }
+
+      // Fetch user role from user_roles table
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (roleError) {
+        console.error('Error fetching role:', roleError);
+      }
+
+      // Combine profile and role data
+      if (profileData) {
+        setProfile({
+          ...profileData,
+          role: roleData?.role || profileData.role
+        });
       } else {
-        setProfile(data);
+        setProfile(null);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
