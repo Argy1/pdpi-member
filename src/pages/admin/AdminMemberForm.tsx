@@ -397,7 +397,7 @@ export default function AdminMemberForm() {
 
     // Validate sequential order: if Praktek 3 is filled, Praktek 2 must be filled
     if ((formData.tempatPraktek3 || formData.tempatPraktek3Tipe || formData.tempatPraktek3Alkes) &&
-        (!formData.tempatPraktek2 || !formData.tempatPraktek2Tipe || !formData.tempatPraktek2Alkes)) {
+        !formData.tempatPraktek2) {
       toast({
         title: 'Validasi Error',
         description: 'Jika mengisi Tempat Praktek 3, Tempat Praktek 2 harus diisi terlebih dahulu.',
@@ -408,7 +408,7 @@ export default function AdminMemberForm() {
 
     // Validate sequential order: if Praktek 2 is filled, Praktek 1 must be filled
     if ((formData.tempatPraktek2 || formData.tempatPraktek2Tipe || formData.tempatPraktek2Alkes) &&
-        (!formData.tempatPraktek1 || !formData.tempatPraktek1Tipe || !formData.tempatPraktek1Alkes)) {
+        !formData.tempatPraktek1) {
       toast({
         title: 'Validasi Error',
         description: 'Jika mengisi Tempat Praktek 2, Tempat Praktek 1 harus diisi terlebih dahulu.',
