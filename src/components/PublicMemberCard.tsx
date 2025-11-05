@@ -21,17 +21,23 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
     { 
       name: member.tempat_praktek_1, 
       type: member.tempat_praktek_1_tipe,
-      type2: member.tempat_praktek_1_tipe_2 
+      type2: member.tempat_praktek_1_tipe_2,
+      kota: member.kota_kabupaten_kantor,
+      provinsi: member.provinsi_kantor
     },
     { 
       name: member.tempat_praktek_2, 
       type: member.tempat_praktek_2_tipe,
-      type2: member.tempat_praktek_2_tipe_2 
+      type2: member.tempat_praktek_2_tipe_2,
+      kota: member.kota_kabupaten_praktek_2,
+      provinsi: member.provinsi_praktek_2
     },
     { 
       name: member.tempat_praktek_3, 
       type: member.tempat_praktek_3_tipe,
-      type2: member.tempat_praktek_3_tipe_2 
+      type2: member.tempat_praktek_3_tipe_2,
+      kota: member.kota_kabupaten_praktek_3,
+      provinsi: member.provinsi_praktek_3
     },
   ].filter(location => location.name) // Only show if location name exists
 
@@ -135,9 +141,18 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
                           <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
                           <div>
                             <span className="font-medium text-muted-foreground">Kota/Kabupaten:</span>{" "}
-                            <span className="font-semibold text-foreground">{member.kota_kabupaten_kantor || '-'}</span>
+                            <span className="font-semibold text-foreground">{location.kota || '-'}</span>
                           </div>
                         </div>
+                        {location.provinsi && (
+                          <div className="flex items-start gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-medium text-muted-foreground">Provinsi:</span>{" "}
+                              <span className="font-semibold text-foreground">{location.provinsi}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

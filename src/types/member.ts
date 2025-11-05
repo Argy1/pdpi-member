@@ -32,11 +32,15 @@ export interface Member {
   tempat_praktek_2_tipe_2?: string
   tempat_praktek_2_alkes?: string
   tempat_praktek_2_alkes_2?: string
+  kota_kabupaten_praktek_2?: string
+  provinsi_praktek_2?: string
   tempat_praktek_3?: string
   tempat_praktek_3_tipe?: string
   tempat_praktek_3_tipe_2?: string
   tempat_praktek_3_alkes?: string
   tempat_praktek_3_alkes_2?: string
+  kota_kabupaten_praktek_3?: string
+  provinsi_praktek_3?: string
   fasilitas_kesehatan?: Record<string, string[]>
   created_at: string
   updated_at: string

@@ -145,6 +145,8 @@ export type Database = {
           keterangan: string | null
           kota_kabupaten: string | null
           kota_kabupaten_kantor: string | null
+          kota_kabupaten_praktek_2: string | null
+          kota_kabupaten_praktek_3: string | null
           kota_kabupaten_rumah: string | null
           nama: string
           no_hp: string | null
@@ -152,6 +154,8 @@ export type Database = {
           npa_numeric: number | null
           provinsi: string | null
           provinsi_kantor: string | null
+          provinsi_praktek_2: string | null
+          provinsi_praktek_3: string | null
           provinsi_rumah: string | null
           search_text: string | null
           status: string | null
@@ -193,6 +197,8 @@ export type Database = {
           keterangan?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_kantor?: string | null
+          kota_kabupaten_praktek_2?: string | null
+          kota_kabupaten_praktek_3?: string | null
           kota_kabupaten_rumah?: string | null
           nama: string
           no_hp?: string | null
@@ -200,6 +206,8 @@ export type Database = {
           npa_numeric?: number | null
           provinsi?: string | null
           provinsi_kantor?: string | null
+          provinsi_praktek_2?: string | null
+          provinsi_praktek_3?: string | null
           provinsi_rumah?: string | null
           search_text?: string | null
           status?: string | null
@@ -241,6 +249,8 @@ export type Database = {
           keterangan?: string | null
           kota_kabupaten?: string | null
           kota_kabupaten_kantor?: string | null
+          kota_kabupaten_praktek_2?: string | null
+          kota_kabupaten_praktek_3?: string | null
           kota_kabupaten_rumah?: string | null
           nama?: string
           no_hp?: string | null
@@ -248,6 +258,8 @@ export type Database = {
           npa_numeric?: number | null
           provinsi?: string | null
           provinsi_kantor?: string | null
+          provinsi_praktek_2?: string | null
+          provinsi_praktek_3?: string | null
           provinsi_rumah?: string | null
           search_text?: string | null
           status?: string | null

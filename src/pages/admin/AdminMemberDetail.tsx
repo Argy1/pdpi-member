@@ -448,6 +448,12 @@ export default function AdminMemberDetail() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</label>
                 <p className="mt-1">{member.tempat_praktek_2 || '-'}</p>
+                {member.tempat_praktek_2 && (
+                  <div className="text-xs text-muted-foreground mt-1">
+                    <p>Kota/Kab: {member.kota_kabupaten_praktek_2 || '-'}</p>
+                    <p>Provinsi: {member.provinsi_praktek_2 || '-'}</p>
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 mt-1">
                   {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
                     <Button
@@ -485,6 +491,12 @@ export default function AdminMemberDetail() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</label>
                 <p className="mt-1">{member.tempat_praktek_3 || '-'}</p>
+                {member.tempat_praktek_3 && (
+                  <div className="text-xs text-muted-foreground mt-1">
+                    <p>Kota/Kab: {member.kota_kabupaten_praktek_3 || '-'}</p>
+                    <p>Provinsi: {member.provinsi_praktek_3 || '-'}</p>
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 mt-1">
                   {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
                     <Button

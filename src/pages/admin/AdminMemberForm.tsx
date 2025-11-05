@@ -59,11 +59,15 @@ interface MemberFormData {
   tempatPraktek2Tipe2: string;
   tempatPraktek2Alkes: string;
   tempatPraktek2Alkes2: string;
+  kotaPraktek2: string;
+  provinsiPraktek2: string;
   tempatPraktek3: string;
   tempatPraktek3Tipe: string;
   tempatPraktek3Tipe2: string;
   tempatPraktek3Alkes: string;
   tempatPraktek3Alkes2: string;
+  kotaPraktek3: string;
+  provinsiPraktek3: string;
   
   // Legal
   nik: string;
@@ -115,11 +119,15 @@ const initialFormData: MemberFormData = {
   tempatPraktek2Tipe2: '',
   tempatPraktek2Alkes: '',
   tempatPraktek2Alkes2: '',
+  kotaPraktek2: '',
+  provinsiPraktek2: '',
   tempatPraktek3: '',
   tempatPraktek3Tipe: '',
   tempatPraktek3Tipe2: '',
   tempatPraktek3Alkes: '',
   tempatPraktek3Alkes2: '',
+  kotaPraktek3: '',
+  provinsiPraktek3: '',
   nik: '',
   noSTR: '',
   strBerlakuSampai: undefined,
@@ -262,11 +270,15 @@ export default function AdminMemberForm() {
             tempatPraktek2Tipe2: existingMember.tempat_praktek_2_tipe_2 || '',
             tempatPraktek2Alkes: existingMember.tempat_praktek_2_alkes || '',
             tempatPraktek2Alkes2: existingMember.tempat_praktek_2_alkes_2 || '',
+            kotaPraktek2: existingMember.kota_kabupaten_praktek_2 || '',
+            provinsiPraktek2: existingMember.provinsi_praktek_2 || '',
             tempatPraktek3: existingMember.tempat_praktek_3 || '',
             tempatPraktek3Tipe: existingMember.tempat_praktek_3_tipe || '',
             tempatPraktek3Tipe2: existingMember.tempat_praktek_3_tipe_2 || '',
             tempatPraktek3Alkes: existingMember.tempat_praktek_3_alkes || '',
             tempatPraktek3Alkes2: existingMember.tempat_praktek_3_alkes_2 || '',
+            kotaPraktek3: existingMember.kota_kabupaten_praktek_3 || '',
+            provinsiPraktek3: existingMember.provinsi_praktek_3 || '',
             nik: '', // Field doesn't exist in database, set to empty
             noSTR: '', // Field doesn't exist in database, set to empty
             strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
@@ -443,11 +455,15 @@ export default function AdminMemberForm() {
         tempat_praktek_2_tipe_2: formData.tempatPraktek2Tipe2 || null,
         tempat_praktek_2_alkes: formData.tempatPraktek2Alkes || null,
         tempat_praktek_2_alkes_2: formData.tempatPraktek2Alkes2 || null,
+        kota_kabupaten_praktek_2: formData.kotaPraktek2 || null,
+        provinsi_praktek_2: formData.provinsiPraktek2 || null,
         tempat_praktek_3: formData.tempatPraktek3 || null,
         tempat_praktek_3_tipe: formData.tempatPraktek3Tipe || null,
         tempat_praktek_3_tipe_2: formData.tempatPraktek3Tipe2 || null,
         tempat_praktek_3_alkes: formData.tempatPraktek3Alkes || null,
         tempat_praktek_3_alkes_2: formData.tempatPraktek3Alkes2 || null,
+        kota_kabupaten_praktek_3: formData.kotaPraktek3 || null,
+        provinsi_praktek_3: formData.provinsiPraktek3 || null,
         keterangan: null // Can be added later if needed
       }
       
@@ -1319,6 +1335,29 @@ export default function AdminMemberForm() {
                               )}
                             </div>
                           </div>
+
+                          {/* Kota/Kabupaten Praktek 2 */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="kotaPraktek2">Kota/Kabupaten Praktek 2</Label>
+                              <Input
+                                id="kotaPraktek2"
+                                value={formData.kotaPraktek2}
+                                onChange={(e) => handleInputChange('kotaPraktek2', e.target.value)}
+                                placeholder="Kota/Kabupaten"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="provinsiPraktek2">Provinsi Praktek 2</Label>
+                              <Input
+                                id="provinsiPraktek2"
+                                value={formData.provinsiPraktek2}
+                                onChange={(e) => handleInputChange('provinsiPraktek2', e.target.value)}
+                                placeholder="Provinsi"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
 
@@ -1440,6 +1479,29 @@ export default function AdminMemberForm() {
                                   {formData.tempatPraktek3Alkes2}
                                 </p>
                               )}
+                            </div>
+                          </div>
+
+                          {/* Kota/Kabupaten Praktek 3 */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="kotaPraktek3">Kota/Kabupaten Praktek 3</Label>
+                              <Input
+                                id="kotaPraktek3"
+                                value={formData.kotaPraktek3}
+                                onChange={(e) => handleInputChange('kotaPraktek3', e.target.value)}
+                                placeholder="Kota/Kabupaten"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="provinsiPraktek3">Provinsi Praktek 3</Label>
+                              <Input
+                                id="provinsiPraktek3"
+                                value={formData.provinsiPraktek3}
+                                onChange={(e) => handleInputChange('provinsiPraktek3', e.target.value)}
+                                placeholder="Provinsi"
+                              />
                             </div>
                           </div>
                         </div>

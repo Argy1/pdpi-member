@@ -344,6 +344,12 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 2</p>
                   <p className="text-medical-body">{member.tempat_praktek_2 || "-"}</p>
+                  {member.tempat_praktek_2 && (
+                    <div className="text-xs text-muted-foreground">
+                      <p>Kota/Kab: {member.kota_kabupaten_praktek_2 || '-'}</p>
+                      <p>Provinsi: {member.provinsi_praktek_2 || '-'}</p>
+                    </div>
+                  )}
                   <div className="flex flex-wrap gap-2 mt-1">
                     {member.tempat_praktek_2 && member.tempat_praktek_2_tipe && (
                       <Button
@@ -381,6 +387,12 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Tempat Praktek 3</p>
                   <p className="text-medical-body">{member.tempat_praktek_3 || "-"}</p>
+                  {member.tempat_praktek_3 && (
+                    <div className="text-xs text-muted-foreground">
+                      <p>Kota/Kab: {member.kota_kabupaten_praktek_3 || '-'}</p>
+                      <p>Provinsi: {member.provinsi_praktek_3 || '-'}</p>
+                    </div>
+                  )}
                   <div className="flex flex-wrap gap-2 mt-1">
                     {member.tempat_praktek_3 && member.tempat_praktek_3_tipe && (
                       <Button
