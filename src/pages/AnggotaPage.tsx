@@ -60,9 +60,9 @@ export default function AnggotaPage() {
     }
   })
 
-  // Default sort based on auth state - will be updated in useEffect
+  // Default sort by NPA (numeric) ascending
   const [sort, setSort] = useState<MemberSort>({
-    field: "nama",
+    field: "npa",
     direction: "asc"
   })
 
@@ -77,15 +77,6 @@ export default function AnggotaPage() {
       const { data: { user } } = await supabase.auth.getUser()
       const authenticated = !!user
       setIsAuthenticated(authenticated)
-      
-      // Set default sort based on authentication status
-      if (!authenticated) {
-        // Public users default to NPA sort
-        setSort({
-          field: "npa",
-          direction: "asc"
-        })
-      }
     }
     checkAuth()
 
@@ -169,7 +160,7 @@ export default function AnggotaPage() {
     if (filters.gelar_fisr?.length) params.set("gelar_fisr", filters.gelar_fisr.join(","))
     if (pagination.page > 1) params.set("page", pagination.page.toString())
     if (pagination.limit !== 25) params.set("limit", pagination.limit.toString())
-    if (sort.field !== "nama" || sort.direction !== "asc") {
+    if (sort.field !== "npa" || sort.direction !== "asc") {
       params.set("sort", `${sort.field}-${sort.direction}`)
     }
 
@@ -325,6 +316,8 @@ export default function AnggotaPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="npa-asc">NPA Terkecil - Terbesar</SelectItem>
+                    <SelectItem value="npa-desc">NPA Terbesar - Terkecil</SelectItem>
                     <SelectItem value="nama-asc">Nama A-Z</SelectItem>
                     <SelectItem value="nama-desc">Nama Z-A</SelectItem>
                     <SelectItem value="kota-asc">Kota A-Z</SelectItem>
