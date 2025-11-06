@@ -57,7 +57,7 @@ import { AnggotaAPI } from '@/pages/api/AnggotaAPI';
 export default function AdminMembers() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || '');
-  const [sortConfig, setSortConfig] = useState({ key: 'nama', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: 'npa', direction: 'asc' });
   const [selectedStatus, setSelectedStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(() => {
     const pageParam = searchParams.get("page");
@@ -138,7 +138,7 @@ export default function AdminMembers() {
     status: filters.status?.join(',') || selectedStatus || undefined,
     gelar_fisr: filters.gelar_fisr,
     alumni: filters.alumni,
-    sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'nama_asc',
+    sort: sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'npa_asc',
     limit: itemsPerPage,
     page: currentPage,
     scope: 'admin'

@@ -57,8 +57,8 @@ export class AnggotaAPI {
 
       const isAdmin = scope === 'admin'
       
-      // Set default sort based on scope - public uses NPA, admin uses nama
-      const defaultSort = isAdmin ? 'nama_asc' : 'npa_numeric_asc'
+      // Set default sort based on scope - both use NPA numeric for proper sorting
+      const defaultSort = 'npa_numeric_asc'
       const finalSort = sort || defaultSort
 
       // Define field selection based on scope - only include existing columns
