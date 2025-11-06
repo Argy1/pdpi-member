@@ -1184,6 +1184,7 @@ export default function AdminMemberForm() {
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Rs Tipe D">Rs Tipe D</SelectItem>
                                   <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                                 </SelectContent>
                               </Select>
@@ -1307,6 +1308,7 @@ export default function AdminMemberForm() {
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Rs Tipe D">Rs Tipe D</SelectItem>
                                   <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                                 </SelectContent>
                               </Select>
@@ -1453,6 +1455,7 @@ export default function AdminMemberForm() {
                                   <SelectItem value="Rs Tipe A">Rs Tipe A</SelectItem>
                                   <SelectItem value="Rs Tipe B">Rs Tipe B</SelectItem>
                                   <SelectItem value="Rs Tipe C">Rs Tipe C</SelectItem>
+                                  <SelectItem value="Rs Tipe D">Rs Tipe D</SelectItem>
                                   <SelectItem value="Klinik Pribadi">Klinik Pribadi</SelectItem>
                                 </SelectContent>
                               </Select>
