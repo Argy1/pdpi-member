@@ -62,7 +62,7 @@ export class AnggotaAPI {
       const finalSort = sort || defaultSort
 
       // Define field selection based on scope - only include existing columns
-      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_1_tipe_2, tempat_praktek_1_alkes, tempat_praktek_1_alkes_2, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_2_tipe_2, tempat_praktek_2_alkes, tempat_praktek_2_alkes_2, tempat_praktek_3, tempat_praktek_3_tipe, tempat_praktek_3_tipe_2, tempat_praktek_3_alkes, tempat_praktek_3_alkes_2, email, foto, jenis_kelamin'
+      const baseFields = 'id, nama, npa, gelar, gelar2, tempat_tugas, status, created_at, cabang, thn_lulus, alumni, tempat_praktek_1, tempat_praktek_1_tipe, tempat_praktek_1_tipe_2, tempat_praktek_1_alkes, tempat_praktek_1_alkes_2, tempat_praktek_2, tempat_praktek_2_tipe, tempat_praktek_2_tipe_2, tempat_praktek_2_alkes, tempat_praktek_2_alkes_2, kota_kabupaten_praktek_2, provinsi_praktek_2, tempat_praktek_3, tempat_praktek_3_tipe, tempat_praktek_3_tipe_2, tempat_praktek_3_alkes, tempat_praktek_3_alkes_2, kota_kabupaten_praktek_3, provinsi_praktek_3, email, foto, jenis_kelamin'
       const publicFields = `${baseFields}, kota_kabupaten_kantor, provinsi_kantor, kota_kabupaten, provinsi`
       const adminFields = `${baseFields}, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, tempat_lahir, tgl_lahir, keterangan, kota_kabupaten, provinsi, kota_kabupaten_kantor, provinsi_kantor`
 
