@@ -178,9 +178,8 @@ export default function AdminMemberForm() {
   // Field protections based on role - admin_cabang cannot edit NPA and Status at all
   const isNPAHidden = isCabangAdmin;
   const isStatusHidden = isCabangAdmin;
-  const isCabangDisabled = isCabangAdmin;
   
-  console.log('Field visibility:', { isNPAHidden, isStatusHidden, isCabangDisabled });
+  console.log('Field visibility:', { isNPAHidden, isStatusHidden });
   
   // Admin cabang cannot add new members - redirect if they try
   useEffect(() => {
@@ -970,16 +969,14 @@ export default function AdminMemberForm() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="pd" className="flex items-center gap-2">
+                      <Label htmlFor="pd">
                         Cabang
-                        {isCabangDisabled && <Lock className="h-3 w-3 text-muted-foreground" />}
                       </Label>
                       <Select 
                         value={formData.pd} 
                         onValueChange={(value) => handleInputChange('pd', value)}
-                        disabled={isCabangDisabled}
                       >
-                        <SelectTrigger className={cn(isCabangDisabled && "bg-muted cursor-not-allowed")}>
+                        <SelectTrigger>
                           <SelectValue placeholder="Pilih cabang" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1017,11 +1014,6 @@ export default function AdminMemberForm() {
                           <SelectItem value="Cabang Papua">Cabang Papua</SelectItem>
                         </SelectContent>
                       </Select>
-                      {isCabangDisabled && (
-                        <p className="text-xs text-muted-foreground">
-                          Field ini hanya dapat diedit oleh Super Admin
-                        </p>
-                      )}
                     </div>
                   </div>
                 </div>
