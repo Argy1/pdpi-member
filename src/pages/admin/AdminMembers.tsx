@@ -81,7 +81,6 @@ export default function AdminMembers() {
   const [availableBranches, setAvailableBranches] = useState<string[]>([]);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
   const [availableSubspecialties, setAvailableSubspecialties] = useState<string[]>([]);
-  const [hospitalTypes, setHospitalTypes] = useState<string[]>([]);
   
   // Hardcoded alumni options as specified
   const alumniOptions = [
@@ -151,10 +150,9 @@ export default function AdminMembers() {
         // Import getAllProvinces helper
         const { getAllProvinces } = await import('@/utils/getAllProvinces')
         
-        const [allProvinces, cityResult, hospitalTypesResult] = await Promise.all([
+        const [allProvinces, cityResult] = await Promise.all([
           getAllProvinces(), // Get all 39 provinces from centroids
-          AnggotaAPI.getAvailableCities(),
-          AnggotaAPI.getHospitalTypes()
+          AnggotaAPI.getAvailableCities()
         ])
         
         // Fetch branches only
@@ -169,10 +167,6 @@ export default function AdminMembers() {
         setAvailableProvinces(allProvinces);
         setAvailableBranches(branches.sort());
         setAvailableCities(cityResult.data || []);
-
-        if (hospitalTypesResult.data) {
-          setHospitalTypes(hospitalTypesResult.data);
-        }
       } catch (error) {
         console.error('Error fetching filter options:', error);
       }
@@ -421,7 +415,6 @@ export default function AdminMembers() {
               provinces={availableProvinces}
               pds={availableBranches}
               cities={availableCities}
-              hospitalTypes={hospitalTypes}
               alumniOptions={alumniOptions}
             />
           </div>

@@ -19,7 +19,6 @@ export default function AnggotaPage() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-  const [hospitalTypes, setHospitalTypes] = useState<string[]>([])
   const [availableProvinces, setAvailableProvinces] = useState<string[]>([])
   const [availableBranches, setAvailableBranches] = useState<string[]>([])
   const [availableCities, setAvailableCities] = useState<string[]>([])
@@ -85,8 +84,7 @@ export default function AnggotaPage() {
         // Import getAllProvinces helper
         const { getAllProvinces } = await import('@/utils/getAllProvinces')
         
-        const [hospitalTypesResult, allProvinces, citiesResult] = await Promise.all([
-          AnggotaAPI.getHospitalTypes(),
+        const [allProvinces, citiesResult] = await Promise.all([
           getAllProvinces(), // Get all 39 provinces from centroids
           AnggotaAPI.getAvailableCities()
         ])
@@ -99,9 +97,6 @@ export default function AnggotaPage() {
         
         const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
         
-        if (hospitalTypesResult.data) {
-          setHospitalTypes(hospitalTypesResult.data)
-        }
         // Use all provinces from centroids instead of just those with members
         setAvailableProvinces(allProvinces)
         if (citiesResult.data) {
@@ -273,7 +268,6 @@ export default function AnggotaPage() {
             provinces={availableProvinces}
             pds={availableBranches}
             cities={availableCities}
-            hospitalTypes={hospitalTypes}
             alumniOptions={alumniOptions}
             isPublicView={!isAuthenticated}
           />

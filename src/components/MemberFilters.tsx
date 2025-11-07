@@ -13,7 +13,6 @@ interface MemberFiltersProps {
   onFiltersChange: (filters: MemberFilters) => void
   provinces: string[]
   pds: string[]
-  hospitalTypes: string[]
   cities: string[]
   subspecialties?: string[]
   alumniOptions?: string[]
@@ -26,7 +25,6 @@ export function MemberFiltersComponent({
   onFiltersChange, 
   provinces, 
   pds,
-  hospitalTypes,
   cities,
   subspecialties = [
     'Spesialis Paru Konsultan Asma PPOK',
@@ -59,6 +57,14 @@ export function MemberFiltersComponent({
   className = "",
   isPublicView = false
 }: MemberFiltersProps) {
+  // Static hospital type options
+  const hospitalTypeOptions = [
+    'Rs Tipe A',
+    'Rs Tipe B',
+    'Rs Tipe C',
+    'Rs Tipe D',
+    'Klinik Pribadi'
+  ]
   const [openProvinsiKantor, setOpenProvinsiKantor] = useState(false)
   const [openPD, setOpenPD] = useState(false)
   const [openKotaKantor, setOpenKotaKantor] = useState(false)
@@ -211,7 +217,7 @@ export function MemberFiltersComponent({
           open={openHospitalType}
           setOpen={setOpenHospitalType}
           title="Tipe RS"
-          options={hospitalTypes}
+          options={hospitalTypeOptions}
           filterKey="hospitalType"
           placeholder="Cari tipe RS..."
         />

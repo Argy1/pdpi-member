@@ -126,16 +126,16 @@ export class AnggotaAPI {
         }
       }
 
-      // Apply hospital type filter (OR within types)
+      // Apply hospital type filter (OR within types) - now using tempat_praktek_X_tipe_2
       if (hospitalType) {
         const types = hospitalType.split(',').map(t => t.trim()).filter(t => t)
         if (types.length > 0) {
           const hospitalConditions = []
           types.forEach(type => {
-            // Check across all practice locations for matching type
-            hospitalConditions.push(`tempat_praktek_1_tipe.eq.${type}`)
-            hospitalConditions.push(`tempat_praktek_2_tipe.eq.${type}`)
-            hospitalConditions.push(`tempat_praktek_3_tipe.eq.${type}`)
+            // Check across all practice locations for matching type in tipe_2 field
+            hospitalConditions.push(`tempat_praktek_1_tipe_2.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_2_tipe_2.eq.${type}`)
+            hospitalConditions.push(`tempat_praktek_3_tipe_2.eq.${type}`)
           })
           if (hospitalConditions.length > 0) {
             query = query.or(hospitalConditions.join(','))
