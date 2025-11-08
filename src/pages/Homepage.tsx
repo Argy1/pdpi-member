@@ -83,7 +83,7 @@ export default function Homepage() {
             <StatCard
               title="Cabang"
               value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
-              description="Pengurus Daerah"
+              description="Cabang PDPI"
               icon={Building2}
             />
           </div>
@@ -136,7 +136,7 @@ export default function Homepage() {
           </div>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
