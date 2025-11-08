@@ -150,7 +150,7 @@ const Index = () => {
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-400 dark:to-slate-600 bg-clip-text text-transparent">
                         {summary?.byCabang.length || 0}
                       </p>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Pengurus Daerah</p>
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Cabang PDPI</p>
                     </div>
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg group-hover:rotate-12 transition-transform duration-500">
                       <Building2 className="h-8 w-8 text-white" />
