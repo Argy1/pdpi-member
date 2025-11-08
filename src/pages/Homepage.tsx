@@ -71,7 +71,6 @@ export default function Homepage() {
               value={loading ? "..." : (summary?.total || 0).toLocaleString("id-ID")}
               description="Dokter Spesialis Paru"
               icon={Users}
-              trend={{ value: 12, isPositive: true }}
             />
             <StatCard
               title="Provinsi"
@@ -84,7 +83,6 @@ export default function Homepage() {
               value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
               description="Pengurus Daerah"
               icon={Building2}
-              trend={{ value: 3, isPositive: true }}
             />
           </div>
         </div>

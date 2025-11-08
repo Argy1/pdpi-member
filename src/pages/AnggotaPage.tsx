@@ -89,13 +89,25 @@ export default function AnggotaPage() {
           AnggotaAPI.getAvailableCities()
         ])
         
-        // Fetch branches only
+        // Fetch branches only with normalization
         const { data: branchData } = await supabase
           .from('members')
           .select('cabang')
           .not('cabang', 'is', null)
         
-        const branches = [...new Set(branchData?.map(m => m.cabang).filter(Boolean))] as string[]
+        // Normalize branch names to remove duplicates (trim, normalize dashes and spaces)
+        const normalizeBranch = (branch: string) => {
+          return branch.trim().replace(/\s+/g, ' ').replace(/[–—]/g, '-')
+        }
+        
+        const branchSet = new Set<string>()
+        branchData?.forEach(m => {
+          if (m.cabang) {
+            branchSet.add(normalizeBranch(m.cabang))
+          }
+        })
+        
+        const branches = Array.from(branchSet).sort()
         
         // Use all provinces from centroids instead of just those with members
         setAvailableProvinces(allProvinces)
