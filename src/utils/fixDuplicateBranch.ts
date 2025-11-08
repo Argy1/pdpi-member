@@ -6,20 +6,32 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export async function fixDuplicateBranch() {
   try {
-    // Update the member with the variant spelling
-    const { data, error } = await supabase
-      .from('members')
-      .update({ cabang: 'Cabang Sulut - Sulteng - Gorontalo (Suluttenggo)' })
-      .eq('cabang', 'Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)')
-      .select();
+    const standardName = 'Cabang Sulut - Sulteng - Gorontalo (Suluttenggo)';
+    
+    // Update all variants to the standard name
+    const variants = [
+      'Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)', // en-dash version
+      'Cabang Sulut - Sulteng - Gorontalo (Sulutenggo)', // single 't' version
+    ];
 
-    if (error) {
-      console.error('Error fixing duplicate branch:', error);
-      return { success: false, error };
+    const results = [];
+    
+    for (const variant of variants) {
+      const { data, error } = await supabase
+        .from('members')
+        .update({ cabang: standardName })
+        .eq('cabang', variant)
+        .select();
+
+      if (error) {
+        console.error(`Error fixing variant "${variant}":`, error);
+      } else if (data && data.length > 0) {
+        console.log(`Fixed ${data.length} member(s) from variant "${variant}"`);
+        results.push(...data);
+      }
     }
 
-    console.log('Fixed duplicate branch for', data?.length, 'member(s)');
-    return { success: true, data };
+    return { success: true, data: results };
   } catch (error) {
     console.error('Error:', error);
     return { success: false, error };

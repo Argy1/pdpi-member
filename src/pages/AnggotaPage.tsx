@@ -95,9 +95,18 @@ export default function AnggotaPage() {
           .select('cabang')
           .not('cabang', 'is', null)
         
-        // Normalize branch names to remove duplicates (trim, normalize dashes and spaces)
+        // Normalize branch names to remove duplicates
         const normalizeBranch = (branch: string) => {
-          return branch.trim().replace(/\s+/g, ' ').replace(/[–—]/g, '-')
+          let normalized = branch.trim()
+            .replace(/\s+/g, ' ') // normalize spaces
+            .replace(/[–—]/g, '-') // normalize dashes
+          
+          // Standardize Sulut-Sulteng-Gorontalo variations
+          if (normalized.includes('Sulut') && normalized.includes('Sulteng') && normalized.includes('Gorontalo')) {
+            normalized = 'Cabang Sulut - Sulteng - Gorontalo (Suluttenggo)'
+          }
+          
+          return normalized
         }
         
         const branchSet = new Set<string>()

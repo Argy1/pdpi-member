@@ -94,9 +94,14 @@ export class AnggotaAPI {
         }
       }
 
-      // Apply PD filter
+      // Apply PD filter with normalization for Sulut variations
       if (pd) {
-        query = query.ilike('cabang', `%${pd}%`)
+        // Handle Sulut-Sulteng-Gorontalo variations - match any variant
+        if (pd.includes('Sulut') && pd.includes('Sulteng') && pd.includes('Gorontalo')) {
+          query = query.or('cabang.ilike.%Sulut%Sulteng%Gorontalo%,cabang.ilike.%Suluttenggo%,cabang.ilike.%Sulutenggo%')
+        } else {
+          query = query.ilike('cabang', `%${pd}%`)
+        }
       }
 
       // Apply city filter (OR within cities)
@@ -236,7 +241,12 @@ export class AnggotaAPI {
       }
 
       if (pd) {
-        countQuery = countQuery.ilike('cabang', `%${pd}%`)
+        // Handle Sulut-Sulteng-Gorontalo variations - match any variant
+        if (pd.includes('Sulut') && pd.includes('Sulteng') && pd.includes('Gorontalo')) {
+          countQuery = countQuery.or('cabang.ilike.%Sulut%Sulteng%Gorontalo%,cabang.ilike.%Suluttenggo%,cabang.ilike.%Sulutenggo%')
+        } else {
+          countQuery = countQuery.ilike('cabang', `%${pd}%`)
+        }
       }
 
       if (kota_kabupaten_kantor) {
