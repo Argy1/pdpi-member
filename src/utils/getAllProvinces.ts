@@ -7,10 +7,9 @@ export async function getAllProvinces(): Promise<string[]> {
     const response = await fetch('/geo/centroids-provinces.json', { cache: 'no-store' })
     const centroids = await response.json()
     
-    // Get unique province names, excluding the duplicate "Kepulauan Bangka Belitung"
+    // Get unique province names
     const provinceNames: string[] = centroids
       .map((c: any) => c.provinsi as string)
-      .filter((p: string) => p !== 'Kepulauan Bangka Belitung') // Keep only "Bangka Belitung"
     
     // Remove duplicates and sort
     const uniqueProvinces = Array.from(new Set<string>(provinceNames))
