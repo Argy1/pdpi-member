@@ -6,6 +6,8 @@ import { StatCard } from "@/components/StatCard";
 import { SearchBar } from "@/components/SearchBar";
 import { ProvinceChips } from "@/components/ProvinceChips";
 import { HowToUse } from "@/components/HowToUse";
+import { VisitorCounter } from "@/components/VisitorCounter";
+import { Footer } from "@/components/Footer";
 import { useStats } from "@/hooks/useStats";
 import { getAllProvinces } from "@/utils/getAllProvinces";
 import logoImage from "@/assets/logo-pdpi.png";
@@ -115,6 +117,13 @@ export default function Homepage() {
       {/* How to Use Section */}
       <HowToUse />
 
+      {/* Visitor Counter Section */}
+      <section className="section-spacing">
+        <div className="container-pdpi">
+          <VisitorCounter />
+        </div>
+      </section>
+
       {/* Data Source Note */}
       <section className="section-spacing bg-muted/20">
         <div className="container-pdpi">
@@ -127,6 +136,8 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 }

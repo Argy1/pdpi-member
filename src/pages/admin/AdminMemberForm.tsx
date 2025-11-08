@@ -75,7 +75,6 @@ interface MemberFormData {
   strBerlakuSampai: Date | undefined;
   noSIP: string;
   sipBerlakuSampai: Date | undefined;
-  tahunLulus: string;
   
   // Kontak
   kontakEmail: string;
@@ -133,7 +132,6 @@ const initialFormData: MemberFormData = {
   strBerlakuSampai: undefined,
   noSIP: '',
   sipBerlakuSampai: undefined,
-  tahunLulus: '',
   kontakEmail: '',
   kontakTelepon: '',
   website: '',
@@ -283,7 +281,6 @@ export default function AdminMemberForm() {
             strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
             noSIP: '', // Field doesn't exist in database, set to empty
             sipBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
-            tahunLulus: existingMember.thn_lulus?.toString() || '',
             kontakEmail: existingMember.email || '',
             kontakTelepon: existingMember.no_hp || '',
             website: '', // Field doesn't exist in database, set to empty
@@ -432,7 +429,6 @@ export default function AdminMemberForm() {
         tempat_lahir: formData.tempatLahir || null,
         tgl_lahir: formData.tanggalLahir || null,
         jenis_kelamin: formData.jenisKelamin || null,
-        thn_lulus: formData.tahunLulus ? parseInt(formData.tahunLulus) : null,
         kota_kabupaten: formData.kotaRumah || null,
         provinsi: formData.provinsiRumah || null,
         alamat_rumah: formData.alamat || null,
@@ -768,19 +764,6 @@ export default function AdminMemberForm() {
                           <SelectItem value="UNHAS">UNHAS</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
-                      <Input
-                        id="tahunLulus"
-                        value={formData.tahunLulus}
-                        onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
-                        placeholder="2010"
-                        type="number"
-                        min="1970"
-                        max={new Date().getFullYear()}
-                      />
                     </div>
                   </div>
 
@@ -1617,19 +1600,6 @@ export default function AdminMemberForm() {
                           />
                         </PopoverContent>
                       </Popover>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
-                      <Input
-                        id="tahunLulus"
-                        value={formData.tahunLulus}
-                        onChange={(e) => handleInputChange('tahunLulus', e.target.value)}
-                        placeholder="2010"
-                        type="number"
-                        min="1970"
-                        max={new Date().getFullYear()}
-                      />
                     </div>
                   </div>
                 </div>

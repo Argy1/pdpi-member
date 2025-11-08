@@ -373,6 +373,27 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_stats: {
+        Row: {
+          created_at: string
+          id: string
+          last_updated: string
+          total_visits: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_updated?: string
+          total_visits?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_updated?: string
+          total_visits?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       public_member_directory: {
