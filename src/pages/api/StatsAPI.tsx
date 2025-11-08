@@ -71,8 +71,14 @@ export class StatsAPI {
       const total = allMembers.length
       const laki = allMembers.filter(m => m.jenis_kelamin === 'L').length
       const perempuan = allMembers.filter(m => m.jenis_kelamin === 'P').length
+      const unknownGender = allMembers.filter(m => !m.jenis_kelamin || (m.jenis_kelamin !== 'L' && m.jenis_kelamin !== 'P')).length
       
-      console.log('Gender breakdown:', { total, laki, perempuan })
+      console.log('Gender breakdown:', { total, laki, perempuan, unknownGender })
+      
+      // Log warning if there are members with unknown gender
+      if (unknownGender > 0) {
+        console.warn(`Found ${unknownGender} member(s) with unknown/null gender - these will not appear in gender breakdown`)
+      }
 
       // Group by provinsi with normalization - prioritize provinsi_kantor
       const provinsiMap = new Map<string, number>()
