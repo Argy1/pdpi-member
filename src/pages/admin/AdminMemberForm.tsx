@@ -37,6 +37,7 @@ interface MemberFormData {
   jenisKelamin: string;
   foto: string;
   alumni: string;
+  tahunLulus: number | undefined;
   
   // Domisili
   alamat: string;
@@ -100,6 +101,7 @@ const initialFormData: MemberFormData = {
   jenisKelamin: '',
   foto: '',
   alumni: '',
+  tahunLulus: undefined,
   alamat: '',
   kotaKantor: '',
   provinsiKantor: '',
@@ -249,6 +251,7 @@ export default function AdminMemberForm() {
             jenisKelamin: existingMember.jenis_kelamin || '',
             foto: existingMember.foto || '',
             alumni: existingMember.alumni || '',
+            tahunLulus: existingMember.thn_lulus || undefined,
             alamat: existingMember.alamat_rumah || '',
             kotaKantor: existingMember.kota_kabupaten_kantor || '',
             provinsiKantor: existingMember.provinsi_kantor || '',
@@ -424,6 +427,7 @@ export default function AdminMemberForm() {
         gelar2: formData.gelar2 || null,
         gelar_fisr: formData.gelar_fisr || null,
         alumni: formData.alumni || null,
+        thn_lulus: formData.tahunLulus || null,
         subspesialis: formData.subspesialis || null,
       // Map form fields to database fields
         tempat_lahir: formData.tempatLahir || null,
@@ -764,6 +768,17 @@ export default function AdminMemberForm() {
                           <SelectItem value="UNHAS">UNHAS</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tahunLulus">Tahun Lulus</Label>
+                      <Input
+                        id="tahunLulus"
+                        type="number"
+                        value={formData.tahunLulus || ""}
+                        onChange={(e) => handleInputChange('tahunLulus', e.target.value ? parseInt(e.target.value) : undefined)}
+                        placeholder="Contoh: 2015"
+                      />
                     </div>
                   </div>
 
