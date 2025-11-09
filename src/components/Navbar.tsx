@@ -84,6 +84,12 @@ export function Navbar() {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-4 mt-6">
+                  {/* Language Switcher in Mobile Menu */}
+                  <div className="pb-4 border-b">
+                    <p className="text-xs text-muted-foreground mb-2 px-1">Bahasa / Language</p>
+                    <LanguageSwitcher />
+                  </div>
+                  
                   <Link 
                     to="/" 
                     className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
@@ -140,8 +146,8 @@ export function Navbar() {
               </SheetContent>
             </Sheet>
 
-            <LanguageSwitcher />
             <ThemeToggle />
+            <LanguageSwitcher />
             
             {user ? (
               <DropdownMenu>

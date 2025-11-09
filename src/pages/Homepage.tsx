@@ -14,7 +14,7 @@ import logoImage from "@/assets/logo-pdpi.png";
 import { useTranslation } from "react-i18next";
 
 export default function Homepage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   // Use Stats API to get accurate totals from database
   const { summary, loading } = useStats({});
 
@@ -71,19 +71,19 @@ export default function Homepage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title={t('stats.totalMembers')}
-              value={loading ? "..." : (summary?.total || 0).toLocaleString("id-ID")}
+              value={loading ? "..." : (summary?.total || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
               description={t('stats.pulmonologists')}
               icon={Users}
             />
             <StatCard
               title={t('stats.provinces')}
-              value={loading ? "..." : totalProvinces.toString()}
+              value={loading ? "..." : totalProvinces.toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
               description={t('stats.regionalBoards')}
               icon={MapPin}
             />
             <StatCard
               title={t('stats.branches')}
-              value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
+              value={loading ? "..." : (summary?.byCabang.length || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
               description="PDPI"
               icon={Building2}
             />

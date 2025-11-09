@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export function VisitorCounter() {
   const [visitorCount, setVisitorCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // Track visitor and get count
@@ -74,7 +76,7 @@ export function VisitorCounter() {
   }, []);
 
   const formatNumber = (num: number) => {
-    return num.toLocaleString('id-ID');
+    return num.toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID');
   };
 
   return (
@@ -83,7 +85,7 @@ export function VisitorCounter() {
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
           <Eye className="h-6 w-6 text-primary" />
         </div>
-        <h3 className="text-lg font-semibold heading-medical">Total Pengunjung Website</h3>
+        <h3 className="text-lg font-semibold heading-medical">{t('visitor.title')}</h3>
       </div>
       
       <div className="py-4">
@@ -99,7 +101,7 @@ export function VisitorCounter() {
       </div>
       
       <p className="text-sm text-medical-body">
-        Pengunjung yang telah mengakses direktori anggota PDPI
+        {t('visitor.total')}
       </p>
     </div>
   );
