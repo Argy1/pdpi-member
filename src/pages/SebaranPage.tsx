@@ -13,9 +13,11 @@ import { AlertCircle, MapPin, Users } from "lucide-react";
 import { StatsAPI } from "@/pages/api/StatsAPI";
 import { exportMembersToExcel, getExportFilename } from "@/utils/exportMembers";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 export default function SebaranPage() {
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExporting, setIsExporting] = useState(false);
 
@@ -88,8 +90,8 @@ export default function SebaranPage() {
     setIsExporting(true);
     try {
       toast({
-        title: "Mengunduh data...",
-        description: "Mohon tunggu, sedang mempersiapkan file export.",
+        title: t('sebaran.downloading'),
+        description: t('sebaran.preparingExport'),
       });
 
       // Fetch all members with current filters
@@ -97,8 +99,8 @@ export default function SebaranPage() {
 
       if (members.length === 0) {
         toast({
-          title: "Tidak ada data",
-          description: "Tidak ada anggota yang sesuai dengan filter yang dipilih.",
+          title: t('sebaran.noData'),
+          description: t('sebaran.noDataDesc'),
           variant: "destructive",
         });
         return;
@@ -110,15 +112,18 @@ export default function SebaranPage() {
       // Export to Excel/CSV
       exportMembersToExcel(members, { format, filename });
 
+      const memberCount = members.length.toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID');
+      const formatUpper = format.toUpperCase();
+
       toast({
-        title: "Berhasil!",
-        description: `Data ${members.length.toLocaleString("id-ID")} anggota berhasil diexport ke ${format.toUpperCase()}.`,
+        title: t('sebaran.exportSuccess'),
+        description: `Data ${memberCount} anggota berhasil diexport ke ${formatUpper}.`,
       });
     } catch (error) {
       console.error("Export error:", error);
       toast({
-        title: "Gagal export",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan saat export data.",
+        title: t('sebaran.exportFailed'),
+        description: error instanceof Error ? error.message : t('sebaran.exportError'),
         variant: "destructive",
       });
     } finally {
@@ -149,11 +154,11 @@ export default function SebaranPage() {
                   <MapPin className="h-6 w-6 text-white" />
                 </div>
                 <h1 className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                  Sebaran Anggota PDPI
+                  {t('sebaran.title')}
                 </h1>
               </div>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                Visualisasi distribusi anggota berdasarkan provinsi, cabang, dan kota/kabupaten di seluruh Indonesia
+                {t('sebaran.subtitle')}
               </p>
             </div>
             <Badge
@@ -161,7 +166,7 @@ export default function SebaranPage() {
               className="self-start md:self-center px-6 py-3 text-lg rounded-2xl shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border-2 border-teal-500/20"
             >
               <Users className="h-5 w-5 mr-2 text-teal-600 dark:text-teal-400" />
-              {summary?.total.toLocaleString("id-ID") || "0"} Anggota
+              {(summary?.total || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')} {t('sebaran.totalMembers')}
             </Badge>
           </div>
         </div>
@@ -210,7 +215,7 @@ export default function SebaranPage() {
               <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 scrollbar-track-transparent">
                 <div className="animate-fade-in" style={{ animationDelay: "400ms" }}>
                   <DistributionTable
-                    title="Distribusi Per Provinsi"
+                    title={t('sebaran.provinceDistribution')}
                     data={
                       summary?.byProvinsi
                         .filter((p) => p.provinsi !== "Tidak Diketahui")
@@ -225,7 +230,7 @@ export default function SebaranPage() {
 
                 <div className="animate-fade-in" style={{ animationDelay: "500ms" }}>
                   <DistributionTable
-                    title="Distribusi Per Cabang"
+                    title={t('sebaran.branchDistribution')}
                     data={
                       summary?.byCabang.map((c) => ({
                         name: c.pd,
@@ -242,7 +247,7 @@ export default function SebaranPage() {
           {/* Cities Table - Full Width */}
           <div className="animate-fade-in" style={{ animationDelay: "600ms" }}>
             <DistributionTable
-              title="Distribusi Per Kota/Kabupaten"
+              title={t('sebaran.cityDistribution')}
               data={
                 summary?.byKota.map((k) => ({
                   name: k.kota,

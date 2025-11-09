@@ -18,13 +18,53 @@
     "provinces": "Provinces",
     "branches": "Branches/PD",
     "pulmonologists": "Pulmonologists",
-    "regionalBoards": "Regional Boards",
-    "activeMembers": "Active Members"
+    "regionalBoards": "Nationwide",
+    "activeMembers": "Active Members",
+    "maleMembers": "Male",
+    "femaleMembers": "Female"
   },
   "search": {
     "placeholder": "Search name/NPA/hospital/city/province…",
     "title": "Search PDPI Members",
-    "description": "Use the search box above to find members by name, NPA, hospital, city, or province."
+    "description": "Find pulmonologists by name, hospital, or location",
+    "searchMember": "Search member name...",
+    "searching": "Name: {{query}}"
+  },
+  "members": {
+    "title": "PDPI Members Directory",
+    "titleAdmin": "PDPI Member Management",
+    "subtitle": "Public directory of Indonesian Society of Respirology members",
+    "subtitleAdmin": "Manage Indonesian Society of Respirology member data",
+    "found": "members found",
+    "loading": "Loading...",
+    "loadingData": "Loading member data...",
+    "error": "Failed to load data:",
+    "tryAgain": "Try Again",
+    "refresh": "Refresh",
+    "remove": "Remove search",
+    "sortBy": "Sort by",
+    "npaAsc": "NPA Lowest - Highest",
+    "npaDesc": "NPA Highest - Lowest",
+    "nameAsc": "Name A-Z",
+    "nameDesc": "Name Z-A",
+    "cityAsc": "City A-Z",
+    "provinceAsc": "Province A-Z",
+    "yearDesc": "Latest Graduation Year"
+  },
+  "sebaran": {
+    "title": "PDPI Member Distribution",
+    "subtitle": "Visualization of member distribution by province, branch, and city/regency across Indonesia",
+    "totalMembers": "Members",
+    "provinceDistribution": "Distribution by Province",
+    "branchDistribution": "Distribution by Branch",
+    "cityDistribution": "Distribution by City/Regency",
+    "downloading": "Downloading data...",
+    "preparingExport": "Please wait, preparing export file.",
+    "noData": "No data",
+    "noDataDesc": "No members match the selected filters.",
+    "exportSuccess": "Success!",
+    "exportFailed": "Export failed",
+    "exportError": "An error occurred while exporting data."
   },
   "footer": {
     "title": "PDPI Directory",

@@ -18,13 +18,53 @@
     "provinces": "Provinsi",
     "branches": "Cabang/PD",
     "pulmonologists": "Dokter Spesialis Paru",
-    "regionalBoards": "Pengurus Daerah",
-    "activeMembers": "Anggota Aktif"
+    "regionalBoards": "Seluruh Indonesia",
+    "activeMembers": "Anggota Aktif",
+    "maleMembers": "Laki-laki",
+    "femaleMembers": "Perempuan"
   },
   "search": {
     "placeholder": "Cari nama/NPA/RS/kota/provinsi…",
     "title": "Cari Anggota PDPI",
-    "description": "Gunakan kolom pencarian di atas untuk menemukan anggota berdasarkan nama, NPA, rumah sakit, kota, atau provinsi."
+    "description": "Temukan dokter spesialis paru berdasarkan nama, rumah sakit, atau lokasi",
+    "searchMember": "Cari nama anggota...",
+    "searching": "Nama: {{query}}"
+  },
+  "members": {
+    "title": "Direktori Anggota PDPI",
+    "titleAdmin": "Manajemen Anggota PDPI",
+    "subtitle": "Direktori publik anggota Perhimpunan Dokter Paru Indonesia",
+    "subtitleAdmin": "Kelola data anggota Perhimpunan Dokter Paru Indonesia",
+    "found": "anggota ditemukan",
+    "loading": "Memuat...",
+    "loadingData": "Memuat data anggota...",
+    "error": "Gagal memuat data:",
+    "tryAgain": "Coba Lagi",
+    "refresh": "Refresh",
+    "remove": "Hapus pencarian",
+    "sortBy": "Urutkan",
+    "npaAsc": "NPA Terkecil - Terbesar",
+    "npaDesc": "NPA Terbesar - Terkecil",
+    "nameAsc": "Nama A-Z",
+    "nameDesc": "Nama Z-A",
+    "cityAsc": "Kota A-Z",
+    "provinceAsc": "Provinsi A-Z",
+    "yearDesc": "Tahun Lulus Terbaru"
+  },
+  "sebaran": {
+    "title": "Sebaran Anggota PDPI",
+    "subtitle": "Visualisasi distribusi anggota berdasarkan provinsi, cabang, dan kota/kabupaten di seluruh Indonesia",
+    "totalMembers": "Anggota",
+    "provinceDistribution": "Distribusi Per Provinsi",
+    "branchDistribution": "Distribusi Per Cabang",
+    "cityDistribution": "Distribusi Per Kota/Kabupaten",
+    "downloading": "Mengunduh data...",
+    "preparingExport": "Mohon tunggu, sedang mempersiapkan file export.",
+    "noData": "Tidak ada data",
+    "noDataDesc": "Tidak ada anggota yang sesuai dengan filter yang dipilih.",
+    "exportSuccess": "Berhasil!",
+    "exportFailed": "Gagal export",
+    "exportError": "Terjadi kesalahan saat export data."
   },
   "footer": {
     "title": "PDPI Directory",
