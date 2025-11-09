@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom"
 import logoImage from "@/assets/logo-pdpi.png"
-import { useTranslation } from "react-i18next"
 
 export function Footer() {
-  const { t } = useTranslation();
-  
   return (
     <footer className="border-t bg-muted/30 mt-auto">
       <div className="container-pdpi">
@@ -20,8 +17,8 @@ export function Footer() {
                 />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">{t('footer.title')}</h3>
-                <p className="text-xs text-muted-foreground">{t('footer.subtitle')}</p>
+                <h3 className="font-semibold text-sm">PDPI Directory</h3>
+                <p className="text-xs text-muted-foreground">Perhimpunan Dokter Paru Indonesia</p>
               </div>
             </div>
 
@@ -31,20 +28,20 @@ export function Footer() {
                 to="/anggota" 
                 className="text-sm text-muted-foreground hover:text-foreground transition-smooth"
               >
-                {t('footer.memberTable')}
+                Tabel Anggota
               </Link>
               <Link 
                 to="/login" 
                 className="text-sm text-muted-foreground hover:text-foreground transition-smooth"
               >
-                {t('footer.adminLogin')}
+                Admin Login
               </Link>
             </div>
           </div>
 
           <div className="mt-6 pt-6 border-t">
             <p className="text-center text-xs text-muted-foreground">
-              © 2024 {t('footer.credit')}
+              © 2024 Perhimpunan Dokter Paru Indonesia. Semua hak dilindungi.
             </p>
           </div>
         </div>

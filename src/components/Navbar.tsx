@@ -20,13 +20,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
-import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 
 export function Navbar() {
   const { user, profile, signOut, isAdmin } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { t } = useTranslation()
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,19 +50,19 @@ export function Navbar() {
               to="/" 
               className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth"
             >
-              {t('nav.home')}
+              Beranda
             </Link>
             <Link 
               to="/anggota" 
               className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth"
             >
-              {t('nav.members')}
+              Tabel Anggota
             </Link>
             <Link 
               to="/sebaran" 
               className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth"
             >
-              {t('nav.map')}
+              Sebaran Anggota
             </Link>
           </div>
 
@@ -84,32 +81,26 @@ export function Navbar() {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-4 mt-6">
-                  {/* Language Switcher in Mobile Menu */}
-                  <div className="pb-4 border-b">
-                    <p className="text-xs text-muted-foreground mb-2 px-1">Bahasa / Language</p>
-                    <LanguageSwitcher />
-                  </div>
-                  
                   <Link 
                     to="/" 
                     className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {t('nav.home')}
+                    Beranda
                   </Link>
                   <Link 
                     to="/anggota" 
                     className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {t('nav.members')}
+                    Tabel Anggota
                   </Link>
                   <Link 
                     to="/sebaran" 
                     className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {t('nav.map')}
+                    Sebaran Anggota
                   </Link>
                   
                   {user && (
@@ -121,7 +112,7 @@ export function Navbar() {
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <Settings className="mr-2 h-4 w-4" />
-                          {t('nav.admin')}
+                          Dashboard Admin
                         </Link>
                       </div>
                     </>
@@ -138,7 +129,7 @@ export function Navbar() {
                         }}
                       >
                         <LogOut className="mr-2 h-4 w-4" />
-                        {t('nav.logout')}
+                        Logout
                       </Button>
                     </div>
                   )}
@@ -147,7 +138,6 @@ export function Navbar() {
             </Sheet>
 
             <ThemeToggle />
-            <LanguageSwitcher />
             
             {user ? (
               <DropdownMenu>
@@ -158,7 +148,7 @@ export function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>{t('nav.profile')}</DropdownMenuLabel>
+                  <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {profile && (
                     <DropdownMenuItem disabled>
@@ -168,13 +158,13 @@ export function Navbar() {
                   <DropdownMenuItem asChild>
                     <Link to="/admin">
                       <Settings className="mr-2 h-4 w-4" />
-                      {t('nav.admin')}
+                      Dashboard Admin
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    {t('nav.logout')}
+                    Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -187,7 +177,7 @@ export function Navbar() {
               >
                 <Link to="/login">
                   <UserCircle className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">{t('nav.login')}</span>
+                  <span className="hidden sm:inline">Login</span>
                 </Link>
               </Button>
             )}

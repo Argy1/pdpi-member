@@ -13,10 +13,8 @@ import { useMembers } from '@/hooks/useMembers'
 import { supabase } from "@/integrations/supabase/client"
 import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
 import { ArrowUpDown, Users, RefreshCw, X } from "lucide-react"
-import { useTranslation } from "react-i18next"
 
 export default function AnggotaPage() {
-  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedMember, setSelectedMember] = useState<Member | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -227,7 +225,7 @@ export default function AnggotaPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="inline-flex items-center gap-2">
           <RefreshCw className="h-5 w-5 animate-spin" />
-          <span>{t('members.loading')}</span>
+          <span>Memuat...</span>
         </div>
       </div>
     )
@@ -240,12 +238,12 @@ export default function AnggotaPage() {
         <div className="space-y-6 mb-8">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold heading-medical">
-              {isAuthenticated ? t('members.titleAdmin') : t('members.title')}
+              {isAuthenticated ? "Manajemen Anggota PDPI" : "Direktori Anggota PDPI"}
             </h1>
             <p className="text-lg text-medical-body">
               {isAuthenticated 
-                ? t('members.subtitleAdmin')
-                : t('members.subtitle')
+                ? "Kelola data anggota Perhimpunan Dokter Paru Indonesia"
+                : "Direktori publik anggota Perhimpunan Dokter Paru Indonesia"
               }
             </p>
           </div>
@@ -257,7 +255,7 @@ export default function AnggotaPage() {
               setFilters(prev => ({ ...prev, query }))
               setPagination(prev => ({ ...prev, page: 1 }))
             }}
-            placeholder={t('search.searchMember')}
+            placeholder="Cari nama anggota..."
             size="default"
             scope={isAuthenticated ? 'admin' : 'public'}
           />
@@ -266,14 +264,14 @@ export default function AnggotaPage() {
           {filters.query && (
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-sm">
-                <span className="font-medium">{t('search.searching', { query: filters.query })}</span>
+                <span className="font-medium">Nama: {filters.query}</span>
                 <button
                   onClick={() => {
                     setFilters(prev => ({ ...prev, query: undefined }))
                     setPagination(prev => ({ ...prev, page: 1 }))
                   }}
                   className="hover:bg-background rounded-full p-1 transition-colors"
-                  aria-label={t('members.remove')}
+                  aria-label="Hapus pencarian"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -301,12 +299,12 @@ export default function AnggotaPage() {
               <div className="flex items-center space-x-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">
-                  {loading ? t('members.loading') : `${total.toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')} ${t('members.found')}`}
+                  {loading ? 'Memuat...' : `${total} anggota ditemukan`}
                 </span>
               </div>
               {error && (
                 <div className="text-sm text-red-600">
-                  {t('members.error')} {error}
+                  Error: {error}
                 </div>
               )}
             </div>
@@ -322,7 +320,7 @@ export default function AnggotaPage() {
                   className="flex items-center gap-2"
                 >
                   <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                  {t('members.refresh')}
+                  Refresh
                 </Button>
                 <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
                 <Select
@@ -333,13 +331,13 @@ export default function AnggotaPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="npa-asc">{t('members.npaAsc')}</SelectItem>
-                    <SelectItem value="npa-desc">{t('members.npaDesc')}</SelectItem>
-                    <SelectItem value="nama-asc">{t('members.nameAsc')}</SelectItem>
-                    <SelectItem value="nama-desc">{t('members.nameDesc')}</SelectItem>
-                    <SelectItem value="kota-asc">{t('members.cityAsc')}</SelectItem>
-                    <SelectItem value="provinsi-asc">{t('members.provinceAsc')}</SelectItem>
-                    <SelectItem value="tahunLulus-desc">{t('members.yearDesc')}</SelectItem>
+                    <SelectItem value="npa-asc">NPA Terkecil - Terbesar</SelectItem>
+                    <SelectItem value="npa-desc">NPA Terbesar - Terkecil</SelectItem>
+                    <SelectItem value="nama-asc">Nama A-Z</SelectItem>
+                    <SelectItem value="nama-desc">Nama Z-A</SelectItem>
+                    <SelectItem value="kota-asc">Kota A-Z</SelectItem>
+                    <SelectItem value="provinsi-asc">Provinsi A-Z</SelectItem>
+                    <SelectItem value="tahunLulus-desc">Tahun Lulus Terbaru</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -352,16 +350,16 @@ export default function AnggotaPage() {
           <div className="text-center py-12">
             <div className="inline-flex items-center gap-2">
               <RefreshCw className="h-5 w-5 animate-spin" />
-              <span>{t('members.loadingData')}</span>
+              <span>Memuat data anggota...</span>
             </div>
           </div>
         ) : error ? (
           <div className="text-center py-12">
             <div className="text-red-600 mb-4">
-              {t('members.error')} {error}
+              Gagal memuat data: {error}
             </div>
             <Button onClick={refresh} variant="outline">
-              {t('members.tryAgain')}
+              Coba Lagi
             </Button>
           </div>
         ) : isAuthenticated ? (

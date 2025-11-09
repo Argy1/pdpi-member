@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom"
 import { Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useTranslation } from "react-i18next"
 
 interface SearchBarProps {
   placeholder?: string
@@ -26,12 +25,11 @@ export function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState(controlledValue || defaultValue || "")
   const navigate = useNavigate()
-  const { t } = useTranslation()
 
   // Default placeholders based on scope
   const defaultPlaceholder = scope === "admin" 
     ? "Cari di semua biodata (nama, NPA, RS, kota, provinsi, PD, jabatan, kontak, STR/SIP)..."
-    : t('search.placeholder')
+    : "Cari nama/NPA/RS/kota/provinsi/PD..."
 
   const finalPlaceholder = placeholder || defaultPlaceholder
 
@@ -107,7 +105,7 @@ export function SearchBar({
             disabled={!query.trim()}
           >
             <Search className="h-4 w-4 mr-1" />
-            {scope === "admin" ? "Cari" : t('search.placeholder').split('/')[0].split(' ')[0]}
+            Cari
           </Button>
         </div>
       </div>

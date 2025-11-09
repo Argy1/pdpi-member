@@ -11,10 +11,8 @@ import { Footer } from "@/components/Footer";
 import { useStats } from "@/hooks/useStats";
 import { getAllProvinces } from "@/utils/getAllProvinces";
 import logoImage from "@/assets/logo-pdpi.png";
-import { useTranslation } from "react-i18next";
 
 export default function Homepage() {
-  const { t, i18n } = useTranslation();
   // Use Stats API to get accurate totals from database
   const { summary, loading } = useStats({});
 
@@ -43,10 +41,11 @@ export default function Homepage() {
                 </div>
                 <div className="space-y-4">
                   <h1 className="text-4xl md:text-6xl font-bold heading-medical">
-                    {t('hero.title')}
+                    Daftar Anggota <span className="text-primary">PDPI</span>
                   </h1>
                   <p className="text-xl text-medical-body max-w-2xl mx-auto">
-                    {t('hero.subtitle')}
+                    Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi
+                    profesional
                   </p>
                 </div>
               </div>
@@ -55,7 +54,7 @@ export default function Homepage() {
               <div className="flex justify-center">
                 <Button size="lg" className="h-12 px-8 rounded-xl font-semibold focus-visible" asChild>
                   <Link to="/anggota">
-                    {t('hero.cta')}
+                    Buka Tabel Anggota
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
@@ -70,21 +69,21 @@ export default function Homepage() {
         <div className="container-pdpi">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
-              title={t('stats.totalMembers')}
-              value={loading ? "..." : (summary?.total || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
-              description={t('stats.pulmonologists')}
+              title="Total Anggota"
+              value={loading ? "..." : (summary?.total || 0).toLocaleString("id-ID")}
+              description="Dokter Spesialis Paru"
               icon={Users}
             />
             <StatCard
-              title={t('stats.provinces')}
-              value={loading ? "..." : totalProvinces.toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
-              description={t('stats.regionalBoards')}
+              title="Provinsi"
+              value={loading ? "..." : totalProvinces.toString()}
+              description="Seluruh Indonesia"
               icon={MapPin}
             />
             <StatCard
-              title={t('stats.branches')}
-              value={loading ? "..." : (summary?.byCabang.length || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
-              description="PDPI"
+              title="Cabang"
+              value={loading ? "..." : (summary?.byCabang.length || 0).toString()}
+              description="Cabang PDPI"
               icon={Building2}
             />
           </div>
@@ -96,9 +95,9 @@ export default function Homepage() {
         <div className="container-pdpi">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center space-y-4">
-              <h2 className="text-3xl font-bold heading-medical">{t('search.title')}</h2>
+              <h2 className="text-3xl font-bold heading-medical">Cari Anggota PDPI</h2>
               <p className="text-lg text-medical-body">
-                {t('search.description')}
+                Temukan dokter spesialis paru berdasarkan nama, rumah sakit, atau lokasi
               </p>
             </div>
 

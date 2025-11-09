@@ -9,7 +9,6 @@ import { MemberSyncProvider } from "@/components/MemberSyncProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { ImportProvider } from "@/contexts/ImportContext";
-import "./i18n/config";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
