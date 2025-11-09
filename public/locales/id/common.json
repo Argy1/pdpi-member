@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "members": "Tabel Anggota",
+    "map": "Sebaran Anggota",
+    "login": "Login",
+    "logout": "Keluar",
+    "admin": "Admin Dashboard",
+    "profile": "Profil"
+  },
+  "hero": {
+    "title": "Daftar Anggota PDPI",
+    "subtitle": "Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi profesional",
+    "cta": "Buka Tabel Anggota"
+  },
+  "stats": {
+    "totalMembers": "Total Anggota",
+    "provinces": "Provinsi",
+    "branches": "Cabang/PD",
+    "pulmonologists": "Dokter Spesialis Paru",
+    "regionalBoards": "Pengurus Daerah",
+    "activeMembers": "Anggota Aktif"
+  },
+  "search": {
+    "placeholder": "Cari nama/NPA/RS/kota/provinsi…",
+    "title": "Cari Anggota PDPI",
+    "description": "Gunakan kolom pencarian di atas untuk menemukan anggota berdasarkan nama, NPA, rumah sakit, kota, atau provinsi."
+  },
+  "footer": {
+    "title": "PDPI Directory",
+    "subtitle": "Perhimpunan Dokter Paru Indonesia",
+    "memberTable": "Tabel Anggota",
+    "adminLogin": "Admin Login",
+    "credit": "Perhimpunan Dokter Paru Indonesia. Semua hak dilindungi."
+  },
+  "howToUse": {
+    "title": "Cara Menggunakan",
+    "step1": "Gunakan kolom pencarian untuk mencari anggota",
+    "step2": "Filter berdasarkan provinsi atau cabang",
+    "step3": "Klik pada nama anggota untuk melihat detail"
+  },
+  "visitor": {
+    "title": "Pengunjung Website",
+    "total": "Total Kunjungan"
+  }
+}

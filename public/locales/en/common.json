@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "home": "Home",
+    "members": "Members Table",
+    "map": "Members Map",
+    "login": "Login",
+    "logout": "Logout",
+    "admin": "Admin Dashboard",
+    "profile": "Profile"
+  },
+  "hero": {
+    "title": "PDPI Members Directory",
+    "subtitle": "A complete directory of Indonesian pulmonologists for easy access to professional information",
+    "cta": "Open Members Table"
+  },
+  "stats": {
+    "totalMembers": "Total Members",
+    "provinces": "Provinces",
+    "branches": "Branches/PD",
+    "pulmonologists": "Pulmonologists",
+    "regionalBoards": "Regional Boards",
+    "activeMembers": "Active Members"
+  },
+  "search": {
+    "placeholder": "Search name/NPA/hospital/city/province…",
+    "title": "Search PDPI Members",
+    "description": "Use the search box above to find members by name, NPA, hospital, city, or province."
+  },
+  "footer": {
+    "title": "PDPI Directory",
+    "subtitle": "Indonesian Society of Respirology",
+    "memberTable": "Members Table",
+    "adminLogin": "Admin Login",
+    "credit": "Indonesian Society of Respirology. All rights reserved."
+  },
+  "howToUse": {
+    "title": "How to Use",
+    "step1": "Use the search box to find members",
+    "step2": "Filter by province or branch",
+    "step3": "Click on a member's name to view details"
+  },
+  "visitor": {
+    "title": "Website Visitors",
+    "total": "Total Visits"
+  }
+}
