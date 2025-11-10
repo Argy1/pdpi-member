@@ -16,7 +16,8 @@
   "stats": {
     "totalMembers": "Total Members",
     "provinces": "Provinces",
-    "branches": "Branches/PD",
+    "branches": "Branches",
+    "branchesDescription": "PDPI Branches",
     "pulmonologists": "Pulmonologists",
     "regionalBoards": "Nationwide",
     "activeMembers": "Active Members",

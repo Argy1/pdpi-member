@@ -16,7 +16,8 @@
   "stats": {
     "totalMembers": "Total Anggota",
     "provinces": "Provinsi",
-    "branches": "Cabang/PD",
+    "branches": "Cabang",
+    "branchesDescription": "Cabang PDPI",
     "pulmonologists": "Dokter Spesialis Paru",
     "regionalBoards": "Seluruh Indonesia",
     "activeMembers": "Anggota Aktif",

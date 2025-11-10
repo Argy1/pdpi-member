@@ -84,7 +84,7 @@ export default function Homepage() {
             <StatCard
               title={t('stats.branches')}
               value={loading ? "..." : (summary?.byCabang.length || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
-              description="PDPI"
+              description={t('stats.branchesDescription')}
               icon={Building2}
             />
           </div>
