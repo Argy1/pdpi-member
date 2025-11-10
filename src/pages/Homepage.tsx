@@ -38,8 +38,8 @@ export default function Homepage() {
             <div className="text-center space-y-8 max-w-4xl mx-auto">
               {/* Logo and Title */}
               <div className="flex flex-col items-center space-y-6">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full overflow-hidden bg-white shadow-xl">
-                  <img src={logoImage} alt="PDPI Logo" className="h-20 w-20 object-contain" />
+                <div className="flex h-40 w-40 items-center justify-center rounded-full overflow-hidden bg-white shadow-xl">
+                  <img src={logoImage} alt="PDPI Logo" className="h-36 w-36 object-contain" />
                 </div>
                 <div className="space-y-4">
                   <h1 className="text-4xl md:text-6xl font-bold heading-medical">

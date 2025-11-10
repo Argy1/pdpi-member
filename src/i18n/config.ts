@@ -9,6 +9,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'id',
+    lng: 'id', // Set default language explicitly
     defaultNS: 'common',
     ns: ['common'],
     debug: false,
@@ -23,5 +24,11 @@ i18n
       caches: ['localStorage'],
     },
   });
+
+// Set Indonesian as default if no language preference exists
+if (!localStorage.getItem('i18nextLng')) {
+  i18n.changeLanguage('id');
+  localStorage.setItem('i18nextLng', 'id');
+}
 
 export default i18n;
