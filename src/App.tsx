@@ -22,6 +22,17 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminChangeRequests from "./pages/admin/AdminChangeRequests";
 import AdminAuditLog from "./pages/admin/AdminAuditLog";
+import IuranSaya from "./pages/iuran/IuranSaya";
+import PembayaranKolektif from "./pages/iuran/PembayaranKolektif";
+import Checkout from "./pages/iuran/Checkout";
+import InstruksiPembayaran from "./pages/iuran/InstruksiPembayaran";
+import RiwayatPembayaran from "./pages/iuran/RiwayatPembayaran";
+import InvoiceDetail from "./pages/invoice/InvoiceDetail";
+import AdminIuranDashboard from "./pages/admin/iuran/AdminIuranDashboard";
+import AdminPeriodeTarif from "./pages/admin/iuran/AdminPeriodeTarif";
+import AdminKelolaTagihan from "./pages/admin/iuran/AdminKelolaTagihan";
+import AdminRekonsiliasi from "./pages/admin/iuran/AdminRekonsiliasi";
+import AdminLaporan from "./pages/admin/iuran/AdminLaporan";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +75,62 @@ const App = () => (
               } />
               <Route path="/login" element={<LoginPage />} />
               
+              {/* Iuran routes (Member) */}
+              <Route path="/iuran" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <IuranSaya />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/iuran/kolektif" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <PembayaranKolektif />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/iuran/checkout" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <Checkout />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/iuran/instruksi/:groupCode" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <InstruksiPembayaran />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/iuran/riwayat" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <RiwayatPembayaran />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/invoice/:groupCode" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <InvoiceDetail />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              
               {/* Admin routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
@@ -76,7 +143,13 @@ const App = () => (
                 <Route path="import" element={<AdminImport />} />
                 <Route path="laporan" element={<AdminReports />} />
                 <Route path="profil" element={<AdminProfile />} />
-                {/* Add more admin routes as needed */}
+                
+                {/* Admin Iuran routes */}
+                <Route path="iuran" element={<AdminIuranDashboard />} />
+                <Route path="iuran/periode" element={<AdminPeriodeTarif />} />
+                <Route path="iuran/tagihan" element={<AdminKelolaTagihan />} />
+                <Route path="iuran/rekonsiliasi" element={<AdminRekonsiliasi />} />
+                <Route path="iuran/laporan" element={<AdminLaporan />} />
               </Route>
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

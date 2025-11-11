@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,26 +6,99 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CreditCard, Calendar, ShoppingCart, History, CheckCircle, AlertCircle } from 'lucide-react';
+import { usePaymentCart } from '@/hooks/usePaymentCart';
+import { usePaymentGroups } from '@/hooks/usePaymentGroups';
+import { useMemberDues } from '@/hooks/useMemberDues';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { TARIFF_PER_YEAR, MAX_YEARS_PER_TRANSACTION, formatRupiah, getAvailableYears } from '@/utils/paymentHelpers';
+import { useToast } from '@/hooks/use-toast';
 
 export default function IuranSaya() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedYears, setSelectedYears] = useState('1');
+  const [myMember, setMyMember] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { addItem } = usePaymentCart();
+  const { paymentGroups } = usePaymentGroups();
+  const { dues, isPaidYear } = useMemberDues(myMember?.id);
 
-  // Dummy data
+  const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    const fetchMyMember = async () => {
+      if (!user) return;
+      try {
+        const { data, error } = await supabase
+          .from('members')
+          .select('*')
+          .eq('email', user.email)
+          .single();
+        
+        if (error) throw error;
+        setMyMember(data);
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: 'Gagal memuat data anggota',
+          variant: 'destructive'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyMember();
+  }, [user]);
+
   const currentPeriod = {
-    year: 2025,
-    amount: 500000,
-    status: 'unpaid',
-    dueDate: '31 Desember 2025'
+    year: currentYear,
+    amount: TARIFF_PER_YEAR,
+    status: isPaidYear(currentYear) ? 'paid' : 'unpaid',
+    dueDate: `31 Desember ${currentYear}`
   };
 
-  const recentHistory = [
-    { id: 1, period: '2024', amount: 500000, status: 'paid', date: '15 Jan 2024', method: 'QRIS' },
-    { id: 2, period: '2023', amount: 450000, status: 'paid', date: '20 Jan 2023', method: 'Transfer' },
-    { id: 3, period: '2022', amount: 450000, status: 'paid', date: '18 Jan 2022', method: 'QRIS' }
-  ];
+  const recentHistory = paymentGroups
+    .filter(g => g.status === 'PAID')
+    .slice(0, 3)
+    .map(g => ({
+      id: g.id,
+      period: new Date(g.created_at).getFullYear().toString(),
+      amount: g.total_payable,
+      status: 'paid',
+      date: new Date(g.paid_at || g.created_at).toLocaleDateString('id-ID'),
+      method: g.method === 'qris' ? 'QRIS' : 'Transfer'
+    }));
 
   const handleAddToCart = () => {
+    if (!myMember) {
+      toast({
+        title: 'Error',
+        description: 'Data anggota tidak ditemukan',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    const yearsCount = parseInt(selectedYears);
+    const availableYears = getAvailableYears(dues.filter(d => d.status === 'PAID').map(d => d.year));
+    const selectedYearsList = availableYears.slice(0, yearsCount);
+
+    addItem({
+      memberId: myMember.id,
+      memberName: myMember.nama,
+      npa: myMember.npa,
+      years: selectedYearsList,
+      cabang: myMember.cabang
+    });
+
+    toast({
+      title: 'Berhasil',
+      description: `${yearsCount} tahun ditambahkan ke keranjang`
+    });
+
     navigate('/iuran/checkout');
   };
 
@@ -62,7 +135,7 @@ export default function IuranSaya() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Nominal per tahun</p>
-                <p className="text-2xl font-bold text-primary">Rp {currentPeriod.amount.toLocaleString('id-ID')}</p>
+                <p className="text-2xl font-bold text-primary">{formatRupiah(currentPeriod.amount)}</p>
               </div>
             </div>
           </CardContent>
@@ -98,7 +171,7 @@ export default function IuranSaya() {
                 <label className="text-sm font-medium mb-2 block">Total Pembayaran</label>
                 <div className="h-10 px-4 flex items-center rounded-md border bg-muted">
                   <span className="font-semibold text-primary">
-                    Rp {(currentPeriod.amount * parseInt(selectedYears)).toLocaleString('id-ID')}
+                    {formatRupiah(TARIFF_PER_YEAR * parseInt(selectedYears))}
                   </span>
                 </div>
               </div>
@@ -148,7 +221,7 @@ export default function IuranSaya() {
                     <TableCell className="font-medium">{item.period}</TableCell>
                     <TableCell>{item.date}</TableCell>
                     <TableCell>{item.method}</TableCell>
-                    <TableCell className="text-right">Rp {item.amount.toLocaleString('id-ID')}</TableCell>
+                    <TableCell className="text-right">{formatRupiah(item.amount)}</TableCell>
                     <TableCell>
                       <Badge variant="default" className="bg-green-500">
                         <CheckCircle className="h-3 w-3 mr-1" />
