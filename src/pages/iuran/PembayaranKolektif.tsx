@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { usePaymentCart, CartItem } from '@/hooks/usePaymentCart';
+import { useAuth } from '@/contexts/AuthContext';
 import { useMemberDues } from '@/hooks/useMemberDues';
 import { formatRupiah, TARIFF_PER_YEAR, MAX_YEARS_PER_TRANSACTION, getAvailableYears } from '@/utils/paymentHelpers';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,6 +24,7 @@ interface Member {
 
 export default function PembayaranKolektif() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const { toast } = useToast();
   const { items: cartItems, addItem, removeItem, getTotalAmount, clearCart } = usePaymentCart();
   
@@ -31,6 +33,13 @@ export default function PembayaranKolektif() {
   const [selectedMembers, setSelectedMembers] = useState<Map<string, { member: Member; years: number[] }>>(new Map());
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+
+  // Redirect admins to admin iuran page
+  useEffect(() => {
+    if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+      navigate('/admin/iuran', { replace: true });
+    }
+  }, [profile, navigate]);
 
   // Search members from database
   const handleSearch = async () => {
@@ -190,6 +199,11 @@ export default function PembayaranKolektif() {
 
     navigate('/iuran/checkout');
   };
+
+  // Early return for admins
+  if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+    return null;
+  }
 
   const currentYear = new Date().getFullYear();
   const availableYears = Array.from({ length: 10 }, (_, i) => currentYear + i);

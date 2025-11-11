@@ -8,20 +8,34 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { History, Search, Download, Eye, CheckCircle, Clock, XCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { formatRupiah } from '@/utils/paymentHelpers';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 export default function RiwayatPembayaran() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState<any[]>([]);
 
+  // Redirect admins to admin iuran page
   useEffect(() => {
+    if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+      navigate('/admin/iuran', { replace: true });
+    }
+  }, [profile, navigate]);
+
+  useEffect(() => {
+    // Don't fetch for admins
+    if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+      setLoading(false);
+      return;
+    }
     fetchPayments();
-  }, [statusFilter]);
+  }, [statusFilter, profile]);
 
   const fetchPayments = async () => {
     try {
@@ -89,6 +103,19 @@ export default function RiwayatPembayaran() {
     payment.group_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
     payment.method.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Early return for admins
+  if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

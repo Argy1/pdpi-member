@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function IuranSaya() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [selectedYears, setSelectedYears] = useState('1');
   const [myMember, setMyMember] = useState<any>(null);
@@ -27,9 +27,23 @@ export default function IuranSaya() {
 
   const currentYear = new Date().getFullYear();
 
+  // Redirect admins to admin iuran page
+  useEffect(() => {
+    if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+      navigate('/admin/iuran', { replace: true });
+    }
+  }, [profile, navigate]);
+
   useEffect(() => {
     const fetchMyMember = async () => {
       if (!user) return;
+      
+      // Don't fetch for admins
+      if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const { data, error } = await supabase
           .from('members')
@@ -41,9 +55,8 @@ export default function IuranSaya() {
         setMyMember(data);
       } catch (error: any) {
         toast({
-          title: 'Error',
-          description: 'Gagal memuat data anggota',
-          variant: 'destructive'
+          title: 'Info',
+          description: 'Anda adalah admin. Gunakan menu Admin Iuran untuk mengelola iuran anggota.',
         });
       } finally {
         setLoading(false);
@@ -51,7 +64,7 @@ export default function IuranSaya() {
     };
 
     fetchMyMember();
-  }, [user]);
+  }, [user, profile]);
 
   const currentPeriod = {
     year: currentYear,
@@ -101,6 +114,19 @@ export default function IuranSaya() {
 
     navigate('/iuran/checkout');
   };
+
+  // Early return for admins
+  if (profile && (profile.role === 'admin_pusat' || profile.role === 'admin_cabang')) {
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

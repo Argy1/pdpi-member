@@ -70,13 +70,22 @@ export function Navbar() {
             >
               {t('nav.map')}
             </Link>
-            {user && (
+            {user && profile?.role === 'user' && (
               <Link 
                 to="/iuran" 
                 className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth flex items-center gap-1"
               >
                 <CreditCard className="h-4 w-4" />
                 Iuran
+              </Link>
+            )}
+            {user && (profile?.role === 'admin_pusat' || profile?.role === 'admin_cabang') && (
+              <Link 
+                to="/admin/iuran" 
+                className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth flex items-center gap-1"
+              >
+                <CreditCard className="h-4 w-4" />
+                Admin Iuran
               </Link>
             )}
           </div>
@@ -123,7 +132,7 @@ export function Navbar() {
                   >
                     {t('nav.map')}
                   </Link>
-                  {user && (
+                  {user && profile?.role === 'user' && (
                     <Link 
                       to="/iuran" 
                       className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2 flex items-center"
@@ -131,6 +140,16 @@ export function Navbar() {
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       Iuran
+                    </Link>
+                  )}
+                  {user && (profile?.role === 'admin_pusat' || profile?.role === 'admin_cabang') && (
+                    <Link 
+                      to="/admin/iuran" 
+                      className="text-base font-medium text-foreground hover:text-primary transition-smooth py-2 flex items-center"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Admin Iuran
                     </Link>
                   )}
                   
