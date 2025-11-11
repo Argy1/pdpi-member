@@ -33,6 +33,7 @@ import AdminPeriodeTarif from "./pages/admin/iuran/AdminPeriodeTarif";
 import AdminKelolaTagihan from "./pages/admin/iuran/AdminKelolaTagihan";
 import AdminRekonsiliasi from "./pages/admin/iuran/AdminRekonsiliasi";
 import AdminLaporan from "./pages/admin/iuran/AdminLaporan";
+import BayarMewakili from "./pages/admin/iuran/BayarMewakili";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -146,6 +147,7 @@ const App = () => (
                 
                 {/* Admin Iuran routes */}
                 <Route path="iuran" element={<AdminIuranDashboard />} />
+                <Route path="iuran/bayar-mewakili" element={<BayarMewakili />} />
                 <Route path="iuran/periode" element={<AdminPeriodeTarif />} />
                 <Route path="iuran/tagihan" element={<AdminKelolaTagihan />} />
                 <Route path="iuran/rekonsiliasi" element={<AdminRekonsiliasi />} />

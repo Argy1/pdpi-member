@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart3, TrendingUp, Users, DollarSign, Activity, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BarChart3, TrendingUp, Users as UsersIcon, DollarSign, Activity, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
@@ -9,6 +11,7 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 export default function AdminIuranDashboard() {
+  const navigate = useNavigate();
   const { isAdminPusat, branchId, loading: authLoading } = useAdminAccess();
   const [loading, setLoading] = useState(true);
   const [kpiData, setKpiData] = useState({
@@ -118,9 +121,15 @@ export default function AdminIuranDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard Iuran</h1>
-        <p className="text-muted-foreground">Ringkasan dan statistik pembayaran iuran anggota PDPI</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard Iuran</h1>
+          <p className="text-muted-foreground">Ringkasan pembayaran iuran anggota</p>
+        </div>
+        <Button onClick={() => navigate('/admin/iuran/bayar-mewakili')}>
+          <UsersIcon className="mr-2 h-4 w-4" />
+          Bayar Mewakili
+        </Button>
       </div>
 
       {/* KPI Cards */}
@@ -142,7 +151,7 @@ export default function AdminIuranDashboard() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardDescription>Tagihan Lunas</CardDescription>
-              <Users className="h-5 w-5 text-green-600" />
+              <UsersIcon className="h-5 w-5 text-green-600" />
             </div>
           </CardHeader>
           <CardContent>

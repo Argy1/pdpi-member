@@ -384,6 +384,8 @@ export type Database = {
           method: string
           note: string | null
           paid_at: string | null
+          paid_by_admin: boolean | null
+          payer_role: string | null
           pd_scope: string | null
           qris_payload: Json | null
           reference_id: string | null
@@ -405,6 +407,8 @@ export type Database = {
           method: string
           note?: string | null
           paid_at?: string | null
+          paid_by_admin?: boolean | null
+          payer_role?: string | null
           pd_scope?: string | null
           qris_payload?: Json | null
           reference_id?: string | null
@@ -426,6 +430,8 @@ export type Database = {
           method?: string
           note?: string | null
           paid_at?: string | null
+          paid_by_admin?: boolean | null
+          payer_role?: string | null
           pd_scope?: string | null
           qris_payload?: Json | null
           reference_id?: string | null
