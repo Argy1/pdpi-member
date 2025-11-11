@@ -72,7 +72,6 @@ export default function Checkout() {
           total_payable: total,
           status: 'PENDING',
           expired_at: expiredAt.toISOString(),
-          pd_scope: profile?.branch_id || null,
           paid_by_admin: false,
           payer_role: 'user'
         })

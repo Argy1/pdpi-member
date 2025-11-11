@@ -189,6 +189,23 @@ export default function BayarMewakili() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // Validate: Admin cannot pay for themselves
+      const { data: adminMember } = await supabase
+        .from('members')
+        .select('id')
+        .eq('email', user.email)
+        .maybeSingle();
+
+      if (adminMember && selectedMembers.some(m => m.id === adminMember.id)) {
+        toast({
+          title: 'Error',
+          description: 'Admin tidak boleh membayar untuk dirinya sendiri. Gunakan halaman Iuran Saya untuk membayar iuran pribadi.',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
       // Validate: Admin cabang can only pay for members in their PD
       if (isAdminCabang && profile?.branches?.name) {
         const invalidMembers = selectedMembers.filter(
@@ -197,7 +214,7 @@ export default function BayarMewakili() {
         if (invalidMembers.length > 0) {
           toast({
             title: 'Error',
-            description: `Anggota berikut tidak berada di PD Anda: ${invalidMembers.map(m => m.nama).join(', ')}`,
+            description: `Anggota berikut tidak berada di PD Anda (${profile.branches.name}): ${invalidMembers.map(m => m.nama).join(', ')}`,
             variant: 'destructive',
           });
           setLoading(false);
