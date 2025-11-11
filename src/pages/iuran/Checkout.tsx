@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,26 +6,116 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, CreditCard, Building2, QrCode, CheckCircle, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, CreditCard, Building2, QrCode, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { usePaymentCart } from '@/hooks/usePaymentCart';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { generateGroupCode, calculateExpiry, formatRupiah, TARIFF_PER_YEAR } from '@/utils/paymentHelpers';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState('qris');
+  const { toast } = useToast();
+  const { items, getTotalAmount, clearCart } = usePaymentCart();
+  const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bank_transfer'>('qris');
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
 
-  // Dummy cart data
-  const cartItems = [
-    { id: 1, npa: '12345', nama: 'Dr. Ahmad Suryadi, Sp.P', years: 1, amount: 500000 },
-    { id: 2, npa: '12346', nama: 'Dr. Budi Santoso, Sp.P', years: 2, amount: 1000000 }
-  ];
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
-  const subtotal: number = cartItems.reduce((sum, item) => sum + item.amount, 0);
-  const adminFee: number = 0; // Free for QRIS
-  const total: number = subtotal + adminFee;
+  const fetchProfile = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*, branches(id, name)')
+        .eq('user_id', user.id)
+        .single();
+      setProfile(data);
+    }
+  };
 
-  const handleCreateInvoice = () => {
-    const groupCode = 'INV' + Date.now();
-    navigate(`/iuran/instruksi/${groupCode}`);
+  const subtotal = getTotalAmount();
+  const adminFee = 0; // Free for both methods
+  const uniqueCode = paymentMethod === 'bank_transfer' ? Math.floor(Math.random() * 900) + 100 : 0;
+  const total = subtotal + uniqueCode;
+
+  const handleCreateInvoice = async () => {
+    if (items.length === 0) {
+      toast({
+        title: 'Keranjang Kosong',
+        description: 'Silakan tambahkan item terlebih dahulu',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const groupCode = generateGroupCode();
+      const expiredAt = calculateExpiry(paymentMethod);
+
+      // Create payment group
+      const { data: paymentGroup, error: groupError } = await supabase
+        .from('payment_groups')
+        .insert({
+          group_code: groupCode,
+          created_by: user.id,
+          method: paymentMethod,
+          amount_base: subtotal,
+          unique_code: uniqueCode,
+          total_payable: total,
+          status: 'PENDING',
+          expired_at: expiredAt.toISOString(),
+          pd_scope: profile?.branch_id || null
+        })
+        .select()
+        .single();
+
+      if (groupError) throw groupError;
+
+      // Create payment items
+      const paymentItems = items.flatMap(item => 
+        item.years.map(year => ({
+          payment_group_id: paymentGroup.id,
+          member_id: item.memberId,
+          npa: item.npa,
+          year,
+          amount: TARIFF_PER_YEAR,
+          status: 'PENDING'
+        }))
+      );
+
+      const { error: itemsError } = await supabase
+        .from('payment_items')
+        .insert(paymentItems);
+
+      if (itemsError) throw itemsError;
+
+      // Clear cart
+      clearCart();
+
+      toast({
+        title: 'Tagihan Berhasil Dibuat',
+        description: `Invoice ${groupCode} telah dibuat`
+      });
+
+      navigate(`/iuran/instruksi/${groupCode}`);
+    } catch (error: any) {
+      console.error('Error creating invoice:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,20 +141,20 @@ export default function Checkout() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle>Ringkasan Pesanan</CardTitle>
-                <CardDescription>{cartItems.length} item dalam keranjang</CardDescription>
+                <CardDescription>{items.length} anggota dalam keranjang</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-4 rounded-lg border bg-muted/30">
+                {items.map((item) => (
+                  <div key={item.memberId} className="flex items-center justify-between p-4 rounded-lg border bg-muted/30">
                     <div className="flex-1">
-                      <p className="font-semibold text-foreground">{item.nama}</p>
+                      <p className="font-semibold text-foreground">{item.memberName}</p>
                       <p className="text-sm text-muted-foreground">NPA: {item.npa}</p>
                       <Badge variant="outline" className="mt-1">
-                        {item.years} Tahun
+                        {item.years.length} Tahun: {item.years.join(', ')}
                       </Badge>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-primary">Rp {item.amount.toLocaleString('id-ID')}</p>
+                      <p className="font-semibold text-primary">{formatRupiah(item.years.length * TARIFF_PER_YEAR)}</p>
                     </div>
                   </div>
                 ))}
@@ -81,7 +171,7 @@ export default function Checkout() {
                 <CardDescription>Pilih metode pembayaran yang Anda inginkan</CardDescription>
               </CardHeader>
               <CardContent>
-                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
+                <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as 'qris' | 'bank_transfer')} className="space-y-3">
                   <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-primary bg-primary/5">
                     <RadioGroupItem value="qris" id="qris" />
                     <Label htmlFor="qris" className="flex-1 cursor-pointer">
@@ -136,23 +226,33 @@ export default function Checkout() {
               <CardContent className="pt-6">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal ({cartItems.length} item)</span>
-                    <span className="font-medium">Rp {subtotal.toLocaleString('id-ID')}</span>
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">{formatRupiah(subtotal)}</span>
                   </div>
+                  {paymentMethod === 'bank_transfer' && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Kode Unik</span>
+                      <span className="font-medium text-primary">{formatRupiah(uniqueCode)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Biaya Admin</span>
-                    <span className="font-medium text-green-600">
-                      {adminFee === 0 ? 'Gratis' : `Rp ${adminFee.toLocaleString('id-ID')}`}
-                    </span>
+                    <span className="font-medium text-green-600">Gratis</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between">
                     <span className="text-lg font-semibold">Total</span>
-                    <span className="text-2xl font-bold text-primary">Rp {total.toLocaleString('id-ID')}</span>
+                    <span className="text-2xl font-bold text-primary">{formatRupiah(total)}</span>
                   </div>
                 </div>
 
-                <Button onClick={handleCreateInvoice} className="w-full mt-6" size="lg">
+                <Button 
+                  onClick={handleCreateInvoice} 
+                  className="w-full mt-6" 
+                  size="lg"
+                  disabled={loading || items.length === 0}
+                >
+                  {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   Buat Tagihan
                 </Button>
 
