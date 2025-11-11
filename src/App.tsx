@@ -28,12 +28,11 @@ import Checkout from "./pages/iuran/Checkout";
 import InstruksiPembayaran from "./pages/iuran/InstruksiPembayaran";
 import RiwayatPembayaran from "./pages/iuran/RiwayatPembayaran";
 import InvoiceDetail from "./pages/invoice/InvoiceDetail";
-import AdminIuranDashboard from "./pages/admin/iuran/AdminIuranDashboard";
+import AdminIuranLayout from "./pages/admin/iuran/AdminIuranLayout";
 import AdminPeriodeTarif from "./pages/admin/iuran/AdminPeriodeTarif";
 import AdminKelolaTagihan from "./pages/admin/iuran/AdminKelolaTagihan";
 import AdminRekonsiliasi from "./pages/admin/iuran/AdminRekonsiliasi";
 import AdminLaporan from "./pages/admin/iuran/AdminLaporan";
-import BayarMewakili from "./pages/admin/iuran/BayarMewakili";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -146,8 +145,7 @@ const App = () => (
                 <Route path="profil" element={<AdminProfile />} />
                 
                 {/* Admin Iuran routes */}
-                <Route path="iuran" element={<AdminIuranDashboard />} />
-                <Route path="iuran/bayar-mewakili" element={<BayarMewakili />} />
+                <Route path="iuran" element={<AdminIuranLayout />} />
                 <Route path="iuran/periode" element={<AdminPeriodeTarif />} />
                 <Route path="iuran/tagihan" element={<AdminKelolaTagihan />} />
                 <Route path="iuran/rekonsiliasi" element={<AdminRekonsiliasi />} />

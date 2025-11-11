@@ -75,37 +75,9 @@ const menuItems = [
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {
-    title: 'Dashboard Iuran',
+    title: 'Admin Iuran',
     url: '/admin/iuran',
     icon: CreditCard,
-    roles: ['admin_pusat', 'admin_cabang'],
-    isIuran: true
-  },
-  {
-    title: 'Periode & Tarif',
-    url: '/admin/iuran/periode',
-    icon: Calendar,
-    roles: ['admin_pusat'],
-    isIuran: true
-  },
-  {
-    title: 'Kelola Tagihan',
-    url: '/admin/iuran/tagihan',
-    icon: Receipt,
-    roles: ['admin_pusat', 'admin_cabang'],
-    isIuran: true
-  },
-  {
-    title: 'Rekonsiliasi',
-    url: '/admin/iuran/rekonsiliasi',
-    icon: RefreshCcw,
-    roles: ['admin_pusat'],
-    isIuran: true
-  },
-  {
-    title: 'Laporan Iuran',
-    url: '/admin/iuran/laporan',
-    icon: FileText,
     roles: ['admin_pusat', 'admin_cabang'],
     isIuran: true
   },
