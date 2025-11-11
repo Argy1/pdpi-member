@@ -22,7 +22,7 @@ export default function AdminPeriodeTarif() {
   const [periods, setPeriods] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     year: new Date().getFullYear() + 1,
-    tariff_per_year: 300000,
+    tariff_per_year: 1000000,
     due_date: ''
   });
 
@@ -86,7 +86,7 @@ export default function AdminPeriodeTarif() {
       fetchPeriods();
       setFormData({
         year: new Date().getFullYear() + 1,
-        tariff_per_year: 300000,
+        tariff_per_year: 1000000,
         due_date: ''
       });
     } catch (error: any) {
@@ -213,7 +213,7 @@ export default function AdminPeriodeTarif() {
         <CardContent className="pt-6">
           <h3 className="font-semibold mb-3">Catatan Penting</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>• Tarif standar untuk iuran anggota PDPI adalah Rp 300.000 per tahun</li>
+            <li>• Tarif standar untuk iuran anggota PDPI adalah Rp 1.000.000 per tahun</li>
             <li>• Periode digunakan sebagai metadata untuk pembayaran dan laporan</li>
             <li>• Jatuh tempo membantu sistem mengirim reminder otomatis</li>
             <li>• Hanya Admin Pusat yang dapat menambah atau mengubah periode</li>

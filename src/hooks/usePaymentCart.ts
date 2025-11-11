@@ -19,7 +19,7 @@ interface CartState {
   getTotalYears: () => number;
 }
 
-const TARIFF_PER_YEAR = 300000;
+const TARIFF_PER_YEAR = 1000000;
 
 export const usePaymentCart = create<CartState>()(
   persist(

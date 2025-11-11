@@ -1,4 +1,4 @@
-export const TARIFF_PER_YEAR = 300000;
+export const TARIFF_PER_YEAR = 1000000;
 export const MAX_YEARS_PER_TRANSACTION = 5;
 
 export const generateGroupCode = (): string => {
