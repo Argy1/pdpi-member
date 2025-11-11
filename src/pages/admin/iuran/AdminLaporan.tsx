@@ -1,22 +1,89 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, FileText } from 'lucide-react';
+import { Download, FileText, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { useToast } from '@/hooks/use-toast';
+import { formatRupiah } from '@/utils/paymentHelpers';
 
 export default function AdminLaporan() {
+  const { toast } = useToast();
+  const { isAdminPusat, branchId, loading: authLoading } = useAdminAccess();
+  const [loading, setLoading] = useState(true);
   const [periodFilter, setPeriodFilter] = useState('2025');
-  const [cabangFilter, setCabangFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
+  const [summary, setSummary] = useState({
+    totalCollection: 0,
+    totalInvoices: 0,
+    qrisPayments: 0,
+    transferPayments: 0
+  });
 
-  // Dummy summary data
-  const summary = {
-    totalCollection: 125000000,
-    totalMembers: 850,
-    qrisPayments: 600,
-    transferPayments: 250,
-    avgPaymentTime: '2.5 jam'
+  useEffect(() => {
+    if (!authLoading) {
+      fetchSummary();
+    }
+  }, [authLoading, periodFilter, methodFilter, branchId]);
+
+  const fetchSummary = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('payment_groups')
+        .select('*')
+        .eq('status', 'PAID');
+
+      // Role-based filtering
+      if (!isAdminPusat && branchId) {
+        query = query.eq('pd_scope', branchId);
+      }
+
+      if (methodFilter !== 'all') {
+        query = query.eq('method', methodFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      const total = data?.reduce((sum, p) => sum + p.total_payable, 0) || 0;
+      const qris = data?.filter(p => p.method === 'qris').length || 0;
+      const transfer = data?.filter(p => p.method === 'bank_transfer').length || 0;
+
+      setSummary({
+        totalCollection: total,
+        totalInvoices: data?.length || 0,
+        qrisPayments: qris,
+        transferPayments: transfer
+      });
+    } catch (error: any) {
+      console.error('Error fetching summary:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleExport = (type: string) => {
+    toast({
+      title: 'Export Sedang Diproses',
+      description: `Laporan ${type} sedang dihasilkan...`
+    });
+  };
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -33,7 +100,7 @@ export default function AdminLaporan() {
           <CardDescription>Pilih kriteria laporan yang ingin dihasilkan</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Periode</label>
               <Select value={periodFilter} onValueChange={setPeriodFilter}>
@@ -50,21 +117,6 @@ export default function AdminLaporan() {
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">Cabang/PD</label>
-              <Select value={cabangFilter} onValueChange={setCabangFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Semua Cabang</SelectItem>
-                  <SelectItem value="jakarta">DKI Jakarta</SelectItem>
-                  <SelectItem value="jabar">Jawa Barat</SelectItem>
-                  <SelectItem value="jatim">Jawa Timur</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
               <label className="text-sm font-medium mb-2 block">Metode Pembayaran</label>
               <Select value={methodFilter} onValueChange={setMethodFilter}>
                 <SelectTrigger>
@@ -73,7 +125,7 @@ export default function AdminLaporan() {
                 <SelectContent>
                   <SelectItem value="all">Semua Metode</SelectItem>
                   <SelectItem value="qris">QRIS</SelectItem>
-                  <SelectItem value="transfer">Transfer Bank</SelectItem>
+                  <SelectItem value="bank_transfer">Transfer Bank</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -86,14 +138,14 @@ export default function AdminLaporan() {
         <Card className="shadow-sm">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground mb-1">Total Terkumpul</p>
-            <p className="text-2xl font-bold text-primary">Rp {summary.totalCollection.toLocaleString('id-ID')}</p>
+            <p className="text-2xl font-bold text-primary">{formatRupiah(summary.totalCollection)}</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-sm">
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground mb-1">Anggota Bayar</p>
-            <p className="text-2xl font-bold text-green-600">{summary.totalMembers}</p>
+            <p className="text-sm text-muted-foreground mb-1">Total Invoice</p>
+            <p className="text-2xl font-bold text-green-600">{summary.totalInvoices}</p>
           </CardContent>
         </Card>
 
@@ -123,7 +175,12 @@ export default function AdminLaporan() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button variant="outline" className="h-20 gap-3 justify-start" size="lg">
+            <Button 
+              variant="outline" 
+              className="h-20 gap-3 justify-start" 
+              size="lg"
+              onClick={() => handleExport('Excel Lengkap')}
+            >
               <Download className="h-5 w-5" />
               <div className="text-left">
                 <p className="font-semibold">Laporan Lengkap (Excel)</p>
@@ -131,7 +188,12 @@ export default function AdminLaporan() {
               </div>
             </Button>
 
-            <Button variant="outline" className="h-20 gap-3 justify-start" size="lg">
+            <Button 
+              variant="outline" 
+              className="h-20 gap-3 justify-start" 
+              size="lg"
+              onClick={() => handleExport('PDF Ringkasan')}
+            >
               <Download className="h-5 w-5" />
               <div className="text-left">
                 <p className="font-semibold">Ringkasan (PDF)</p>
@@ -139,7 +201,12 @@ export default function AdminLaporan() {
               </div>
             </Button>
 
-            <Button variant="outline" className="h-20 gap-3 justify-start" size="lg">
+            <Button 
+              variant="outline" 
+              className="h-20 gap-3 justify-start" 
+              size="lg"
+              onClick={() => handleExport('Per Cabang')}
+            >
               <Download className="h-5 w-5" />
               <div className="text-left">
                 <p className="font-semibold">Per Cabang (Excel)</p>
@@ -147,7 +214,12 @@ export default function AdminLaporan() {
               </div>
             </Button>
 
-            <Button variant="outline" className="h-20 gap-3 justify-start" size="lg">
+            <Button 
+              variant="outline" 
+              className="h-20 gap-3 justify-start" 
+              size="lg"
+              onClick={() => handleExport('Belum Bayar')}
+            >
               <Download className="h-5 w-5" />
               <div className="text-left">
                 <p className="font-semibold">Anggota Belum Bayar (CSV)</p>
@@ -166,7 +238,7 @@ export default function AdminLaporan() {
             <li>• Laporan dihasilkan berdasarkan filter yang dipilih</li>
             <li>• Data realtime, update otomatis setiap pembayaran baru</li>
             <li>• Laporan Excel dapat dibuka di Microsoft Excel atau Google Sheets</li>
-            <li>• Semua export tersimpan di log untuk audit trail</li>
+            <li>• {!isAdminPusat ? 'Data dibatasi sesuai PD Anda' : 'Anda dapat melihat semua data sebagai Admin Pusat'}</li>
           </ul>
         </CardContent>
       </Card>

@@ -503,6 +503,36 @@ export type Database = {
           },
         ]
       }
+      periods: {
+        Row: {
+          created_at: string
+          due_date: string | null
+          id: string
+          status: string
+          tariff_per_year: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          tariff_per_year?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          status?: string
+          tariff_per_year?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           branch_id: string | null

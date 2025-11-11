@@ -1,22 +1,119 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BarChart3, TrendingUp, Users, DollarSign, Activity } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, DollarSign, Activity, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { formatRupiah } from '@/utils/paymentHelpers';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 export default function AdminIuranDashboard() {
-  // Dummy KPI data
-  const kpiData = {
-    totalCollection: 125000000,
-    paidMembers: 850,
-    pendingPayments: 45,
-    thisMonthCollection: 15000000,
-    topBranch: 'DKI Jakarta'
+  const { isAdminPusat, branchId, loading: authLoading } = useAdminAccess();
+  const [loading, setLoading] = useState(true);
+  const [kpiData, setKpiData] = useState({
+    totalCollection: 0,
+    paidCount: 0,
+    pendingCount: 0,
+    thisMonthCollection: 0
+  });
+  const [recentPayments, setRecentPayments] = useState<any[]>([]);
+  const [topBranches, setTopBranches] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!authLoading) {
+      fetchDashboardData();
+    }
+  }, [authLoading, branchId]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Build query with role-based filtering
+      let paymentsQuery = supabase
+        .from('payment_groups')
+        .select(`
+          *,
+          payment_items(count)
+        `);
+
+      if (!isAdminPusat && branchId) {
+        paymentsQuery = paymentsQuery.eq('pd_scope', branchId);
+      }
+
+      const { data: payments } = await paymentsQuery;
+
+      // Calculate KPIs
+      const total = payments?.reduce((sum, p) => p.status === 'PAID' ? sum + p.total_payable : sum, 0) || 0;
+      const paid = payments?.filter(p => p.status === 'PAID').length || 0;
+      const pending = payments?.filter(p => p.status === 'PENDING').length || 0;
+
+      const thisMonth = new Date();
+      thisMonth.setDate(1);
+      thisMonth.setHours(0, 0, 0, 0);
+
+      const thisMonthTotal = payments?.filter(p => 
+        p.status === 'PAID' && new Date(p.paid_at) >= thisMonth
+      ).reduce((sum, p) => sum + p.total_payable, 0) || 0;
+
+      setKpiData({
+        totalCollection: total,
+        paidCount: paid,
+        pendingCount: pending,
+        thisMonthCollection: thisMonthTotal
+      });
+
+      // Recent payments
+      const recent = payments
+        ?.filter(p => p.status === 'PAID')
+        .sort((a, b) => new Date(b.paid_at).getTime() - new Date(a.paid_at).getTime())
+        .slice(0, 5) || [];
+      
+      setRecentPayments(recent);
+
+      // Top branches (admin pusat only)
+      if (isAdminPusat) {
+        const { data: branchStats } = await supabase
+          .from('payment_groups')
+          .select(`
+            pd_scope,
+            total_payable,
+            status,
+            branches(name)
+          `)
+          .eq('status', 'PAID');
+
+        const branchTotals = branchStats?.reduce((acc: any, p) => {
+          const branchName = (p as any).branches?.name || 'Tidak ada PD';
+          if (!acc[branchName]) {
+            acc[branchName] = { name: branchName, total: 0, count: 0 };
+          }
+          acc[branchName].total += p.total_payable;
+          acc[branchName].count += 1;
+          return acc;
+        }, {});
+
+        const top = Object.values(branchTotals || {})
+          .sort((a: any, b: any) => b.total - a.total)
+          .slice(0, 5);
+
+        setTopBranches(top as any[]);
+      }
+    } catch (error: any) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const recentPayments = [
-    { id: 1, name: 'Dr. Ahmad S.', amount: 500000, status: 'verified', date: '2 jam lalu' },
-    { id: 2, name: 'Dr. Budi S. (Kolektif 3)', amount: 1500000, status: 'verified', date: '3 jam lalu' },
-    { id: 3, name: 'Dr. Citra D.', amount: 1000000, status: 'pending', date: '5 jam lalu' }
-  ];
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -36,21 +133,21 @@ export default function AdminIuranDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-primary">Rp {kpiData.totalCollection.toLocaleString('id-ID')}</p>
-            <p className="text-xs text-muted-foreground mt-1">Tahun berjalan 2025</p>
+            <p className="text-2xl font-bold text-primary">{formatRupiah(kpiData.totalCollection)}</p>
+            <p className="text-xs text-muted-foreground mt-1">Semua periode</p>
           </CardContent>
         </Card>
 
         <Card className="shadow-md">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardDescription>Anggota Lunas</CardDescription>
+              <CardDescription>Tagihan Lunas</CardDescription>
               <Users className="h-5 w-5 text-green-600" />
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-green-600">{kpiData.paidMembers}</p>
-            <p className="text-xs text-muted-foreground mt-1">dari 1.805 anggota</p>
+            <p className="text-2xl font-bold text-green-600">{kpiData.paidCount}</p>
+            <p className="text-xs text-muted-foreground mt-1">Invoice dibayar</p>
           </CardContent>
         </Card>
 
@@ -62,7 +159,7 @@ export default function AdminIuranDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-amber-600">{kpiData.pendingPayments}</p>
+            <p className="text-2xl font-bold text-amber-600">{kpiData.pendingCount}</p>
             <p className="text-xs text-muted-foreground mt-1">Perlu ditindaklanjuti</p>
           </CardContent>
         </Card>
@@ -75,8 +172,10 @@ export default function AdminIuranDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-blue-600">Rp {kpiData.thisMonthCollection.toLocaleString('id-ID')}</p>
-            <p className="text-xs text-green-600 mt-1">↑ 12% dari bulan lalu</p>
+            <p className="text-2xl font-bold text-blue-600">{formatRupiah(kpiData.thisMonthCollection)}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {format(new Date(), 'MMMM yyyy', { locale: id })}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -89,20 +188,24 @@ export default function AdminIuranDashboard() {
             <CardDescription>Transaksi terkini yang masuk</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {recentPayments.map((payment) => (
-              <div key={payment.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                <div>
-                  <p className="font-semibold">{payment.name}</p>
-                  <p className="text-xs text-muted-foreground">{payment.date}</p>
+            {recentPayments.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">Belum ada pembayaran</p>
+            ) : (
+              recentPayments.map((payment) => (
+                <div key={payment.id} className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+                  <div className="flex-1">
+                    <p className="font-semibold">{payment.group_code}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {payment.paid_at ? format(new Date(payment.paid_at), 'dd MMM yyyy HH:mm', { locale: id }) : '-'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-primary">{formatRupiah(payment.total_payable)}</p>
+                    <Badge variant="default" className="mt-1 bg-green-500">Lunas</Badge>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-primary">Rp {payment.amount.toLocaleString('id-ID')}</p>
-                  <Badge variant={payment.status === 'verified' ? 'default' : 'secondary'} className="mt-1">
-                    {payment.status === 'verified' ? 'Terverifikasi' : 'Pending'}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
 
@@ -126,31 +229,33 @@ export default function AdminIuranDashboard() {
         </Card>
       </div>
 
-      {/* Top Branches */}
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>Top 5 Cabang</CardTitle>
-          <CardDescription>Cabang dengan pembayaran tertinggi tahun ini</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {['DKI Jakarta', 'Jawa Barat', 'Jawa Timur', 'Jawa Tengah', 'Bali'].map((cabang, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                    {idx + 1}
+      {/* Top Branches - Admin Pusat only */}
+      {isAdminPusat && topBranches.length > 0 && (
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle>Top Cabang</CardTitle>
+            <CardDescription>Cabang dengan pembayaran tertinggi</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {topBranches.map((branch, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                      {idx + 1}
+                    </div>
+                    <p className="font-semibold">{branch.name}</p>
                   </div>
-                  <p className="font-semibold">{cabang}</p>
+                  <div className="text-right">
+                    <p className="font-semibold text-primary">{formatRupiah(branch.total)}</p>
+                    <p className="text-xs text-muted-foreground">{branch.count} invoice</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-primary">Rp {(15000000 - idx * 2000000).toLocaleString('id-ID')}</p>
-                  <p className="text-xs text-muted-foreground">{120 - idx * 15} anggota</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

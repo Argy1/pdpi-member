@@ -1,98 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Upload, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { RefreshCw, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { useToast } from '@/hooks/use-toast';
+import { formatRupiah } from '@/utils/paymentHelpers';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 export default function AdminRekonsiliasi() {
-  const [file, setFile] = useState<File | null>(null);
+  const { toast } = useToast();
+  const { isAdminPusat, loading: authLoading } = useAdminAccess();
+  const [loading, setLoading] = useState(true);
+  const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
 
-  // Dummy webhook logs
-  const webhookLogs = [
-    {
-      id: 1,
-      invoice: 'INV202501001',
-      amount: 500000,
-      status: 'success',
-      provider: 'QRIS',
-      timestamp: '15 Jan 2025 14:30:45'
-    },
-    {
-      id: 2,
-      invoice: 'INV202501005',
-      amount: 1000000,
-      status: 'success',
-      provider: 'QRIS',
-      timestamp: '15 Jan 2025 10:15:22'
-    },
-    {
-      id: 3,
-      invoice: 'INV202501008',
-      amount: 500000,
-      status: 'failed',
-      provider: 'QRIS',
-      timestamp: '14 Jan 2025 16:45:10'
+  useEffect(() => {
+    if (!authLoading && isAdminPusat) {
+      fetchWebhookLogs();
     }
-  ];
+  }, [authLoading, isAdminPusat]);
 
-  // Dummy transfer data
-  const transfers = [
-    {
-      id: 1,
-      date: '15 Jan 2025',
-      amount: 500000,
-      sender: 'Ahmad Suryadi',
-      description: 'INV202501002',
-      status: 'matched'
-    },
-    {
-      id: 2,
-      date: '16 Jan 2025',
-      amount: 1500000,
-      sender: 'Budi Santoso',
-      description: 'Transfer Iuran',
-      status: 'unmatched'
-    }
-  ];
+  const fetchWebhookLogs = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('webhook_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      if (error) throw error;
+      setWebhookLogs(data || []);
+    } catch (error: any) {
+      console.error('Error fetching webhook logs:', error);
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'success':
-      case 'matched':
+    switch (status?.toUpperCase()) {
+      case 'PAID':
+      case 'SUCCESS':
         return (
           <Badge variant="default" className="bg-green-500">
             <CheckCircle className="h-3 w-3 mr-1" />
-            {status === 'success' ? 'Berhasil' : 'Cocok'}
+            Berhasil
           </Badge>
         );
-      case 'failed':
+      case 'FAILED':
+      case 'ERROR':
         return (
           <Badge variant="destructive">
             <XCircle className="h-3 w-3 mr-1" />
             Gagal
           </Badge>
         );
-      case 'unmatched':
+      default:
         return (
           <Badge variant="default" className="bg-amber-500">
             <AlertTriangle className="h-3 w-3 mr-1" />
-            Belum Cocok
+            {status || 'Unknown'}
           </Badge>
         );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdminPusat) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card className="max-w-md">
+          <CardContent className="pt-6 text-center">
+            <p className="text-muted-foreground">Hanya Admin Pusat yang dapat mengakses halaman ini</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -118,41 +119,59 @@ export default function AdminRekonsiliasi() {
                   <CardTitle>Log Webhook QRIS</CardTitle>
                   <CardDescription>Notifikasi pembayaran realtime dari payment gateway</CardDescription>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={fetchWebhookLogs}
+                >
                   <RefreshCw className="h-4 w-4" />
                   Refresh
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Timestamp</TableHead>
-                      <TableHead>Invoice</TableHead>
-                      <TableHead>Provider</TableHead>
-                      <TableHead className="text-right">Jumlah</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {webhookLogs.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="font-mono text-xs">{log.timestamp}</TableCell>
-                        <TableCell className="font-medium">{log.invoice}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{log.provider}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right font-semibold text-primary">
-                          Rp {log.amount.toLocaleString('id-ID')}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(log.status)}</TableCell>
+              {webhookLogs.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">Belum ada log webhook</p>
+              ) : (
+                <div className="rounded-lg border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Timestamp</TableHead>
+                        <TableHead>Order ID</TableHead>
+                        <TableHead>Gateway</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Verified</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {webhookLogs.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="font-mono text-xs">
+                            {log.created_at ? format(new Date(log.created_at), 'dd MMM yyyy HH:mm:ss', { locale: id }) : '-'}
+                          </TableCell>
+                          <TableCell className="font-medium">{log.order_id || '-'}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{log.gateway || 'Unknown'}</Badge>
+                          </TableCell>
+                          <TableCell>{getStatusBadge(log.status_parsed)}</TableCell>
+                          <TableCell>
+                            {log.verified ? (
+                              <Badge variant="default" className="bg-green-500">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Yes
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary">No</Badge>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -163,7 +182,9 @@ export default function AdminRekonsiliasi() {
                 Webhook Aktif
               </h3>
               <p className="text-sm text-muted-foreground mb-2">
-                Webhook endpoint: <code className="bg-muted px-2 py-1 rounded text-xs">https://api.pdpi.org/webhook/qris</code>
+                Webhook endpoint: <code className="bg-muted px-2 py-1 rounded text-xs font-mono">
+                  {`${window.location.origin}/api/webhook/qris`}
+                </code>
               </p>
               <p className="text-sm text-muted-foreground">
                 Pembayaran QRIS akan otomatis diverifikasi dalam hitungan detik setelah berhasil.
@@ -174,76 +195,18 @@ export default function AdminRekonsiliasi() {
 
         {/* Transfer Tab */}
         <TabsContent value="transfer" className="space-y-6">
-          {/* Upload CSV */}
           <Card className="shadow-md">
             <CardHeader>
-              <CardTitle>Upload Mutasi Rekening</CardTitle>
-              <CardDescription>Upload file CSV mutasi dari Bank Mega Syariah untuk rekonsiliasi otomatis</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="csv-file">File CSV Mutasi Rekening</Label>
-                <Input
-                  id="csv-file"
-                  type="file"
-                  accept=".csv"
-                  onChange={handleFileUpload}
-                  className="mt-2"
-                />
-                {file && (
-                  <div className="flex items-center gap-2 mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-sm text-green-700">{file.name}</span>
-                  </div>
-                )}
-              </div>
-              <Button disabled={!file} className="gap-2">
-                <Upload className="h-4 w-4" />
-                Proses Rekonsiliasi
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Transfer List */}
-          <Card className="shadow-md">
-            <CardHeader>
-              <CardTitle>Daftar Transfer Masuk</CardTitle>
-              <CardDescription>Transfer yang perlu dicocokkan dengan invoice</CardDescription>
+              <CardTitle>Rekonsiliasi Transfer Manual</CardTitle>
+              <CardDescription>
+                Untuk transfer bank, admin perlu memverifikasi manual dengan melihat bukti transfer yang diunggah oleh pembayar.
+                Gunakan halaman "Kelola Tagihan" untuk verifikasi.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-lg border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tanggal</TableHead>
-                      <TableHead>Pengirim</TableHead>
-                      <TableHead>Keterangan</TableHead>
-                      <TableHead className="text-right">Jumlah</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-center">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transfers.map((transfer) => (
-                      <TableRow key={transfer.id}>
-                        <TableCell>{transfer.date}</TableCell>
-                        <TableCell className="font-medium">{transfer.sender}</TableCell>
-                        <TableCell>{transfer.description}</TableCell>
-                        <TableCell className="text-right font-semibold text-primary">
-                          Rp {transfer.amount.toLocaleString('id-ID')}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(transfer.status)}</TableCell>
-                        <TableCell className="text-center">
-                          {transfer.status === 'unmatched' && (
-                            <Button variant="outline" size="sm">
-                              Cocokkan
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="text-center py-12 text-muted-foreground">
+                <p className="mb-4">Fitur upload CSV mutasi rekening akan segera hadir</p>
+                <p className="text-sm">Untuk saat ini, gunakan halaman Kelola Tagihan untuk verifikasi manual</p>
               </div>
             </CardContent>
           </Card>
