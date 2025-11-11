@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
-import { useMemberDues } from '@/hooks/useMemberDues';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Users, Calendar, CreditCard, Search, X, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Users, Calendar, CreditCard, Search, X, ArrowLeft, ArrowRight, AlertCircle } from 'lucide-react';
 import { TARIFF_PER_YEAR, formatRupiah, generateGroupCode, calculateExpiry } from '@/utils/paymentHelpers';
 
 interface SelectedMember {
@@ -189,9 +189,28 @@ export default function BayarMewakili() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // Validate: Admin cabang can only pay for members in their PD
+      if (isAdminCabang && profile?.branches?.name) {
+        const invalidMembers = selectedMembers.filter(
+          m => m.cabang !== profile.branches.name
+        );
+        if (invalidMembers.length > 0) {
+          toast({
+            title: 'Error',
+            description: `Anggota berikut tidak berada di PD Anda: ${invalidMembers.map(m => m.nama).join(', ')}`,
+            variant: 'destructive',
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
       const { amountBase, uniqueCode, total } = calculateTotal();
       const groupCode = generateGroupCode();
       const expiredAt = calculateExpiry(paymentMethod);
+
+      // Determine payer_role
+      const payerRole = profile?.role || 'user';
 
       // Create payment group
       const { data: paymentGroup, error: groupError } = await supabase
@@ -207,7 +226,7 @@ export default function BayarMewakili() {
           expired_at: expiredAt.toISOString(),
           pd_scope: profile?.branch_id || null,
           paid_by_admin: true,
-          payer_role: profile?.role || null,
+          payer_role: payerRole,
         })
         .select()
         .single();
@@ -308,19 +327,28 @@ export default function BayarMewakili() {
 
       {/* Step 1: Select Members */}
       {currentStep === 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Pilih Anggota</CardTitle>
-            <CardDescription>
-              Cari dan pilih anggota yang akan dibayarkan iurannya
-              {isAdminCabang && profile?.branches?.name && (
-                <span className="ml-2 text-primary">
-                  (PD: {profile.branches.name})
-                </span>
-              )}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Pilih Anggota</CardTitle>
+          <CardDescription>
+            Cari dan pilih anggota yang akan dibayarkan iurannya
+            {isAdminCabang && profile?.branches?.name && (
+              <span className="ml-2 text-primary">
+                (PD: {profile.branches.name})
+              </span>
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Info Alert */}
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {isAdminCabang 
+                ? 'Hanya anggota di PD Anda yang dapat dipilih untuk pembayaran kolektif.'
+                : 'Pilih anggota yang akan dibayarkan iurannya.'}
+            </AlertDescription>
+          </Alert>
             {/* Search */}
             <div className="flex gap-2">
               <Input

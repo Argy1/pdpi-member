@@ -60,7 +60,7 @@ export default function Checkout() {
       const groupCode = generateGroupCode();
       const expiredAt = calculateExpiry(paymentMethod);
 
-      // Create payment group
+      // Create payment group - regular user flow
       const { data: paymentGroup, error: groupError } = await supabase
         .from('payment_groups')
         .insert({
@@ -72,7 +72,9 @@ export default function Checkout() {
           total_payable: total,
           status: 'PENDING',
           expired_at: expiredAt.toISOString(),
-          pd_scope: profile?.branch_id || null
+          pd_scope: profile?.branch_id || null,
+          paid_by_admin: false,
+          payer_role: 'user'
         })
         .select()
         .single();
@@ -192,8 +194,8 @@ export default function Checkout() {
                   </div>
                   
                   <div className="flex items-center space-x-3 p-4 rounded-lg border">
-                    <RadioGroupItem value="transfer" id="transfer" />
-                    <Label htmlFor="transfer" className="flex-1 cursor-pointer">
+                    <RadioGroupItem value="bank_transfer" id="bank_transfer" />
+                    <Label htmlFor="bank_transfer" className="flex-1 cursor-pointer">
                       <div className="flex items-center gap-3">
                         <Building2 className="h-6 w-6 text-primary" />
                         <div>
