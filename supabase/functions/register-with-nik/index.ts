@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
     // Step 1: Check if NIK exists in members table
     const { data: memberData, error: memberError } = await supabase
       .from('members')
-      .select('id, user_id, nik, npa, full_name, nama, pd_id, cabang')
+      .select('id, nik, npa, nama, cabang')
       .eq('nik', nik)
       .maybeSingle()
 
@@ -74,8 +74,14 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Step 3: Check if NIK already linked to user account
-    if (memberData.user_id) {
+    // Step 3: Check if member already has account linked
+    // Note: members table doesn't have user_id column, we check via email match
+    const { data: existingUser } = await supabase.auth.admin.listUsers()
+    const isAlreadyLinked = existingUser.users.some(
+      user => user.user_metadata?.nik === nik
+    )
+    
+    if (isAlreadyLinked) {
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -85,9 +91,9 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Step 4: Get branch_id from cabang if pd_id is null
-    let branchId = memberData.pd_id
-    if (!branchId && memberData.cabang) {
+    // Step 4: Get branch_id from cabang
+    let branchId = null
+    if (memberData.cabang) {
       const { data: branchData } = await supabase
         .from('branches')
         .select('id')
@@ -108,7 +114,8 @@ Deno.serve(async (req) => {
       user_metadata: {
         app_role: 'user', // FORCED - never from client
         npa: memberData.npa,
-        full_name: memberData.full_name || memberData.nama,
+        nama: memberData.nama,
+        cabang: memberData.cabang,
         pd_id: branchId,
         nik: nik
       }
@@ -147,19 +154,19 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Step 6: Link member to user account
-    const { error: updateError } = await supabase
-      .from('members')
-      .update({ 
-        user_id: authData.user.id,
-        full_name: memberData.full_name || memberData.nama,
-        pd_id: branchId || memberData.pd_id
-      })
-      .eq('id', memberData.id)
+    // Step 6: Update member email if needed
+    // Note: members table doesn't have user_id column
+    // We link users via NIK stored in user_metadata
+    if (memberData.email !== email) {
+      const { error: updateError } = await supabase
+        .from('members')
+        .update({ email: email })
+        .eq('id', memberData.id)
 
-    if (updateError) {
-      console.error('Error linking member to user:', updateError)
-      // Don't fail registration - user is created, just log the error
+      if (updateError) {
+        console.error('Error updating member email:', updateError)
+        // Don't fail registration - user is created, just log the error
+      }
     }
 
     // Step 7: Profile is automatically created by handle_new_user() trigger
@@ -175,7 +182,8 @@ Deno.serve(async (req) => {
           id: authData.user.id,
           email: authData.user.email,
           npa: memberData.npa,
-          full_name: memberData.full_name || memberData.nama
+          nama: memberData.nama,
+          cabang: memberData.cabang
         }
       }),
       { 
