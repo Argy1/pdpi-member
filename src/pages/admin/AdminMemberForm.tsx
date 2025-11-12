@@ -247,7 +247,6 @@ export default function AdminMemberForm() {
             subspesialis: existingMember.subspesialis || '',
             tempatLahir: existingMember.tempat_lahir || '',
             tanggalLahir: existingMember.tgl_lahir ? new Date(existingMember.tgl_lahir) : undefined,
-            // Ensure jenis_kelamin is stored as 'L' or 'P' in database
             jenisKelamin: existingMember.jenis_kelamin || '',
             foto: existingMember.foto || '',
             alumni: existingMember.alumni || '',
@@ -258,8 +257,8 @@ export default function AdminMemberForm() {
             kotaRumah: existingMember.kota_kabupaten_rumah || '',
             provinsiRumah: existingMember.provinsi_rumah || '',
             pd: existingMember.cabang || '',
-            unitKerja: existingMember.tempat_tugas || '', // Map tempat_tugas to unitKerja
-            jabatan: '', // Field doesn't exist in database, set to empty
+            unitKerja: existingMember.tempat_tugas || '',
+            jabatan: existingMember.jabatan || '',
             tempatPraktek1: existingMember.tempat_praktek_1 || '',
             tempatPraktek1Tipe: existingMember.tempat_praktek_1_tipe || '',
             tempatPraktek1Tipe2: existingMember.tempat_praktek_1_tipe_2 || '',
@@ -279,15 +278,15 @@ export default function AdminMemberForm() {
             tempatPraktek3Alkes2: existingMember.tempat_praktek_3_alkes_2 || '',
             kotaPraktek3: existingMember.kota_kabupaten_praktek_3 || '',
             provinsiPraktek3: existingMember.provinsi_praktek_3 || '',
-            nik: '', // Field doesn't exist in database, set to empty
-            noSTR: '', // Field doesn't exist in database, set to empty
-            strBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
-            noSIP: '', // Field doesn't exist in database, set to empty
-            sipBerlakuSampai: undefined, // Field doesn't exist in database, set to undefined
+            nik: existingMember.nik || '',
+            noSTR: existingMember.no_str || '',
+            strBerlakuSampai: existingMember.str_berlaku_sampai ? new Date(existingMember.str_berlaku_sampai) : undefined,
+            noSIP: existingMember.no_sip || '',
+            sipBerlakuSampai: existingMember.sip_berlaku_sampai ? new Date(existingMember.sip_berlaku_sampai) : undefined,
             kontakEmail: existingMember.email || '',
             kontakTelepon: existingMember.no_hp || '',
-            website: '', // Field doesn't exist in database, set to empty
-            sosialMedia: '', // Field doesn't exist in database, set to empty
+            website: existingMember.website || '',
+            sosialMedia: existingMember.sosial_media || '',
             status: existingMember.status || 'Biasa',
           };
           setFormData(memberFormData);
@@ -429,7 +428,6 @@ export default function AdminMemberForm() {
         alumni: formData.alumni || null,
         thn_lulus: formData.tahunLulus || null,
         subspesialis: formData.subspesialis || null,
-      // Map form fields to database fields
         tempat_lahir: formData.tempatLahir || null,
         tgl_lahir: formData.tanggalLahir || null,
         jenis_kelamin: formData.jenisKelamin || null,
@@ -439,6 +437,7 @@ export default function AdminMemberForm() {
         kota_kabupaten_rumah: formData.kotaRumah || null,
         provinsi_rumah: formData.provinsiRumah || null,
         tempat_tugas: formData.unitKerja || null,
+        jabatan: formData.jabatan || null,
         kota_kabupaten_kantor: formData.kotaKantor || null,
         provinsi_kantor: formData.provinsiKantor || null,
         no_hp: formData.kontakTelepon || null,
@@ -463,7 +462,14 @@ export default function AdminMemberForm() {
         tempat_praktek_3_alkes_2: formData.tempatPraktek3Alkes2 || null,
         kota_kabupaten_praktek_3: formData.kotaPraktek3 || null,
         provinsi_praktek_3: formData.provinsiPraktek3 || null,
-        keterangan: null // Can be added later if needed
+        nik: formData.nik || null,
+        no_str: formData.noSTR || null,
+        str_berlaku_sampai: formData.strBerlakuSampai || null,
+        no_sip: formData.noSIP || null,
+        sip_berlaku_sampai: formData.sipBerlakuSampai || null,
+        website: formData.website || null,
+        sosial_media: formData.sosialMedia || null,
+        keterangan: null
       }
       
       // Only include NPA, Status, and Cabang if user is Pusat Admin

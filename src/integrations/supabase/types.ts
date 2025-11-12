@@ -189,6 +189,7 @@ export type Database = {
           gelar_fisr: string | null
           gelar2: string | null
           id: string
+          jabatan: string | null
           jenis_kelamin: string | null
           keterangan: string | null
           kota_kabupaten: string | null
@@ -197,7 +198,10 @@ export type Database = {
           kota_kabupaten_praktek_3: string | null
           kota_kabupaten_rumah: string | null
           nama: string
+          nik: string | null
           no_hp: string | null
+          no_sip: string | null
+          no_str: string | null
           npa: string | null
           npa_numeric: number | null
           provinsi: string | null
@@ -206,7 +210,10 @@ export type Database = {
           provinsi_praktek_3: string | null
           provinsi_rumah: string | null
           search_text: string | null
+          sip_berlaku_sampai: string | null
+          sosial_media: string | null
           status: string | null
+          str_berlaku_sampai: string | null
           subspesialis: string | null
           tempat_lahir: string | null
           tempat_praktek_1: string | null
@@ -228,6 +235,7 @@ export type Database = {
           tgl_lahir: string | null
           thn_lulus: number | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           alamat_rumah?: string | null
@@ -241,6 +249,7 @@ export type Database = {
           gelar_fisr?: string | null
           gelar2?: string | null
           id?: string
+          jabatan?: string | null
           jenis_kelamin?: string | null
           keterangan?: string | null
           kota_kabupaten?: string | null
@@ -249,7 +258,10 @@ export type Database = {
           kota_kabupaten_praktek_3?: string | null
           kota_kabupaten_rumah?: string | null
           nama: string
+          nik?: string | null
           no_hp?: string | null
+          no_sip?: string | null
+          no_str?: string | null
           npa?: string | null
           npa_numeric?: number | null
           provinsi?: string | null
@@ -258,7 +270,10 @@ export type Database = {
           provinsi_praktek_3?: string | null
           provinsi_rumah?: string | null
           search_text?: string | null
+          sip_berlaku_sampai?: string | null
+          sosial_media?: string | null
           status?: string | null
+          str_berlaku_sampai?: string | null
           subspesialis?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
@@ -280,6 +295,7 @@ export type Database = {
           tgl_lahir?: string | null
           thn_lulus?: number | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           alamat_rumah?: string | null
@@ -293,6 +309,7 @@ export type Database = {
           gelar_fisr?: string | null
           gelar2?: string | null
           id?: string
+          jabatan?: string | null
           jenis_kelamin?: string | null
           keterangan?: string | null
           kota_kabupaten?: string | null
@@ -301,7 +318,10 @@ export type Database = {
           kota_kabupaten_praktek_3?: string | null
           kota_kabupaten_rumah?: string | null
           nama?: string
+          nik?: string | null
           no_hp?: string | null
+          no_sip?: string | null
+          no_str?: string | null
           npa?: string | null
           npa_numeric?: number | null
           provinsi?: string | null
@@ -310,7 +330,10 @@ export type Database = {
           provinsi_praktek_3?: string | null
           provinsi_rumah?: string | null
           search_text?: string | null
+          sip_berlaku_sampai?: string | null
+          sosial_media?: string | null
           status?: string | null
+          str_berlaku_sampai?: string | null
           subspesialis?: string | null
           tempat_lahir?: string | null
           tempat_praktek_1?: string | null
@@ -332,6 +355,7 @@ export type Database = {
           tgl_lahir?: string | null
           thn_lulus?: number | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }

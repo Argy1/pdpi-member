@@ -42,6 +42,17 @@ export interface Member {
   kota_kabupaten_praktek_3?: string
   provinsi_praktek_3?: string
   fasilitas_kesehatan?: Record<string, string[]>
+  // Legal fields
+  nik?: string
+  no_str?: string
+  str_berlaku_sampai?: string
+  no_sip?: string
+  sip_berlaku_sampai?: string
+  // Media fields
+  website?: string
+  sosial_media?: string
+  // Other fields
+  jabatan?: string
   created_at: string
   updated_at: string
   
@@ -63,8 +74,6 @@ export interface Member {
   pd?: string
   rumahSakit?: string
   unitKerja?: string
-  jabatan?: string
-  nik?: string
   noSTR?: string
   strBerlakuSampai?: string
   noSIP?: string
@@ -72,7 +81,6 @@ export interface Member {
   keteranganStatus?: string
   kontakEmail?: string
   kontakTelepon?: string
-  website?: string
   sosialMedia?: string
   fotoUrl?: string
   cabangId?: string

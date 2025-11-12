@@ -305,10 +305,6 @@ export default function AdminMemberDetail() {
                   <p className="mt-1">{member.thn_lulus || member.tahunLulus || '-'}</p>
                 </div>
 
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">NIK</label>
-                  <p className="mt-1">{member.nik || '-'}</p>
-                </div>
               </CardContent>
             </Card>
 
@@ -352,7 +348,7 @@ export default function AdminMemberDetail() {
                 
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Media Sosial</label>
-                  <p className="mt-1">{member.sosialMedia || '-'}</p>
+                  <p className="mt-1">{member.sosial_media || member.sosialMedia || '-'}</p>
                 </div>
             </CardContent>
           </Card>
@@ -394,6 +390,42 @@ export default function AdminMemberDetail() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Cabang</label>
                 <p className="mt-1">{member.cabang || member.pd || '-'}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Legal Documents */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Dokumen Legal
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">NIK</label>
+                <p className="mt-1">{member.nik || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">No. STR</label>
+                <p className="mt-1">{member.no_str || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">STR Berlaku Sampai</label>
+                <p className="mt-1">{member.str_berlaku_sampai ? formatDate(member.str_berlaku_sampai) : '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">No. SIP</label>
+                <p className="mt-1">{member.no_sip || '-'}</p>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">SIP Berlaku Sampai</label>
+                <p className="mt-1">{member.sip_berlaku_sampai ? formatDate(member.sip_berlaku_sampai) : '-'}</p>
               </div>
             </CardContent>
           </Card>
