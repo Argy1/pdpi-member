@@ -15,7 +15,7 @@ import { z } from "zod"
 
 // Validation schema
 const registerSchema = z.object({
-  name: z.string().min(3, "Nama minimal 3 karakter").max(100, "Nama maksimal 100 karakter"),
+  name: z.string().length(16, "NIK harus 16 digit").regex(/^\d{16}$/, "NIK harus berisi angka saja"),
   email: z.string().email("Email tidak valid").max(255, "Email maksimal 255 karakter"),
   password: z.string().min(6, "Password minimal 6 karakter").max(100, "Password maksimal 100 karakter"),
   confirmPassword: z.string()
@@ -332,16 +332,19 @@ export default function LoginPage() {
                       <form onSubmit={handleRegister} className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="register-name" className="text-sm font-medium">
-                            Nama Lengkap
+                            NIK
                           </Label>
                           <Input
                             id="register-name"
                             name="name"
                             type="text"
-                            placeholder="Dr. John Doe, Sp.P"
+                            placeholder="3175021408740012"
                             value={registerData.name}
                             onChange={handleRegisterInputChange}
                             required
+                            maxLength={16}
+                            pattern="[0-9]{16}"
+                            title="NIK harus 16 digit angka"
                             className="focus-visible"
                           />
                         </div>

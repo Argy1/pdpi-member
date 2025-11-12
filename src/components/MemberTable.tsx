@@ -64,6 +64,7 @@ export function MemberTable({
                 <TableHead className="font-semibold min-w-[80px] sticky left-0 bg-muted/50 z-10">Foto</TableHead>
                 <TableHead className="font-semibold min-w-[200px]">Nama</TableHead>
                 <TableHead className="font-semibold min-w-[120px]">NPA</TableHead>
+                <TableHead className="font-semibold min-w-[150px]">NIK</TableHead>
                 <TableHead className="font-semibold min-w-[180px]">Alumni</TableHead>
                 <TableHead className="font-semibold min-w-[180px]">Kota/Kabupaten Kantor</TableHead>
                 <TableHead className="font-semibold min-w-[160px]">Provinsi Kantor</TableHead>
@@ -102,6 +103,11 @@ export function MemberTable({
                     </code>
                   </TableCell>
                   <TableCell>
+                    <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
+                      {member.nik || "-"}
+                    </code>
+                  </TableCell>
+                  <TableCell>
                     <p className="text-sm whitespace-nowrap">{member.alumni || "-"}</p>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{member.kota_kabupaten_kantor || "-"}</TableCell>
@@ -125,7 +131,7 @@ export function MemberTable({
               ))}
               {members.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={10} className="text-center py-8">
                     <div className="space-y-2">
                       <p className="text-muted-foreground">Tidak ada data anggota</p>
                       <p className="text-sm text-muted-foreground">
