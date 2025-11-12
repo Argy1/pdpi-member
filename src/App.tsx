@@ -14,6 +14,8 @@ import AnggotaPage from "./pages/AnggotaPage";
 import SebaranPage from "./pages/SebaranPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrasiPage from "./pages/RegistrasiPage";
+import ProfilPage from "./pages/ProfilPage";
+import ProfilEditPage from "./pages/ProfilEditPage";
 import ProfilSayaPage from "./pages/ProfilSayaPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMembers from "./pages/admin/AdminMembers";
@@ -78,6 +80,24 @@ const App = () => (
               <Route path="/login" element={<LoginPage />} />
               <Route path="/registrasi" element={<RegistrasiPage />} />
               <Route path="/profil-saya" element={<ProfilSayaPage />} />
+              <Route path="/profil" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <ProfilPage />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/profil/edit" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <ProfilEditPage />
+                  </main>
+                  <Footer />
+                </div>
+              } />
               
               {/* Iuran routes (Member) */}
               <Route path="/iuran" element={

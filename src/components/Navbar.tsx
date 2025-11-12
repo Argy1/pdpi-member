@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserCircle, LogOut, Settings, Menu, ShoppingCart, CreditCard } from "lucide-react"
+import { UserCircle, LogOut, Settings, Menu, ShoppingCart, CreditCard, User } from "lucide-react"
 import logoImage from "@/assets/logo-pdpi.png"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePaymentCart } from "@/hooks/usePaymentCart"
@@ -212,11 +212,23 @@ export function Navbar() {
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel>{t('nav.profile')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profil">
+                      <User className="mr-2 h-4 w-4" />
+                      Profil
+                    </Link>
+                  </DropdownMenuItem>
                   {profile && (
                     <DropdownMenuItem disabled>
                       Role: {profile.role}
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/profil/edit">
+                      <User className="mr-2 h-4 w-4" />
+                      Edit Profil Saya
+                    </Link>
+                  </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link to="/admin">
