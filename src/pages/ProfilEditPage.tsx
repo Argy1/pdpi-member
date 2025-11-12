@@ -42,25 +42,47 @@ export default function ProfilEditPage() {
     try {
       setLoading(true);
       
-      const nik = user?.user_metadata?.nik;
+      if (!user) return;
+
+      // Step 1: Get profile data from public.profiles
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      }
+
+      // Step 2: Get NIK from user metadata
+      const nik = user.user_metadata?.nik;
       
       if (!nik) {
-        console.error('NIK not found in user metadata');
+        console.error('NIK not found in user metadata or profile');
         setLoading(false);
         return;
       }
 
-      const { data, error } = await supabase
+      // Step 3: Find member record with priority:
+      // a) user_id = auth.uid()
+      // b) nik = profiles.nik
+      let memberData = null;
+      
+      // Try finding by NIK
+      const { data: memberByNik } = await supabase
         .from('members')
         .select('*')
         .eq('nik', nik)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching member:', error);
-      } else {
-        setMember(data as Member);
-        setFormData((data || {}) as Partial<Member>);
+
+      memberData = memberByNik;
+
+      // Step 5: Set member data and prefill form
+      if (memberData) {
+        setMember(memberData as Member);
+        setFormData(memberData as Partial<Member>);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -177,15 +199,20 @@ export default function ProfilEditPage() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>Data Tidak Ditemukan</CardTitle>
+            <CardTitle>Data Anggota Belum Ditemukan</CardTitle>
             <CardDescription>
-              Data profil Anda belum tersedia. Hubungi admin cabang Anda.
+              Data anggota Anda belum tersedia di sistem. Silakan hubungi admin PDPI atau sekretariat PD Anda untuk pendaftaran.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Informasi Akun:</p>
+              <p className="text-sm"><span className="font-medium">Email:</span> {user?.email}</p>
+              <p className="text-sm"><span className="font-medium">NIK:</span> {user?.user_metadata?.nik || '-'}</p>
+            </div>
             <Button onClick={() => navigate('/')} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Kembali ke Beranda
@@ -292,6 +319,15 @@ export default function ProfilEditPage() {
                 <FormField label="NIK" value={member.nik} readOnly />
                 <FormField label="NPA" value={member.npa} readOnly />
                 <FormField label="Nama Lengkap" value={member.nama} readOnly className="md:col-span-2" />
+                <FormField label="Jenis Kelamin" value={member.jenis_kelamin} readOnly />
+                <FormField label="Tempat Lahir" value={member.tempat_lahir} readOnly />
+                <FormField 
+                  label="Tanggal Lahir" 
+                  value={member.tgl_lahir ? new Date(member.tgl_lahir).toLocaleDateString('id-ID') : undefined} 
+                  readOnly 
+                />
+                <FormField label="Alumni" value={member.alumni} readOnly />
+                <FormField label="Tahun Lulus" value={member.thn_lulus} readOnly />
               </CardContent>
             </Card>
 
