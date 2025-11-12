@@ -9,12 +9,7 @@ import {
   User,
   BarChart3,
   GitPullRequest,
-  History,
-  CreditCard,
-  Calendar,
-  Receipt,
-  RefreshCcw,
-  FileText
+  History
 } from 'lucide-react';
 import {
   Sidebar,
@@ -75,13 +70,6 @@ const menuItems = [
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {
-    title: 'Admin Iuran',
-    url: '/admin/iuran',
-    icon: CreditCard,
-    roles: ['admin_pusat', 'admin_cabang'],
-    isIuran: true
-  },
-  {
     title: 'Profil Saya',
     url: '/admin/profil',
     icon: User,
@@ -116,9 +104,6 @@ export const AdminSidebar = () => {
     hasRole(item.roles)
   );
 
-  const mainMenuItems = filteredMenuItems.filter(item => !item.isIuran);
-  const iuranMenuItems = filteredMenuItems.filter(item => item.isIuran);
-
   return (
     <Sidebar className={isCollapsed ? 'w-14' : 'w-64'} collapsible="icon">
       <SidebarContent>
@@ -146,7 +131,7 @@ export const AdminSidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainMenuItems.map((item) => (
+              {filteredMenuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
@@ -163,31 +148,6 @@ export const AdminSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {iuranMenuItems.length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupLabel className={isCollapsed ? 'sr-only' : ''}>
-              Manajemen Iuran
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {iuranMenuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        className={getNavCls}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
     </Sidebar>
   );
