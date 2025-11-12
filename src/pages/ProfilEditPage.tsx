@@ -7,13 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   User, Mail, Phone, MapPin, Briefcase, FileText, 
-  Save, X, Upload, Loader2, ArrowLeft 
+  Save, X, Upload, Loader2, ArrowLeft, GraduationCap,
+  Building2, AlertCircle
 } from 'lucide-react';
 import { Member } from '@/types/member';
 
@@ -26,6 +29,7 @@ export default function ProfilEditPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<Partial<Member>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -104,22 +108,35 @@ export default function ProfilEditPage() {
       return;
     }
 
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        variant: "destructive",
+        title: "Format Tidak Didukung",
+        description: "Hanya mendukung format JPG, JPEG, dan PNG"
+      });
+      return;
+    }
+
     try {
       setUploading(true);
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${member.id}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Use NPA for filename: <npa>.jpg
+      const fileExt = file.type === 'image/png' ? 'png' : 'jpg';
+      const fileName = `${member.npa}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('member-photos')
-        .upload(filePath, file, { upsert: true });
+        .from('avatars')
+        .upload(fileName, file, { 
+          upsert: true,
+          contentType: file.type
+        });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('member-photos')
-        .getPublicUrl(filePath);
+        .from('avatars')
+        .getPublicUrl(fileName);
 
       setFormData(prev => ({ ...prev, foto: publicUrl }));
 
@@ -139,9 +156,44 @@ export default function ProfilEditPage() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Validate HP (hanya angka dan plus)
+    if (formData.no_hp && !/^[\d\+\-\s\(\)]+$/.test(formData.no_hp)) {
+      newErrors.no_hp = 'Nomor HP hanya boleh berisi angka, +, -, spasi, dan tanda kurung';
+    }
+
+    // Validate email
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Format email tidak valid';
+    }
+
+    // Validate tahun lulus (1900 - current year)
+    const currentYear = new Date().getFullYear();
+    if (formData.thn_lulus) {
+      const year = Number(formData.thn_lulus);
+      if (year < 1900 || year > currentYear) {
+        newErrors.thn_lulus = `Tahun lulus harus antara 1900 - ${currentYear}`;
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!member) return;
+
+    if (!validateForm()) {
+      toast({
+        variant: "destructive",
+        title: "Validasi Gagal",
+        description: "Mohon perbaiki kesalahan pada form"
+      });
+      return;
+    }
 
     try {
       setSaving(true);
@@ -156,18 +208,34 @@ export default function ProfilEditPage() {
         sosial_media: formData.sosial_media,
         website: formData.website,
         foto: formData.foto,
+        tempat_tugas: formData.tempat_tugas,
+        jabatan: formData.jabatan,
+        alumni: formData.alumni,
+        thn_lulus: formData.thn_lulus,
+        tempat_praktek_1: formData.tempat_praktek_1,
+        tempat_praktek_1_tipe: formData.tempat_praktek_1_tipe,
+        tempat_praktek_2: formData.tempat_praktek_2,
+        tempat_praktek_2_tipe: formData.tempat_praktek_2_tipe,
+        tempat_praktek_3: formData.tempat_praktek_3,
+        tempat_praktek_3_tipe: formData.tempat_praktek_3_tipe,
         keterangan: formData.keterangan,
       };
+
+      // Find member by NIK (since we don't have user_id column)
+      const nik = user?.user_metadata?.nik;
+      if (!nik) {
+        throw new Error('NIK tidak ditemukan');
+      }
 
       const { error } = await supabase
         .from('members')
         .update(allowedFields)
-        .eq('id', member.id);
+        .eq('nik', nik);
 
       if (error) throw error;
 
       toast({
-        title: "Profil Berhasil Diperbarui",
+        title: "Profil Berhasil Diperbarui ✓",
         description: "Data profil Anda telah tersimpan"
       });
 
@@ -257,7 +325,10 @@ export default function ProfilEditPage() {
             {/* Foto Profil */}
             <Card>
               <CardHeader>
-                <CardTitle>Foto Profil</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Foto Profil
+                </CardTitle>
                 <CardDescription>
                   Upload foto profil Anda (maksimal 5MB, format JPG/PNG)
                 </CardDescription>
@@ -299,6 +370,9 @@ export default function ProfilEditPage() {
                         )}
                       </Button>
                     </Label>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      File akan disimpan sebagai {member.npa}.jpg
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -316,9 +390,9 @@ export default function ProfilEditPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-4">
-                <FormField label="NIK" value={member.nik} readOnly />
-                <FormField label="NPA" value={member.npa} readOnly />
-                <FormField label="Nama Lengkap" value={member.nama} readOnly className="md:col-span-2" />
+                <FormField label="NPA" value={member.npa} readOnly required />
+                <FormField label="NIK" value={member.nik} readOnly required />
+                <FormField label="Nama Lengkap" value={member.nama} readOnly required className="md:col-span-2" />
                 <FormField label="Jenis Kelamin" value={member.jenis_kelamin} readOnly />
                 <FormField label="Tempat Lahir" value={member.tempat_lahir} readOnly />
                 <FormField 
@@ -326,8 +400,6 @@ export default function ProfilEditPage() {
                   value={member.tgl_lahir ? new Date(member.tgl_lahir).toLocaleDateString('id-ID') : undefined} 
                   readOnly 
                 />
-                <FormField label="Alumni" value={member.alumni} readOnly />
-                <FormField label="Tahun Lulus" value={member.thn_lulus} readOnly />
               </CardContent>
             </Card>
 
@@ -341,24 +413,48 @@ export default function ProfilEditPage() {
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    Email {errors.email && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, email: e.target.value }));
+                      setErrors(prev => ({ ...prev, email: '' }));
+                    }}
                     placeholder="email@example.com"
+                    className={errors.email ? 'border-destructive' : ''}
                   />
+                  {errors.email && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="no_hp">No. HP</Label>
+                  <Label htmlFor="no_hp">
+                    No. HP {errors.no_hp && <span className="text-destructive">*</span>}
+                  </Label>
                   <Input
                     id="no_hp"
                     type="tel"
                     value={formData.no_hp || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, no_hp: e.target.value }))}
-                    placeholder="08xxxxxxxxxx"
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, no_hp: e.target.value }));
+                      setErrors(prev => ({ ...prev, no_hp: '' }));
+                    }}
+                    placeholder="08xxxxxxxxxx atau +62xxx"
+                    className={errors.no_hp ? 'border-destructive' : ''}
                   />
+                  {errors.no_hp && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.no_hp}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="website">Website</Label>
@@ -371,28 +467,28 @@ export default function ProfilEditPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="sosial_media">Sosial Media</Label>
+                  <Label htmlFor="sosial_media">Media Sosial</Label>
                   <Input
                     id="sosial_media"
                     value={formData.sosial_media || ''}
                     onChange={(e) => setFormData(prev => ({ ...prev, sosial_media: e.target.value }))}
-                    placeholder="@username"
+                    placeholder="@username atau link profil"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Alamat Domisili */}
+            {/* Domisili / Alamat */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  Alamat Domisili
+                  Domisili / Alamat
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="alamat_rumah">Alamat Lengkap</Label>
+                  <Label htmlFor="alamat_rumah">Alamat Rumah</Label>
                   <Textarea
                     id="alamat_rumah"
                     value={formData.alamat_rumah || ''}
@@ -424,20 +520,229 @@ export default function ProfilEditPage() {
               </CardContent>
             </Card>
 
-            {/* Profesi (Read-only) */}
+            {/* Profesi */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Briefcase className="h-5 w-5 text-primary" />
                   Profesi
                 </CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="tempat_tugas">Tempat Tugas</Label>
+                  <Input
+                    id="tempat_tugas"
+                    value={formData.tempat_tugas || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tempat_tugas: e.target.value }))}
+                    placeholder="RS/Klinik/Instansi"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="jabatan">Jabatan</Label>
+                  <Input
+                    id="jabatan"
+                    value={formData.jabatan || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, jabatan: e.target.value }))}
+                    placeholder="Jabatan"
+                  />
+                </div>
+                <FormField label="Cabang/PD" value={member.cabang} readOnly className="md:col-span-2" />
+              </CardContent>
+            </Card>
+
+            {/* Pendidikan */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-primary" />
+                  Pendidikan
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="alumni">Alumni</Label>
+                  <Input
+                    id="alumni"
+                    value={formData.alumni || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, alumni: e.target.value }))}
+                    placeholder="Universitas/Institusi"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="thn_lulus">
+                    Tahun Lulus {errors.thn_lulus && <span className="text-destructive">*</span>}
+                  </Label>
+                  <Input
+                    id="thn_lulus"
+                    type="number"
+                    value={formData.thn_lulus || ''}
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, thn_lulus: Number(e.target.value) }));
+                      setErrors(prev => ({ ...prev, thn_lulus: '' }));
+                    }}
+                    placeholder="2020"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    className={errors.thn_lulus ? 'border-destructive' : ''}
+                  />
+                  {errors.thn_lulus && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.thn_lulus}
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tempat Praktik */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-primary" />
+                  Tempat Praktik
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Praktik 1 */}
+                <div>
+                  <h4 className="font-semibold mb-3">Praktik 1</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_1">Nama RS/Klinik</Label>
+                      <Input
+                        id="tempat_praktek_1"
+                        value={formData.tempat_praktek_1 || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, tempat_praktek_1: e.target.value }))}
+                        placeholder="Nama tempat praktik"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_1_tipe">Tipe RS</Label>
+                      <Select
+                        value={formData.tempat_praktek_1_tipe || ''}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, tempat_praktek_1_tipe: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih tipe" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                          <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                          <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                          <SelectItem value="RS Tipe D">RS Tipe D</SelectItem>
+                          <SelectItem value="Klinik">Klinik</SelectItem>
+                          <SelectItem value="Puskesmas">Puskesmas</SelectItem>
+                          <SelectItem value="Lainnya">Lainnya</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Praktik 2 */}
+                <div>
+                  <h4 className="font-semibold mb-3">Praktik 2 (Opsional)</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_2">Nama RS/Klinik</Label>
+                      <Input
+                        id="tempat_praktek_2"
+                        value={formData.tempat_praktek_2 || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, tempat_praktek_2: e.target.value }))}
+                        placeholder="Nama tempat praktik"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_2_tipe">Tipe RS</Label>
+                      <Select
+                        value={formData.tempat_praktek_2_tipe || ''}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, tempat_praktek_2_tipe: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih tipe" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                          <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                          <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                          <SelectItem value="RS Tipe D">RS Tipe D</SelectItem>
+                          <SelectItem value="Klinik">Klinik</SelectItem>
+                          <SelectItem value="Puskesmas">Puskesmas</SelectItem>
+                          <SelectItem value="Lainnya">Lainnya</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Praktik 3 */}
+                <div>
+                  <h4 className="font-semibold mb-3">Praktik 3 (Opsional)</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_3">Nama RS/Klinik</Label>
+                      <Input
+                        id="tempat_praktek_3"
+                        value={formData.tempat_praktek_3 || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, tempat_praktek_3: e.target.value }))}
+                        placeholder="Nama tempat praktik"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tempat_praktek_3_tipe">Tipe RS</Label>
+                      <Select
+                        value={formData.tempat_praktek_3_tipe || ''}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, tempat_praktek_3_tipe: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pilih tipe" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="RS Tipe A">RS Tipe A</SelectItem>
+                          <SelectItem value="RS Tipe B">RS Tipe B</SelectItem>
+                          <SelectItem value="RS Tipe C">RS Tipe C</SelectItem>
+                          <SelectItem value="RS Tipe D">RS Tipe D</SelectItem>
+                          <SelectItem value="Klinik">Klinik</SelectItem>
+                          <SelectItem value="Puskesmas">Puskesmas</SelectItem>
+                          <SelectItem value="Lainnya">Lainnya</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dokumen Legal (Read-only) */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Dokumen Legal
+                </CardTitle>
                 <CardDescription>
-                  Data profesi tidak dapat diubah sendiri. Hubungi admin untuk perubahan.
+                  Data dokumen legal tidak dapat diubah sendiri. Hubungi admin untuk perubahan.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid md:grid-cols-2 gap-4">
-                <FormField label="Tempat Tugas" value={member.tempat_tugas} readOnly />
-                <FormField label="Jabatan" value={member.jabatan} readOnly />
+                <FormField label="No. STR" value={member.no_str} readOnly />
+                <FormField 
+                  label="STR Berlaku Sampai" 
+                  value={member.str_berlaku_sampai ? new Date(member.str_berlaku_sampai).toLocaleDateString('id-ID') : undefined} 
+                  readOnly 
+                />
+                <FormField label="No. SIP" value={member.no_sip} readOnly />
+                <FormField 
+                  label="SIP Berlaku Sampai" 
+                  value={member.sip_berlaku_sampai ? new Date(member.sip_berlaku_sampai).toLocaleDateString('id-ID') : undefined} 
+                  readOnly 
+                />
               </CardContent>
             </Card>
 
@@ -497,16 +802,20 @@ function FormField({
   label, 
   value, 
   readOnly,
+  required,
   className 
 }: { 
   label: string; 
   value?: string | number | null;
   readOnly?: boolean;
+  required?: boolean;
   className?: string;
 }) {
   return (
     <div className={`space-y-2 ${className || ''}`}>
-      <Label>{label}</Label>
+      <Label>
+        {label} {required && <span className="text-destructive">*</span>}
+      </Label>
       <Input 
         value={value || '-'} 
         readOnly={readOnly}
