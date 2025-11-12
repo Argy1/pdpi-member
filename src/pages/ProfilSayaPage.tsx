@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { createClient } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -12,6 +12,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, User, Mail, Phone, MapPin, Briefcase, FileText } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+
+const SUPABASE_URL = "https://zxlccvozsbjmwrjbwyrr.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4bGNjdm96c2JqbXdyamJ3eXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5MDc3MzYsImV4cCI6MjA3MzQ4MzczNn0.g76X2TVsCsT-ntssunqsQxUt4exVUXnQzPnan3hhMn0";
+
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 interface ProfileFormData {
   nama: string;
@@ -54,29 +59,31 @@ export default function ProfilSayaPage() {
     
     try {
       setLoading(true);
-      const response = await supabase
+      
+      // Use raw query to avoid type inference issues
+      const result: any = await supabaseClient
         .from('members')
-        .select('*')
+        .select('nik, npa, nama, jenis_kelamin, cabang, email, no_hp, alamat_rumah, kota_kabupaten_rumah, provinsi_rumah, tempat_tugas, kota_kabupaten_kantor, provinsi_kantor, tempat_praktek_1, tempat_praktek_2, tempat_praktek_3, no_str, str_berlaku_sampai, no_sip, sip_berlaku_sampai')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (response.error) throw response.error;
+      if (result.error) throw result.error;
 
-      if (response.data) {
-        setMemberData(response.data);
+      if (result.data) {
+        setMemberData(result.data);
         reset({
-          nama: response.data.nama || '',
-          email: response.data.email || '',
-          no_hp: response.data.no_hp || '',
-          alamat_rumah: response.data.alamat_rumah || '',
-          kota_kabupaten_rumah: response.data.kota_kabupaten_rumah || '',
-          provinsi_rumah: response.data.provinsi_rumah || '',
-          tempat_tugas: response.data.tempat_tugas || '',
-          kota_kabupaten_kantor: response.data.kota_kabupaten_kantor || '',
-          provinsi_kantor: response.data.provinsi_kantor || '',
-          tempat_praktek_1: response.data.tempat_praktek_1 || '',
-          tempat_praktek_2: response.data.tempat_praktek_2 || '',
-          tempat_praktek_3: response.data.tempat_praktek_3 || '',
+          nama: result.data.nama || '',
+          email: result.data.email || '',
+          no_hp: result.data.no_hp || '',
+          alamat_rumah: result.data.alamat_rumah || '',
+          kota_kabupaten_rumah: result.data.kota_kabupaten_rumah || '',
+          provinsi_rumah: result.data.provinsi_rumah || '',
+          tempat_tugas: result.data.tempat_tugas || '',
+          kota_kabupaten_kantor: result.data.kota_kabupaten_kantor || '',
+          provinsi_kantor: result.data.provinsi_kantor || '',
+          tempat_praktek_1: result.data.tempat_praktek_1 || '',
+          tempat_praktek_2: result.data.tempat_praktek_2 || '',
+          tempat_praktek_3: result.data.tempat_praktek_3 || '',
         });
       }
     } catch (err: any) {
@@ -95,7 +102,7 @@ export default function ProfilSayaPage() {
     try {
       setSaving(true);
 
-      const { error } = await supabase
+      const result: any = await supabaseClient
         .from('members')
         .update({
           nama: formData.nama,
@@ -113,7 +120,7 @@ export default function ProfilSayaPage() {
         })
         .eq('user_id', user?.id);
 
-      if (error) throw error;
+      if (result.error) throw result.error;
 
       toast({
         title: 'Berhasil',
