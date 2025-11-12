@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useBranchFix } from '@/hooks/useBranchFix';
 import { SearchBar } from '@/components/SearchBar';
 import { MemberFiltersComponent } from '@/components/MemberFilters';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -104,6 +105,9 @@ export default function AdminMembers() {
     'UNHAS'
   ];
   const { isPusatAdmin, isCabangAdmin, profile, loading: authLoading } = useAuth();
+  
+  // Fix branch duplicates on mount
+  useBranchFix();
   
   // Debug logging to check role
   useEffect(() => {
@@ -473,6 +477,7 @@ export default function AdminMembers() {
                     </div>
                   </TableHead>
                   <TableHead>Alumni</TableHead>
+                  <TableHead>NIK</TableHead>
                   <TableHead>Rumah Sakit</TableHead>
                   <TableHead>Kota/Kabupaten Kantor</TableHead>
                   <TableHead>Provinsi Kantor</TableHead>
@@ -495,7 +500,7 @@ export default function AdminMembers() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={12} className="text-center py-12">
+                    <TableCell colSpan={13} className="text-center py-12">
                       <div className="inline-flex items-center gap-2">
                         <RefreshCw className="h-5 w-5 animate-spin" />
                         <span>Memuat data anggota...</span>
@@ -504,7 +509,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={12} className="text-center py-12">
+                    <TableCell colSpan={13} className="text-center py-12">
                       <div className="text-red-600 mb-4">
                         Gagal memuat data: {error}
                       </div>
@@ -515,7 +520,7 @@ export default function AdminMembers() {
                   </TableRow>
                 ) : members.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={12} className="text-center py-12">
+                    <TableCell colSpan={13} className="text-center py-12">
                       <p className="text-muted-foreground">
                         Tidak ada anggota yang ditemukan.
                       </p>
@@ -527,6 +532,11 @@ export default function AdminMembers() {
                       <TableCell className="font-medium">{member.nama}</TableCell>
                       <TableCell>{member.npa}</TableCell>
                       <TableCell>{member.alumni || '-'}</TableCell>
+                      <TableCell>
+                        <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
+                          {member.nik || "-"}
+                        </code>
+                      </TableCell>
                       <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
                       <TableCell>{member.kota_kabupaten_kantor || '-'}</TableCell>
                       <TableCell>{member.provinsi_kantor || '-'}</TableCell>

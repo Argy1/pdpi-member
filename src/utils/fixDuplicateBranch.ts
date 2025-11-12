@@ -8,15 +8,14 @@ export async function fixDuplicateBranch() {
   try {
     const fixes = [
       {
+        standard: 'Cabang Kalimantan Timur',
+        variants: ['Cabang Kalimantan TImur'] // typo version
+      },
+      {
         standard: 'Cabang Sulut - Sulteng - Gorontalo (Suluttenggo)',
         variants: [
           'Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)', // en-dash version
-          'Cabang Sulut - Sulteng - Gorontalo (Sulutenggo)', // single 't' version
         ]
-      },
-      {
-        standard: 'Cabang Kalimantan Timur',
-        variants: ['Cabang Kalimantan TImur'] // typo version
       },
       {
         standard: 'Cabang Maluku',
