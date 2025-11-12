@@ -573,7 +573,7 @@ export type Database = {
         Insert: {
           branch_id?: string | null
           created_at?: string | null
-          role: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
