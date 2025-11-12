@@ -3,9 +3,11 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AdminSidebar } from './AdminSidebar';
 import { AdminHeader } from './AdminHeader';
+import { useToast } from '@/hooks/use-toast';
 
 export const AdminLayout = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
+  const { toast } = useToast();
 
   if (loading) {
     return (
@@ -17,6 +19,16 @@ export const AdminLayout = () => {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Route guard: only admin_pusat and admin_cabang can access admin area
+  if (!isAdmin) {
+    toast({
+      title: "Akses Ditolak",
+      description: "Akses admin dibatasi.",
+      variant: "destructive",
+    });
+    return <Navigate to="/profil-saya" replace />;
   }
 
   return (
