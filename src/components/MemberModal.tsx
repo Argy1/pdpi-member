@@ -190,10 +190,6 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
                 <p className="text-sm font-medium text-muted-foreground">Alumni</p>
                 <p className="text-medical-body">{member.alumni || "-"}</p>
               </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">NIK</p>
-                <p className="text-medical-body">{member.nik || "-"}</p>
-              </div>
             </div>
           </div>
 
@@ -229,20 +225,24 @@ export function MemberModal({ member, open, onClose }: MemberModalProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">NIK</p>
+                <p className="text-medical-body">{member.nik || "-"}</p>
+              </div>
+              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">No. STR</p>
-                <p className="text-medical-body">{member.noSTR || "-"}</p>
+                <p className="text-medical-body">{member.no_str || member.noSTR || "-"}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">STR Berlaku Sampai</p>
-                <p className="text-medical-body">{formatDate(member.strBerlakuSampai)}</p>
+                <p className="text-medical-body">{formatDate(member.str_berlaku_sampai || member.strBerlakuSampai)}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">No. SIP</p>
-                <p className="text-medical-body">{member.noSIP || "-"}</p>
+                <p className="text-medical-body">{member.no_sip || member.noSIP || "-"}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">SIP Berlaku Sampai</p>
-                <p className="text-medical-body">{formatDate(member.sipBerlakuSampai)}</p>
+                <p className="text-medical-body">{formatDate(member.sip_berlaku_sampai || member.sipBerlakuSampai)}</p>
               </div>
             </div>
           </div>
