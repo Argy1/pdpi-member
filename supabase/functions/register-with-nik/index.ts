@@ -162,25 +162,9 @@ Deno.serve(async (req) => {
       // Don't fail registration - user is created, just log the error
     }
 
-    // Step 7: Create/update profile
-    // SECURITY: Force app_role to 'user'
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .upsert({
-        user_id: authData.user.id,
-        role: 'user', // FORCED - never from client
-        npa: memberData.npa,
-        full_name: memberData.full_name || memberData.nama,
-        branch_id: branchId,
-        pd_id: branchId
-      }, {
-        onConflict: 'user_id'
-      })
-
-    if (profileError) {
-      console.error('Error creating profile:', profileError)
-      // Don't fail registration - user is created, just log the error
-    }
+    // Step 7: Profile is automatically created by handle_new_user() trigger
+    // No need to manually insert/update profile here
+    // The trigger uses user_metadata.app_role which we set to 'user' above
 
     // Success response
     return new Response(
