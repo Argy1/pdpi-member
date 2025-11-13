@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useNIKSync } from '@/hooks/useNIKSync';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +32,9 @@ export default function ProfilEditPage() {
   const [formData, setFormData] = useState<Partial<Member>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Sync NIK to profiles on mount
+  useNIKSync();
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login');
@@ -59,8 +63,11 @@ export default function ProfilEditPage() {
         console.error('Error fetching profile:', profileError);
       }
 
+      // Type assertion for nik field
+      const typedProfile = profileData as any;
+
       // Step 2: Get NIK from profile or user metadata
-      const nik = profileData?.nik || user.user_metadata?.nik;
+      const nik = typedProfile?.nik || user.user_metadata?.nik;
       
       if (!nik) {
         console.error('NIK not found in user metadata or profile');
@@ -69,10 +76,10 @@ export default function ProfilEditPage() {
       }
 
       // Step 3: Sync NIK to profile if missing
-      if (profileData && !profileData.nik && user.user_metadata?.nik) {
+      if (typedProfile && !typedProfile.nik && user.user_metadata?.nik) {
         await supabase
           .from('profiles')
-          .update({ nik: user.user_metadata.nik })
+          .update({ nik: user.user_metadata.nik } as any)
           .eq('user_id', user.id);
       }
 
