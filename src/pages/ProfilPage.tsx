@@ -78,11 +78,17 @@ export default function ProfilPage() {
       }
 
       // Step 4: Find member record by NIK
-      const { data: memberData } = await supabase
+      // Use limit(1) to handle potential NIK duplicates
+      const { data: memberData, error: memberError } = await supabase
         .from('members')
         .select('*')
         .eq('nik', nik)
+        .limit(1)
         .maybeSingle();
+
+      if (memberError) {
+        console.error('Error fetching member:', memberError);
+      }
 
       setMember(memberData as Member);
     } catch (error) {
