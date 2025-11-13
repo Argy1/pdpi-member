@@ -55,8 +55,13 @@ export default function ProfilPage() {
       // Type assertion for nik field
       const typedProfile = profileData as any;
 
-      // Step 2: Get NIK from profile or user metadata
-      const nik = typedProfile?.nik || user.user_metadata?.nik;
+      // Step 2: Get NIK from profile or user metadata (check both 'nik' and 'name')
+      let nik = typedProfile?.nik || user.user_metadata?.nik || user.user_metadata?.name;
+      
+      // Validate NIK format
+      if (nik && !/^\d{16}$/.test(nik)) {
+        nik = null; // Invalid format
+      }
       
       if (!nik) {
         console.error('NIK not found in user metadata or profile');
