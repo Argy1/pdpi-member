@@ -3,11 +3,12 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Member } from '@/types/member';
 
+// Override the Profile interface to include NIK
 interface Profile {
   user_id: string;
   branch_id: string | null;
   role: string;
-  nik: string | null;
+  nik?: string | null;
   created_at: string;
 }
 
@@ -74,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      // Fetch profile data
+      // Fetch profile data (with nik field added via migration)
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -96,26 +97,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Error fetching role:', roleError);
       }
 
+      // Get current user to access metadata
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      // Type assertion to include nik field
+      const typedProfileData = profileData as any;
+      
       // Sync NIK from metadata to profile if missing
-      if (profileData && !profileData.nik && user?.user_metadata?.nik) {
-        await supabase
+      if (typedProfileData && !typedProfileData.nik && currentUser?.user_metadata?.nik) {
+        const { data: updatedProfile } = await supabase
           .from('profiles')
-          .update({ nik: user.user_metadata.nik })
-          .eq('user_id', userId);
+          .update({ nik: currentUser.user_metadata.nik } as any)
+          .eq('user_id', userId)
+          .select()
+          .single();
         
-        if (profileData) {
-          profileData.nik = user.user_metadata.nik;
+        if (updatedProfile) {
+          setProfile({
+            ...updatedProfile,
+            role: roleData?.role || (updatedProfile as any).role,
+            nik: currentUser.user_metadata.nik
+          } as Profile);
         }
-      }
-
-      // Combine profile and role data
-      if (profileData) {
-        setProfile({
-          ...profileData,
-          role: roleData?.role || profileData.role
-        });
       } else {
-        setProfile(null);
+        // Combine profile and role data
+        if (typedProfileData) {
+          setProfile({
+            ...typedProfileData,
+            role: roleData?.role || typedProfileData.role,
+            nik: typedProfileData.nik || null
+          } as Profile);
+        } else {
+          setProfile(null);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
