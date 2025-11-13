@@ -113,21 +113,36 @@ export default function ProfilPage() {
   }
 
   if (!member) {
+    const userNIK = (profile as any)?.nik || user?.user_metadata?.nik || user?.user_metadata?.name;
+    const hasValidNIK = userNIK && /^\d{16}$/.test(userNIK);
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
         <Card className="max-w-md">
           <CardHeader>
             <CardTitle>Data Anggota Belum Ditemukan</CardTitle>
             <CardDescription>
-              Data anggota dengan NIK Anda belum tersedia di sistem. Silakan hubungi admin PDPI atau sekretariat PD Anda untuk pendaftaran.
+              {hasValidNIK 
+                ? 'Data anggota dengan NIK Anda belum tersedia dalam sistem.'
+                : 'NIK Anda belum terdaftar atau tidak valid.'}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Informasi Akun:</p>
+            <div className="p-4 bg-muted rounded-lg space-y-2">
+              <p className="text-sm text-muted-foreground">Informasi Akun:</p>
               <p className="text-sm"><span className="font-medium">Email:</span> {user?.email}</p>
-              <p className="text-sm"><span className="font-medium">NIK:</span> {(user?.user_metadata?.nik) || (profile as any)?.nik || '-'}</p>
+              <p className="text-sm">
+                <span className="font-medium">NIK:</span> {userNIK || 'Tidak tersedia'}
+                {userNIK && !hasValidNIK && (
+                  <Badge variant="destructive" className="ml-2 text-xs">Invalid (harus 16 digit)</Badge>
+                )}
+              </p>
             </div>
+            <p className="text-sm text-muted-foreground">
+              {hasValidNIK 
+                ? 'Silakan hubungi administrator untuk mendaftarkan data anggota Anda dengan NIK ini.'
+                : 'Silakan hubungi administrator untuk memperbarui NIK Anda di sistem.'}
+            </p>
             <Button onClick={() => navigate('/')} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Kembali ke Beranda
