@@ -198,11 +198,9 @@ export const mockPDs = [
   "Cabang Kalimantan Timur",
   "Cabang Kalimantan Barat",
   "Cabang Kalimantan Tengah",
-  "Cabang Sulawesi",
   "Cabang Sulut – Sulteng - Gorontalo (Suluttenggo)",
   "Cabang Sulselbarra",
-  "Cabang Maluku Utara & Maluku",
-  "Cabang Maluku Selatan dan Utara",
+  "Cabang Maluku Selatan & Utara",
   "Cabang Papua"
 ]
 

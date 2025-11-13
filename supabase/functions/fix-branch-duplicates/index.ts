@@ -43,23 +43,29 @@ Deno.serve(async (req) => {
       console.log(`Fixed ${fix2?.length || 0} records: Sulut – Sulteng -> Sulut - Sulteng`)
     }
 
-    // Fix 3: Maluku variants -> Cabang Maluku
+    // Fix 3: Maluku variants -> Cabang Maluku Selatan & Utara
     const { data: fix3a, error: error3a } = await supabase
       .from('members')
-      .update({ cabang: 'Cabang Maluku' })
-      .eq('cabang', 'Cabang Maluku Selatan & Utara')
+      .update({ cabang: 'Cabang Maluku Selatan & Utara' })
+      .eq('cabang', 'Cabang Maluku')
       .select()
 
     const { data: fix3b, error: error3b } = await supabase
       .from('members')
-      .update({ cabang: 'Cabang Maluku' })
+      .update({ cabang: 'Cabang Maluku Selatan & Utara' })
       .eq('cabang', 'Cabang Maluku Utara & Maluku')
       .select()
 
-    if (error3a || error3b) {
-      console.error('Error fixing Maluku:', error3a || error3b)
+    const { data: fix3c, error: error3c } = await supabase
+      .from('members')
+      .update({ cabang: 'Cabang Maluku Selatan & Utara' })
+      .eq('cabang', 'Cabang Maluku Selatan dan Utara')
+      .select()
+
+    if (error3a || error3b || error3c) {
+      console.error('Error fixing Maluku:', error3a || error3b || error3c)
     } else {
-      console.log(`Fixed ${(fix3a?.length || 0) + (fix3b?.length || 0)} records: Maluku variants -> Maluku`)
+      console.log(`Fixed ${(fix3a?.length || 0) + (fix3b?.length || 0) + (fix3c?.length || 0)} records: Maluku variants -> Maluku Selatan & Utara`)
     }
 
     // Get final count
@@ -83,7 +89,7 @@ Deno.serve(async (req) => {
         fixes: {
           kalimantan: fix1?.length || 0,
           suluttenggo: fix2?.length || 0,
-          maluku: (fix3a?.length || 0) + (fix3b?.length || 0)
+          maluku: (fix3a?.length || 0) + (fix3b?.length || 0) + (fix3c?.length || 0)
         },
         totalBranches: branches ? [...new Set(branches.map(m => m.cabang))].length : 0
       }),
