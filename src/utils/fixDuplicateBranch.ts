@@ -18,10 +18,12 @@ export async function fixDuplicateBranch() {
         ]
       },
       {
-        standard: 'Cabang Maluku',
+        standard: 'Cabang Maluku Selatan & Utara',
         variants: [
-          'Cabang Maluku Selatan & Utara',
-          'Cabang Maluku Utara & Maluku'
+          'Cabang Maluku',
+          'Cabang Maluku Utara & Maluku',
+          'Cabang Maluku Selatan dan Utara',
+          'Cabang Maluku Utara & Maluku Selatan'
         ]
       }
     ];
