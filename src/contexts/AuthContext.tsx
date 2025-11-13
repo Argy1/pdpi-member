@@ -7,6 +7,7 @@ interface Profile {
   user_id: string;
   branch_id: string | null;
   role: string;
+  nik: string | null;
   created_at: string;
 }
 
@@ -93,6 +94,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (roleError) {
         console.error('Error fetching role:', roleError);
+      }
+
+      // Sync NIK from metadata to profile if missing
+      if (profileData && !profileData.nik && user?.user_metadata?.nik) {
+        await supabase
+          .from('profiles')
+          .update({ nik: user.user_metadata.nik })
+          .eq('user_id', userId);
+        
+        if (profileData) {
+          profileData.nik = user.user_metadata.nik;
+        }
       }
 
       // Combine profile and role data
