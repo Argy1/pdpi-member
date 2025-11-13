@@ -60,13 +60,16 @@ export function useMemberSync(): MemberSyncResult {
       }
 
       // Find member by NIK only (ignore email)
+      // Use .limit(1).maybeSingle() to handle potential duplicates
       const { data: existingMember, error: fetchError } = await supabase
         .from('members')
         .select('*')
         .eq('nik', nik)
+        .limit(1)
         .maybeSingle();
 
       if (fetchError) {
+        console.error('Error fetching member:', fetchError);
         throw fetchError;
       }
 
