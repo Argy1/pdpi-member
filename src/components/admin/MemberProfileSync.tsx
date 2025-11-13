@@ -19,7 +19,6 @@ export function MemberProfileSync() {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [formData, setFormData] = useState<Partial<Member>>({
-    email: member?.email || user?.email || '',
     tgl_lahir: member?.tgl_lahir || '',
     tempat_lahir: member?.tempat_lahir || '',
     jenis_kelamin: member?.jenis_kelamin || undefined,
@@ -144,9 +143,9 @@ export function MemberProfileSync() {
         {!loading && !member && (
           <div className="text-center py-8 text-muted-foreground">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Tidak ditemukan data anggota dengan email: {user.email}</p>
+            <p>Tidak ditemukan data anggota dengan NIK Anda</p>
             <p className="text-sm mt-2">
-              Pastikan email login Anda terdaftar dalam database anggota PDPI.
+              Pastikan NIK Anda terdaftar dalam database anggota PDPI.
             </p>
           </div>
         )}
@@ -155,17 +154,15 @@ export function MemberProfileSync() {
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="nik">NIK</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  id="nik"
+                  value={member.nik || '-'}
                   disabled
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Email tidak dapat diubah (terhubung dengan akun login)
+                  NIK tidak dapat diubah
                 </p>
               </div>
 

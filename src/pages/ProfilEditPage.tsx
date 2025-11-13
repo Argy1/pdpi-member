@@ -22,7 +22,7 @@ import {
 import { Member } from '@/types/member';
 
 export default function ProfilEditPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [member, setMember] = useState<Member | null>(null);
@@ -279,14 +279,14 @@ export default function ProfilEditPage() {
           <CardHeader>
             <CardTitle>Data Anggota Belum Ditemukan</CardTitle>
             <CardDescription>
-              Data anggota Anda belum tersedia di sistem. Silakan hubungi admin PDPI atau sekretariat PD Anda untuk pendaftaran.
+              Data anggota dengan NIK Anda belum tersedia di sistem. Silakan hubungi admin PDPI atau sekretariat PD Anda untuk pendaftaran.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground mb-2">Informasi Akun:</p>
               <p className="text-sm"><span className="font-medium">Email:</span> {user?.email}</p>
-              <p className="text-sm"><span className="font-medium">NIK:</span> {user?.user_metadata?.nik || '-'}</p>
+              <p className="text-sm"><span className="font-medium">NIK:</span> {(user?.user_metadata?.nik) || (profile as any)?.nik || '-'}</p>
             </div>
             <Button onClick={() => navigate('/')} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />

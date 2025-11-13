@@ -36,11 +36,29 @@ export function useMemberSync(): MemberSyncResult {
     setError(null);
 
     try {
-      // First, try to find member by email
-      let { data: existingMember, error: fetchError } = await supabase
+      // Get NIK from profiles or user metadata
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('nik')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const typedProfile = profileData as any;
+      const nik = typedProfile?.nik || user.user_metadata?.nik;
+
+      if (!nik) {
+        setError('NIK tidak ditemukan');
+        setSyncStatus('error');
+        console.log('No NIK found in profile or metadata');
+        setLoading(false);
+        return;
+      }
+
+      // Find member by NIK only (ignore email)
+      const { data: existingMember, error: fetchError } = await supabase
         .from('members')
         .select('*')
-        .eq('email', user.email)
+        .eq('nik', nik)
         .maybeSingle();
 
       if (fetchError) {
@@ -48,86 +66,16 @@ export function useMemberSync(): MemberSyncResult {
       }
 
       if (existingMember) {
-        // Member found - sync auth data with member data
-        const updatedData: Partial<Member> = {};
-        let hasUpdates = false;
-
-        // Sync email if different
-        if (existingMember.email !== user.email) {
-          updatedData.email = user.email || '';
-          hasUpdates = true;
-        }
-
-        // Extract metadata from user if available
-        const userMetadata = user.user_metadata;
-        if (userMetadata) {
-          // Sync birth date
-          if (userMetadata.tgl_lahir && existingMember.tgl_lahir !== userMetadata.tgl_lahir) {
-            updatedData.tgl_lahir = userMetadata.tgl_lahir;
-            hasUpdates = true;
-          }
-
-          // Sync birth place
-          if (userMetadata.tempat_lahir && existingMember.tempat_lahir !== userMetadata.tempat_lahir) {
-            updatedData.tempat_lahir = userMetadata.tempat_lahir;
-            hasUpdates = true;
-          }
-
-          // Sync gender
-          if (userMetadata.jenis_kelamin && existingMember.jenis_kelamin !== userMetadata.jenis_kelamin) {
-            updatedData.jenis_kelamin = userMetadata.jenis_kelamin;
-            hasUpdates = true;
-          }
-
-          // Sync phone number
-          if (userMetadata.no_hp && existingMember.no_hp !== userMetadata.no_hp) {
-            updatedData.no_hp = userMetadata.no_hp;
-            hasUpdates = true;
-          }
-
-          // Sync full address
-          if (userMetadata.alamat_rumah && existingMember.alamat_rumah !== userMetadata.alamat_rumah) {
-            updatedData.alamat_rumah = userMetadata.alamat_rumah;
-            hasUpdates = true;
-          }
-
-          // Sync name if available and different
-          if (userMetadata.nama && existingMember.nama !== userMetadata.nama) {
-            updatedData.nama = userMetadata.nama;
-            hasUpdates = true;
-          }
-        }
-
-        // Update member data if there are changes
-        if (hasUpdates) {
-          const { data: updatedMember, error: updateError } = await supabase
-            .from('members')
-            .update(updatedData)
-            .eq('id', existingMember.id)
-            .select()
-            .single();
-
-          if (updateError) {
-            throw updateError;
-          }
-
-          setMember(updatedMember as Member);
-          
-          toast({
-            title: "Data Tersinkronisasi",
-            description: "Data anggota telah diperbarui dengan informasi login terbaru.",
-          });
-        } else {
-          setMember(existingMember as Member);
-        }
-
+        // Member found - just set the member data
+        setMember(existingMember as Member);
+        
         setSyncStatus('synced');
       } else {
-        // No member found with this email
+        // No member found with this NIK
         setMember(null);
         setSyncStatus('idle');
         
-        console.log('No member record found for email:', user.email);
+        console.log('No member record found for NIK:', nik);
       }
     } catch (err) {
       console.error('Error syncing member data:', err);
