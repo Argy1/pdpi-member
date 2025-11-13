@@ -405,7 +405,19 @@ export default function AdminMemberDetail() {
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">NIK</label>
-                <p className="mt-1">{member.nik || '-'}</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <p>{member.nik || '-'}</p>
+                  {!member.nik && (
+                    <Badge variant="destructive" className="text-xs">
+                      NIK Kosong - Member tidak bisa login
+                    </Badge>
+                  )}
+                </div>
+                {!member.nik && (
+                  <p className="text-xs text-destructive mt-1">
+                    ⚠️ Anggota ini tidak memiliki NIK dan tidak dapat mengakses sistem profil/edit profil.
+                  </p>
+                )}
               </div>
               
               <div>
