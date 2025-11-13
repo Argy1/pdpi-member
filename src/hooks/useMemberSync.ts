@@ -36,7 +36,7 @@ export function useMemberSync(): MemberSyncResult {
     setError(null);
 
     try {
-      // Get NIK from profiles or user metadata
+      // Get NIK from profiles or user metadata (check both 'nik' and 'name' fields)
       const { data: profileData } = await supabase
         .from('profiles')
         .select('nik')
@@ -44,12 +44,17 @@ export function useMemberSync(): MemberSyncResult {
         .maybeSingle();
 
       const typedProfile = profileData as any;
-      const nik = typedProfile?.nik || user.user_metadata?.nik;
+      let nik = typedProfile?.nik || user.user_metadata?.nik || user.user_metadata?.name;
+      
+      // Validate NIK format (16 digits)
+      if (nik && !/^\d{16}$/.test(nik)) {
+        nik = null; // Invalid format
+      }
 
       if (!nik) {
         setError('NIK tidak ditemukan');
-        setSyncStatus('error');
-        console.log('No NIK found in profile or metadata');
+        setSyncStatus('idle');
+        console.log('No valid NIK found in profile or metadata');
         setLoading(false);
         return;
       }

@@ -19,27 +19,39 @@ export function useNIKSync() {
       const typedProfile = profile as any;
       if (typedProfile?.nik) return;
 
-      // Get NIK from user metadata
-      const nik = user.user_metadata?.nik;
-      if (!nik) {
-        console.log('No NIK in user metadata to sync');
-        return;
-      }
+      // Get NIK from user metadata - check both 'nik' and 'name' fields
+      let nik = user.user_metadata?.nik || user.user_metadata?.name;
+      
+      // Validate NIK (should be 16 digits)
+      if (nik && /^\d{16}$/.test(nik)) {
+        try {
+          // Update profiles table with NIK
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({ nik } as any)
+            .eq('user_id', user.id);
 
-      try {
-        // Update profiles table with NIK
-        const { error } = await supabase
-          .from('profiles')
-          .update({ nik } as any)
-          .eq('user_id', user.id);
-
-        if (error) {
-          console.error('Error syncing NIK:', error);
-        } else {
-          console.log('NIK synced successfully to profiles');
+          if (profileError) {
+            console.error('Error syncing NIK to profile:', profileError);
+          } else {
+            console.log('NIK synced successfully to profiles:', nik);
+            
+            // Also update user metadata to have nik field
+            if (!user.user_metadata?.nik) {
+              const { error: authError } = await supabase.auth.updateUser({
+                data: { nik }
+              });
+              
+              if (authError) {
+                console.error('Error updating user metadata:', authError);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Unexpected error during NIK sync:', error);
         }
-      } catch (error) {
-        console.error('Unexpected error during NIK sync:', error);
+      } else {
+        console.log('No valid NIK found in user metadata to sync');
       }
     };
 
