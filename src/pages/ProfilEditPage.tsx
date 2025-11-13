@@ -48,7 +48,7 @@ export default function ProfilEditPage() {
       
       if (!user) return;
 
-      // Step 1: Get profile data from public.profiles
+      // Step 1: Get profile data with NIK from public.profiles
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -59,8 +59,8 @@ export default function ProfilEditPage() {
         console.error('Error fetching profile:', profileError);
       }
 
-      // Step 2: Get NIK from user metadata
-      const nik = user.user_metadata?.nik;
+      // Step 2: Get NIK from profile or user metadata
+      const nik = profileData?.nik || user.user_metadata?.nik;
       
       if (!nik) {
         console.error('NIK not found in user metadata or profile');
@@ -68,20 +68,20 @@ export default function ProfilEditPage() {
         return;
       }
 
-      // Step 3: Find member record with priority:
-      // a) user_id = auth.uid()
-      // b) nik = profiles.nik
-      let memberData = null;
-      
-      // Try finding by NIK
-      const { data: memberByNik } = await supabase
+      // Step 3: Sync NIK to profile if missing
+      if (profileData && !profileData.nik && user.user_metadata?.nik) {
+        await supabase
+          .from('profiles')
+          .update({ nik: user.user_metadata.nik })
+          .eq('user_id', user.id);
+      }
+
+      // Step 4: Find member record by NIK
+      const { data: memberData } = await supabase
         .from('members')
         .select('*')
         .eq('nik', nik)
         .maybeSingle();
-
-
-      memberData = memberByNik;
 
       // Step 5: Set member data and prefill form
       if (memberData) {
