@@ -64,7 +64,6 @@ export function MemberTable({
                 <TableHead className="font-semibold min-w-[80px] sticky left-0 bg-muted/50 z-10">Foto</TableHead>
                 <TableHead className="font-semibold min-w-[200px]">Nama</TableHead>
                 <TableHead className="font-semibold min-w-[120px]">NPA</TableHead>
-                <TableHead className="font-semibold min-w-[150px]">NIK</TableHead>
                 <TableHead className="font-semibold min-w-[180px]">Alumni</TableHead>
                 <TableHead className="font-semibold min-w-[180px]">Kota/Kabupaten Kantor</TableHead>
                 <TableHead className="font-semibold min-w-[160px]">Provinsi Kantor</TableHead>
@@ -100,11 +99,6 @@ export function MemberTable({
                   <TableCell>
                     <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
                       {member.npa || "-"}
-                    </code>
-                  </TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
-                      {member.nik || "-"}
                     </code>
                   </TableCell>
                   <TableCell>
