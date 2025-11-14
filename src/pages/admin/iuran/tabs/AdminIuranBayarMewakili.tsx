@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Users, Calendar, CreditCard, Search, X, ArrowLeft, ArrowRight, AlertCircle } from 'lucide-react';
+import { Users, Calendar, CreditCard, Search, X, ArrowLeft, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { TARIFF_PER_YEAR, formatRupiah, generateGroupCode, calculateExpiry } from '@/utils/paymentHelpers';
 
 interface SelectedMember {
@@ -35,12 +35,12 @@ export default function BayarMewakili() {
   
   const [currentStep, setCurrentStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [allMembers, setAllMembers] = useState<any[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<any[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMember[]>([]);
   const [memberDues, setMemberDues] = useState<Record<string, any[]>>({});
   const [paymentMethod, setPaymentMethod] = useState<'qris' | 'bank_transfer'>('qris');
   const [loading, setLoading] = useState(false);
-  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     if (!profileLoading && !isAdminPusat && !isAdminCabang) {
@@ -48,36 +48,58 @@ export default function BayarMewakili() {
     }
   }, [profileLoading, isAdminPusat, isAdminCabang, navigate]);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    
-    setSearching(true);
-    try {
-      let query = supabase
-        .from('members')
-        .select('id, npa, nama, cabang')
-        .or(`npa.ilike.%${searchQuery}%,nama.ilike.%${searchQuery}%`)
-        .limit(10);
+  // Load all members with status "Biasa" on mount
+  useEffect(() => {
+    const loadMembers = async () => {
+      if (!profile) return;
 
-      // Filter by branch for admin_cabang
-      if (isAdminCabang && profile?.branches?.name) {
-        query = query.eq('cabang', profile.branches.name);
+      try {
+        setLoading(true);
+        let query = supabase
+          .from('members')
+          .select('id, npa, nama, cabang')
+          .eq('status', 'Biasa')
+          .order('nama', { ascending: true });
+
+        // Filter by branch for admin_cabang
+        if (isAdminCabang && profile?.branches?.name) {
+          query = query.eq('cabang', profile.branches.name);
+        }
+
+        const { data, error } = await query;
+        
+        if (error) throw error;
+        setAllMembers(data || []);
+        setFilteredMembers(data || []);
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: 'Gagal memuat daftar anggota: ' + error.message,
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const { data, error } = await query;
-      
-      if (error) throw error;
-      setSearchResults(data || []);
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setSearching(false);
+    loadMembers();
+  }, [profile, isAdminCabang, toast]);
+
+  // Filter members based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredMembers(allMembers);
+      return;
     }
-  };
+
+    const query = searchQuery.toLowerCase();
+    const filtered = allMembers.filter(member => 
+      member.nama.toLowerCase().includes(query) ||
+      member.npa?.toLowerCase().includes(query) ||
+      member.cabang?.toLowerCase().includes(query)
+    );
+    setFilteredMembers(filtered);
+  }, [searchQuery, allMembers]);
 
   const addMember = async (member: any) => {
     if (selectedMembers.some(m => m.id === member.id)) {
@@ -104,9 +126,6 @@ export default function BayarMewakili() {
       cabang: member.cabang,
       years: [],
     }]);
-    
-    setSearchQuery('');
-    setSearchResults([]);
   };
 
   const removeMember = (memberId: string) => {
@@ -366,23 +385,27 @@ export default function BayarMewakili() {
                 : 'Pilih anggota yang akan dibayarkan iurannya.'}
             </AlertDescription>
           </Alert>
-            {/* Search */}
-            <div className="flex gap-2">
+            
+            {/* Search Filter */}
+            <div className="space-y-2">
               <Input
-                placeholder="Cari NPA atau Nama..."
+                placeholder="Cari NPA, Nama, atau Cabang..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <Button onClick={handleSearch} disabled={searching}>
-                <Search className="h-4 w-4" />
-              </Button>
+              <p className="text-sm text-muted-foreground">
+                Menampilkan {filteredMembers.length} dari {allMembers.length} anggota (Status: Biasa)
+              </p>
             </div>
 
-            {/* Search Results */}
-            {searchResults.length > 0 && (
-              <div className="border rounded-lg divide-y">
-                {searchResults.map((member) => (
+            {/* Members List */}
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : filteredMembers.length > 0 ? (
+              <div className="border rounded-lg divide-y max-h-96 overflow-y-auto">
+                {filteredMembers.map((member) => (
                   <div
                     key={member.id}
                     className="p-3 hover:bg-accent cursor-pointer flex items-center justify-between"
@@ -394,9 +417,16 @@ export default function BayarMewakili() {
                         NPA: {member.npa} • {member.cabang}
                       </p>
                     </div>
-                    <Button size="sm" variant="ghost">Tambah</Button>
+                    <Button size="sm" variant="ghost" disabled={selectedMembers.some(m => m.id === member.id)}>
+                      {selectedMembers.some(m => m.id === member.id) ? 'Sudah Dipilih' : 'Tambah'}
+                    </Button>
                   </div>
                 ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>Tidak ada anggota ditemukan</p>
               </div>
             )}
 

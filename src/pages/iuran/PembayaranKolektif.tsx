@@ -29,10 +29,10 @@ export default function PembayaranKolektif() {
   const { items: cartItems, addItem, removeItem, getTotalAmount, clearCart } = usePaymentCart();
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Member[]>([]);
+  const [allMembers, setAllMembers] = useState<Member[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<Member[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<Map<string, { member: Member; years: number[] }>>(new Map());
   const [loading, setLoading] = useState(false);
-  const [searching, setSearching] = useState(false);
 
   // Redirect admins to admin iuran page
   useEffect(() => {
@@ -41,50 +41,51 @@ export default function PembayaranKolektif() {
     }
   }, [profile, navigate]);
 
-  // Search members from database
-  const handleSearch = async () => {
+  // Load all members with status "Biasa" on mount
+  useEffect(() => {
+    const loadMembers = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('members')
+          .select('id, npa, nama, cabang')
+          .eq('status', 'Biasa')
+          .order('nama', { ascending: true });
+
+        if (error) throw error;
+
+        setAllMembers(data || []);
+        setFilteredMembers(data || []);
+      } catch (error: any) {
+        console.error('Error loading members:', error);
+        toast({
+          title: 'Error',
+          description: 'Gagal memuat daftar anggota: ' + error.message,
+          variant: 'destructive'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMembers();
+  }, [toast]);
+
+  // Filter members based on search query
+  useEffect(() => {
     if (!searchQuery.trim()) {
-      toast({
-        title: 'Peringatan',
-        description: 'Masukkan NPA atau nama anggota untuk mencari',
-        variant: 'destructive'
-      });
+      setFilteredMembers(allMembers);
       return;
     }
 
-    try {
-      setSearching(true);
-      const { data, error } = await supabase
-        .from('members')
-        .select('id, npa, nama, cabang')
-        .or(`npa.ilike.%${searchQuery}%,nama.ilike.%${searchQuery}%`)
-        .eq('status', 'AKTIF')
-        .limit(10);
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        toast({
-          title: 'Tidak Ditemukan',
-          description: 'Anggota tidak ditemukan. Coba kata kunci lain.',
-          variant: 'destructive'
-        });
-        setSearchResults([]);
-        return;
-      }
-
-      setSearchResults(data);
-    } catch (error: any) {
-      console.error('Error searching members:', error);
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
-    } finally {
-      setSearching(false);
-    }
-  };
+    const query = searchQuery.toLowerCase();
+    const filtered = allMembers.filter(member => 
+      member.nama.toLowerCase().includes(query) ||
+      member.npa?.toLowerCase().includes(query) ||
+      member.cabang?.toLowerCase().includes(query)
+    );
+    setFilteredMembers(filtered);
+  }, [searchQuery, allMembers]);
 
   const handleAddMember = (member: Member) => {
     if (selectedMembers.has(member.id)) {
@@ -100,9 +101,6 @@ export default function PembayaranKolektif() {
       member, 
       years: [new Date().getFullYear()] 
     })));
-    
-    setSearchQuery('');
-    setSearchResults([]);
     
     toast({
       title: 'Berhasil',
@@ -222,44 +220,62 @@ export default function PembayaranKolektif() {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            Cari Anggota
+            <Users className="h-5 w-5" />
+            Pilih Anggota PDPi (Status: Biasa)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
+          <div className="mb-4">
             <Input
-              placeholder="Masukkan NPA atau Nama anggota..."
+              placeholder="Cari berdasarkan NPA, nama, atau cabang..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1"
+              className="w-full"
             />
-            <Button onClick={handleSearch} disabled={searching}>
-              {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Cari'}
-            </Button>
+            <p className="text-sm text-muted-foreground mt-2">
+              Menampilkan {filteredMembers.length} dari {allMembers.length} anggota
+            </p>
           </div>
 
-          {/* Search Results */}
-          {searchResults.length > 0 && (
-            <div className="mt-4 border rounded-lg divide-y">
-              {searchResults.map((member) => (
-                <div key={member.id} className="p-3 flex items-center justify-between hover:bg-muted/50">
-                  <div>
-                    <p className="font-semibold">{member.nama}</p>
-                    <p className="text-sm text-muted-foreground">
-                      NPA: {member.npa} • {member.cabang || 'Tidak ada cabang'}
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={() => handleAddMember(member)}
-                    disabled={selectedMembers.has(member.id)}
-                  >
-                    {selectedMembers.has(member.id) ? 'Sudah Ditambahkan' : 'Tambahkan'}
-                  </Button>
-                </div>
-              ))}
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : filteredMembers.length > 0 ? (
+            <div className="border rounded-lg max-h-96 overflow-y-auto">
+              <Table>
+                <TableHeader className="sticky top-0 bg-background">
+                  <TableRow>
+                    <TableHead>NPA</TableHead>
+                    <TableHead>Nama</TableHead>
+                    <TableHead>Cabang</TableHead>
+                    <TableHead>Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredMembers.map((member) => (
+                    <TableRow key={member.id}>
+                      <TableCell>{member.npa || '-'}</TableCell>
+                      <TableCell>{member.nama}</TableCell>
+                      <TableCell>{member.cabang || '-'}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          onClick={() => handleAddMember(member)}
+                          disabled={selectedMembers.has(member.id)}
+                        >
+                          {selectedMembers.has(member.id) ? 'Sudah Dipilih' : 'Tambah'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p>Tidak ada anggota ditemukan</p>
             </div>
           )}
         </CardContent>
