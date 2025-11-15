@@ -567,18 +567,21 @@ export type Database = {
         Row: {
           branch_id: string | null
           created_at: string | null
+          nik: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           branch_id?: string | null
           created_at?: string | null
+          nik?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           branch_id?: string | null
           created_at?: string | null
+          nik?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }

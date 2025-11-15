@@ -14,10 +14,12 @@ import { StatsAPI } from "@/pages/api/StatsAPI";
 import { exportMembersToExcel, getExportFilename } from "@/utils/exportMembers";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SebaranPage() {
   const { toast } = useToast();
   const { t, i18n } = useTranslation();
+  const { user, hasRole } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isExporting, setIsExporting] = useState(false);
 
@@ -85,6 +87,9 @@ export default function SebaranPage() {
     console.log("Filters changed, refreshing stats:", filters);
     refresh();
   }, [filters.q, filters.provinsi, filters.pd, filters.kota, filters.status, filters.gender]);
+
+  // Check if user can export (authenticated users with admin_pusat, admin_cabang, or user role)
+  const canExport = user && (hasRole(['admin_pusat', 'admin_cabang', 'user']));
 
   const handleExport = async (format: "xlsx" | "csv") => {
     setIsExporting(true);
@@ -180,7 +185,7 @@ export default function SebaranPage() {
         pds={pds}
         cities={cities}
         loading={loading}
-        onExport={handleExport}
+        onExport={canExport ? handleExport : undefined}
         isExporting={isExporting}
       />
 
