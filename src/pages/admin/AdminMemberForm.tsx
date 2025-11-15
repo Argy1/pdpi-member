@@ -639,13 +639,18 @@ export default function AdminMemberForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <Label htmlFor="nama">Nama Lengkap *</Label>
+                      <Label htmlFor="nama">
+                        Nama Lengkap *
+                        {isCabangAdmin && isEditing && <Lock className="inline-block ml-2 h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Input
                         id="nama"
                         value={formData.nama}
                         onChange={(e) => handleInputChange('nama', e.target.value)}
                         placeholder="Dr. Nama Lengkap"
                         required
+                        disabled={isCabangAdmin && isEditing}
+                        className={cn(isCabangAdmin && isEditing && "bg-muted cursor-not-allowed")}
                       />
                     </div>
 
@@ -1523,7 +1528,10 @@ export default function AdminMemberForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="nik">NIK *</Label>
+                      <Label htmlFor="nik">
+                        NIK *
+                        {isCabangAdmin && isEditing && <Lock className="inline-block ml-2 h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Input
                         id="nik"
                         value={formData.nik}
@@ -1531,6 +1539,8 @@ export default function AdminMemberForm() {
                         placeholder="1234567890123456"
                         maxLength={16}
                         required
+                        disabled={isCabangAdmin && isEditing}
+                        className={cn(isCabangAdmin && isEditing && "bg-muted cursor-not-allowed")}
                       />
                     </div>
 
@@ -1639,7 +1649,10 @@ export default function AdminMemberForm() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="kontakEmail">Email *</Label>
+                      <Label htmlFor="kontakEmail">
+                        Email *
+                        {isCabangAdmin && isEditing && <Lock className="inline-block ml-2 h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Input
                         id="kontakEmail"
                         type="email"
@@ -1647,11 +1660,16 @@ export default function AdminMemberForm() {
                         onChange={(e) => handleInputChange('kontakEmail', e.target.value)}
                         placeholder="dokter@email.com"
                         required
+                        disabled={isCabangAdmin && isEditing}
+                        className={cn(isCabangAdmin && isEditing && "bg-muted cursor-not-allowed")}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="kontakTelepon">Nomor Telepon *</Label>
+                      <Label htmlFor="kontakTelepon">
+                        Nomor Telepon *
+                        {isCabangAdmin && isEditing && <Lock className="inline-block ml-2 h-3 w-3 text-muted-foreground" />}
+                      </Label>
                       <Input
                         id="kontakTelepon"
                         type="tel"
@@ -1659,6 +1677,8 @@ export default function AdminMemberForm() {
                         onChange={(e) => handleInputChange('kontakTelepon', e.target.value)}
                         placeholder="081234567890"
                         required
+                        disabled={isCabangAdmin && isEditing}
+                        className={cn(isCabangAdmin && isEditing && "bg-muted cursor-not-allowed")}
                       />
                     </div>
                   </div>
