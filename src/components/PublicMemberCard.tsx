@@ -123,7 +123,7 @@ export function PublicMemberCard({ member }: PublicMemberCardProps) {
 
           {/* Right Side: Practice Locations */}
           <div className="lg:col-span-1 border-t lg:border-t-0 lg:border-l pt-6 lg:pt-0 lg:pl-8">
-            <h3 className="font-bold text-base sm:text-lg mb-4 underline decoration-2 underline-offset-4">Tempat Praktik</h3>
+            <h3 className="font-bold text-base sm:text-lg mb-4">Tempat Praktik</h3>
             <div className="space-y-3">
               {practiceLocations.map((location, index) => (
                 <div 
