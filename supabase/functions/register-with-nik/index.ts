@@ -45,7 +45,8 @@ Deno.serve(async (req) => {
       )
     }
 
-    // Step 1: Check if NIK exists in members table
+    // Step 1: STRICT - Check if NIK exists in members table
+    // This is the primary validation - NIK MUST exist
     const { data: memberData, error: memberError } = await supabase
       .from('members')
       .select('id, nik, npa, nama, cabang')
@@ -57,35 +58,56 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'Terjadi kesalahan saat memeriksa data' 
+          error: 'Terjadi kesalahan saat memeriksa data anggota' 
         }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Step 2: Validate NIK exists
+    // Step 2: CRITICAL VALIDATION - NIK must exist in database
+    // Reject registration if NIK not found
     if (!memberData) {
+      console.log('Registration rejected: NIK not found -', nik)
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'NIK tidak terdaftar. Hubungi sekretariat PD Anda.' 
+          error: 'NIK tidak terdaftar dalam database. Silakan hubungi sekretariat PD Anda untuk mendaftarkan data Anda terlebih dahulu.' 
         }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+    
+    // Log successful NIK validation
+    console.log('NIK validated successfully:', nik, '- Member:', memberData.nama)
 
-    // Step 3: Check if member already has account linked
-    // Note: members table doesn't have user_id column, we check via email match
+    // Step 3: Check if NIK already linked to an account
+    // This prevents duplicate registrations with same NIK
     const { data: existingUser } = await supabase.auth.admin.listUsers()
     const isAlreadyLinked = existingUser.users.some(
       user => user.user_metadata?.nik === nik
     )
     
     if (isAlreadyLinked) {
+      console.log('Registration rejected: NIK already registered -', nik)
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: 'NIK ini sudah terdaftar. Silakan login.' 
+          error: 'NIK ini sudah terdaftar dan terhubung dengan akun. Silakan login atau reset password jika lupa.' 
+        }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    // Step 3.5: Check if email already registered
+    const { data: emailCheck } = await supabase.auth.admin.listUsers()
+    const emailExists = emailCheck.users.some(user => user.email === email)
+    
+    if (emailExists) {
+      console.log('Registration rejected: Email already registered -', email)
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Email sudah terdaftar. Gunakan email lain atau login jika sudah memiliki akun.' 
         }),
         { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
@@ -107,6 +129,9 @@ Deno.serve(async (req) => {
 
     // Step 5: Create user with Supabase Auth
     // SECURITY: Force app_role to 'user' - never accept from client
+    // SECURITY: Include NIK in metadata for trigger validation
+    console.log('Creating user account for NIK:', nik, '- Email:', email)
+    
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
       password,
@@ -117,19 +142,30 @@ Deno.serve(async (req) => {
         nama: memberData.nama,
         cabang: memberData.cabang,
         pd_id: branchId,
-        nik: nik
+        nik: nik // CRITICAL: NIK for trigger validation
       }
     })
 
     if (authError) {
       console.error('Auth error:', authError)
       
-      // Handle duplicate email
-      if (authError.message?.includes('already registered')) {
+      // Handle NIK validation error from trigger
+      if (authError.message?.includes('NIK') && authError.message?.includes('tidak terdaftar')) {
         return new Response(
           JSON.stringify({ 
             success: false, 
-            error: 'Email sudah terdaftar. Gunakan email lain atau login.' 
+            error: 'NIK tidak valid atau tidak terdaftar dalam database. Hubungi sekretariat PD Anda.' 
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+      
+      // Handle duplicate email
+      if (authError.message?.includes('already registered') || authError.message?.includes('User already registered')) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Email sudah terdaftar. Gunakan email lain atau login jika sudah memiliki akun.' 
           }),
           { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
@@ -138,7 +174,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: authError.message || 'Gagal membuat akun' 
+          error: authError.message || 'Gagal membuat akun. Silakan coba lagi.' 
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
@@ -174,10 +210,12 @@ Deno.serve(async (req) => {
     // The trigger uses user_metadata.app_role which we set to 'user' above
 
     // Success response
+    console.log('Registration successful for NIK:', nik, '- User ID:', authData.user.id)
+    
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Registrasi berhasil. Profil Anda sudah terhubung dengan data anggota.',
+        message: 'Registrasi berhasil! Profil Anda sudah terhubung dengan data anggota.',
         user: {
           id: authData.user.id,
           email: authData.user.email,
