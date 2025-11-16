@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 export interface PaymentGroup {
   id: string;
@@ -21,7 +20,6 @@ export interface PaymentGroup {
 export const usePaymentGroups = () => {
   const [paymentGroups, setPaymentGroups] = useState<PaymentGroup[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   const fetchPaymentGroups = async () => {
     try {
@@ -31,14 +29,15 @@ export const usePaymentGroups = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching payment groups:', error);
+        throw error;
+      }
       setPaymentGroups((data as any) || []);
     } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive'
-      });
+      console.error('Failed to fetch payment groups:', error);
+      // Don't show toast for every fetch error, just log it
+      setPaymentGroups([]);
     } finally {
       setLoading(false);
     }

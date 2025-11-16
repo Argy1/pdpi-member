@@ -45,18 +45,44 @@ export default function IuranSaya() {
       }
       
       try {
-        const { data, error } = await supabase
+        // First try to find by email
+        let { data, error } = await supabase
           .from('members')
           .select('*')
           .eq('email', user.email)
-          .single();
+          .maybeSingle();
         
         if (error) throw error;
+        
+        // If not found by email, try to find by NIK
+        if (!data && profile?.nik) {
+          const { data: nikData, error: nikError } = await supabase
+            .from('members')
+            .select('*')
+            .eq('nik', profile.nik)
+            .maybeSingle();
+          
+          if (nikError) throw nikError;
+          data = nikData;
+        }
+        
+        if (!data) {
+          toast({
+            title: 'Data Tidak Ditemukan',
+            description: 'Data anggota Anda tidak ditemukan. Silakan hubungi admin untuk mendaftarkan data Anda.',
+            variant: 'destructive'
+          });
+          setLoading(false);
+          return;
+        }
+        
         setMyMember(data);
       } catch (error: any) {
+        console.error('Error fetching member:', error);
         toast({
-          title: 'Info',
-          description: 'Anda adalah admin. Gunakan menu Admin Iuran untuk mengelola iuran anggota.',
+          title: 'Error',
+          description: 'Gagal memuat data anggota: ' + error.message,
+          variant: 'destructive'
         });
       } finally {
         setLoading(false);
@@ -242,20 +268,28 @@ export default function IuranSaya() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentHistory.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.period}</TableCell>
-                    <TableCell>{item.date}</TableCell>
-                    <TableCell>{item.method}</TableCell>
-                    <TableCell className="text-right">{formatRupiah(item.amount)}</TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-green-500">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Lunas
-                      </Badge>
+                {recentHistory.length > 0 ? (
+                  recentHistory.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.period}</TableCell>
+                      <TableCell>{item.date}</TableCell>
+                      <TableCell>{item.method}</TableCell>
+                      <TableCell className="text-right">{formatRupiah(item.amount)}</TableCell>
+                      <TableCell>
+                        <Badge variant="default" className="bg-green-500">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Lunas
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      Belum ada pembayaran
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </CardContent>
