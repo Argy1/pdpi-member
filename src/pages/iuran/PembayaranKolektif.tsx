@@ -13,7 +13,7 @@ import { useMemberDues } from '@/hooks/useMemberDues';
 import { formatRupiah, TARIFF_PER_YEAR, MAX_YEARS_PER_TRANSACTION, getAvailableYears } from '@/utils/paymentHelpers';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Search, ShoppingCart, Trash2, Loader2, Users } from 'lucide-react';
+import { Search, ShoppingCart, Trash2, Loader2, Users, ArrowLeft } from 'lucide-react';
 
 interface Member {
   id: string;
@@ -210,6 +210,14 @@ export default function PembayaranKolektif() {
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')} 
+          className="mb-4 gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Kembali
+        </Button>
         <h1 className="text-3xl font-bold text-foreground mb-2">Pembayaran Kolektif</h1>
         <p className="text-muted-foreground">
           Bayar iuran untuk beberapa anggota sekaligus dalam satu transaksi
