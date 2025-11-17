@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CreditCard, Calendar, ShoppingCart, History, CheckCircle, AlertCircle } from 'lucide-react';
+import { CreditCard, Calendar, ShoppingCart, History, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { usePaymentCart } from '@/hooks/usePaymentCart';
 import { usePaymentGroups } from '@/hooks/usePaymentGroups';
 import { useMemberDues } from '@/hooks/useMemberDues';
@@ -159,6 +159,14 @@ export default function IuranSaya() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')} 
+            className="mb-4 gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Kembali
+          </Button>
           <div className="flex items-center gap-2 mb-2">
             <CreditCard className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold text-foreground">Iuran Saya</h1>

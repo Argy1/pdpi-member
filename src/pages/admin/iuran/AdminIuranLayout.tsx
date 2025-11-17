@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LayoutDashboard, Users, FileText, RefreshCcw, BarChart3 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { LayoutDashboard, Users, FileText, RefreshCcw, BarChart3, ArrowLeft } from 'lucide-react';
 import AdminIuranRingkasan from './tabs/AdminIuranRingkasan';
 import AdminIuranBayarMewakili from './tabs/AdminIuranBayarMewakili';
 import AdminIuranKelolaTagihan from './tabs/AdminIuranKelolaTagihan';
@@ -9,10 +11,19 @@ import AdminIuranLaporan from './tabs/AdminIuranLaporan';
 
 export default function AdminIuranLayout() {
   const [activeTab, setActiveTab] = useState('ringkasan');
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
       <div className="mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/admin/dashboard')} 
+          className="mb-4 gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Kembali
+        </Button>
         <h1 className="text-3xl font-bold">Admin Iuran</h1>
         <p className="text-muted-foreground">Kelola pembayaran iuran anggota PDPI</p>
       </div>
