@@ -715,13 +715,14 @@ export default function AdminMemberForm() {
                       <div className="space-y-2">
                         <Label htmlFor="subspesialis">Sub Spesialis</Label>
                         <Select 
-                          value={formData.subspesialis} 
-                          onValueChange={(value) => handleInputChange('subspesialis', value)}
+                          value={formData.subspesialis || ""} 
+                          onValueChange={(value) => handleInputChange('subspesialis', value === "none" ? "" : value)}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Pilih sub spesialis" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-background z-50">
+                            <SelectItem value="none">-- Tidak Ada / Kosong --</SelectItem>
                             <SelectItem value="Spesialis Paru Konsultan Asma PPOK">Spesialis Paru Konsultan Asma PPOK</SelectItem>
                             <SelectItem value="Spesialis Paru Konsultan Infeksi">Spesialis Paru Konsultan Infeksi</SelectItem>
                             <SelectItem value="Spesialis Paru Konsultan Onkologi Toraks">Spesialis Paru Konsultan Onkologi Toraks</SelectItem>
