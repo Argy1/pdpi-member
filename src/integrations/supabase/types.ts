@@ -889,6 +889,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_ebook_download: {
+        Args: { ebook_id: string }
+        Returns: undefined
+      }
       normalize_text: { Args: { input_text: string }; Returns: string }
       notify_super_admins: {
         Args: {

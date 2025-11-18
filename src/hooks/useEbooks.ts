@@ -84,25 +84,14 @@ export const useEbooks = () => {
     }
   };
 
-  // Increment download count
+  // Increment download count using RPC
   const incrementDownload = async (ebookId: string): Promise<boolean> => {
     try {
-      // Direct update since RPC might not exist
-      const { data: ebook } = await supabase
-        .from('ebooks')
-        .select('download_count')
-        .eq('id', ebookId)
-        .single();
+      const { error } = await supabase.rpc('increment_ebook_download', {
+        ebook_id: ebookId
+      });
 
-      if (ebook) {
-        const { error } = await supabase
-          .from('ebooks')
-          .update({ download_count: (ebook.download_count || 0) + 1 })
-          .eq('id', ebookId);
-
-        if (error) throw error;
-      }
-
+      if (error) throw error;
       return true;
     } catch (error: any) {
       console.error('Error incrementing download:', error);
