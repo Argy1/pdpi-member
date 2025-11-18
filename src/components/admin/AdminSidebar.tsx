@@ -14,7 +14,8 @@ import {
   Calendar,
   Receipt,
   RefreshCcw,
-  FileText
+  FileText,
+  Database
 } from 'lucide-react';
 import {
   Sidebar,
@@ -72,6 +73,12 @@ const menuItems = [
     title: 'Laporan & Statistik',
     url: '/admin/laporan',
     icon: BarChart3,
+    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+  },
+  {
+    title: 'Bank Data',
+    url: '/admin/bank-data',
+    icon: Database,
     roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
   },
   {

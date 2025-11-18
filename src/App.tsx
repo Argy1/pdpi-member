@@ -25,6 +25,7 @@ import AdminMemberDetail from "./pages/admin/AdminMemberDetail";
 import AdminImport from "./pages/admin/AdminImport";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminBankData from "./pages/admin/AdminBankData";
 import AdminChangeRequests from "./pages/admin/AdminChangeRequests";
 import AdminAuditLog from "./pages/admin/AdminAuditLog";
 import IuranSaya from "./pages/iuran/IuranSaya";
@@ -176,6 +177,7 @@ const App = () => (
                 <Route path="audit-log" element={<AdminAuditLog />} />
                 <Route path="import" element={<AdminImport />} />
                 <Route path="laporan" element={<AdminReports />} />
+                <Route path="bank-data" element={<AdminBankData />} />
                 <Route path="profil" element={<AdminProfile />} />
                 
                 {/* Admin Iuran routes */}
