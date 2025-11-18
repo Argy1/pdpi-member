@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -27,13 +28,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Search, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { EbookFormModal } from '@/components/admin/bankdata/EbookFormModal';
 import { format } from 'date-fns';
 import { useEbooks, type AdminEbook } from '@/hooks/useEbooks';
 
 const AdminBankData = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const {
     fetchAllEbooks,
@@ -203,7 +205,15 @@ const AdminBankData = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <div className="mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/admin')} 
+          className="mb-4 gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Kembali ke Dashboard
+        </Button>
         <h1 className="text-3xl font-bold heading-medical">Manajemen Bank Data</h1>
         <p className="text-muted-foreground mt-1">
           Kelola e-book, pedoman, dan dokumen PDPI
