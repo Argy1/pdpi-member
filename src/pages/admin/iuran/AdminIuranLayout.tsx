@@ -18,11 +18,11 @@ export default function AdminIuranLayout() {
       <div className="mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/admin/dashboard')} 
+          onClick={() => navigate('/admin')} 
           className="mb-4 gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Kembali
+          Kembali ke Dashboard
         </Button>
         <h1 className="text-3xl font-bold">Admin Iuran</h1>
         <p className="text-muted-foreground">Kelola pembayaran iuran anggota PDPI</p>
