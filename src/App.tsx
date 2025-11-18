@@ -12,6 +12,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import Homepage from "./pages/Homepage";
 import AnggotaPage from "./pages/AnggotaPage";
 import SebaranPage from "./pages/SebaranPage";
+import BankDataPage from "./pages/BankDataPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrasiPage from "./pages/RegistrasiPage";
 import ProfilPage from "./pages/ProfilPage";
@@ -73,6 +74,15 @@ const App = () => (
                   <Navbar />
                   <main className="flex-1">
                     <SebaranPage />
+                  </main>
+                  <Footer />
+                </div>
+              } />
+              <Route path="/bank-data" element={
+                <div className="min-h-screen flex flex-col">
+                  <Navbar />
+                  <main className="flex-1">
+                    <BankDataPage />
                   </main>
                   <Footer />
                 </div>
