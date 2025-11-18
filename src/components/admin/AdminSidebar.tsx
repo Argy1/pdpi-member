@@ -79,7 +79,7 @@ const menuItems = [
     title: 'Bank Data',
     url: '/admin/bank-data',
     icon: Database,
-    roles: ['ADMIN_PUSAT', 'ADMIN_CABANG']
+    roles: ['admin_pusat']
   },
   {
     title: 'Admin Iuran',
