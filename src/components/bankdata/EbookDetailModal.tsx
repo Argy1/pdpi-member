@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { Ebook } from '@/pages/BankDataPage';
+import type { Ebook } from '@/hooks/useEbooks';
 
 interface EbookDetailModalProps {
   ebook: Ebook | null;

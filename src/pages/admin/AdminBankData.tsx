@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -31,124 +31,38 @@ import { Search, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff } from 'lucide-
 import { useToast } from '@/hooks/use-toast';
 import { EbookFormModal } from '@/components/admin/bankdata/EbookFormModal';
 import { format } from 'date-fns';
-
-export interface AdminEbook {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  tags: string[];
-  year: number;
-  authors: string;
-  version: string;
-  language: 'ID' | 'EN';
-  downloadCount: number;
-  fileSizeMB: number;
-  coverUrl?: string;
-  description: string;
-  isActive: boolean;
-  createdAt: Date;
-  fileName?: string;
-}
-
-// Dummy data
-const INITIAL_DUMMY_EBOOKS: AdminEbook[] = [
-  {
-    id: '1',
-    title: 'Pedoman Diagnosis dan Penatalaksanaan PPOK',
-    subtitle: 'Penyakit Paru Obstruktif Kronik',
-    category: 'Pedoman',
-    tags: ['PPOK', 'Diagnosis', 'Terapi'],
-    year: 2023,
-    authors: 'Tim Penyusun PDPI',
-    version: 'Revisi 2023',
-    language: 'ID',
-    downloadCount: 1245,
-    fileSizeMB: 5.2,
-    description: 'Pedoman lengkap mengenai diagnosis dan penatalaksanaan PPOK.',
-    isActive: true,
-    createdAt: new Date('2023-01-15'),
-    fileName: 'pedoman-ppok-2023.pdf',
-  },
-  {
-    id: '2',
-    title: 'Konsensus Asma Indonesia',
-    subtitle: 'Pedoman Praktis Tatalaksana Asma',
-    category: 'Konsensus',
-    tags: ['Asma', 'Tatalaksana'],
-    year: 2024,
-    authors: 'Kelompok Kerja Asma PDPI',
-    version: 'Edisi 2024',
-    language: 'ID',
-    downloadCount: 2340,
-    fileSizeMB: 4.8,
-    description: 'Konsensus terbaru mengenai tatalaksana asma di Indonesia.',
-    isActive: true,
-    createdAt: new Date('2024-02-20'),
-    fileName: 'konsensus-asma-2024.pdf',
-  },
-  {
-    id: '3',
-    title: 'Buku Ajar Respirologi',
-    subtitle: 'Comprehensive Respiratory Medicine',
-    category: 'Buku Ajar',
-    tags: ['Respirologi', 'Textbook'],
-    year: 2023,
-    authors: 'Prof. Dr. Faisal Yunus, dkk',
-    version: 'Edisi 2',
-    language: 'ID',
-    downloadCount: 3120,
-    fileSizeMB: 12.5,
-    description: 'Buku ajar lengkap mengenai ilmu penyakit paru dan pernapasan.',
-    isActive: true,
-    createdAt: new Date('2023-08-10'),
-    fileName: 'buku-ajar-respirologi-ed2.pdf',
-  },
-  {
-    id: '4',
-    title: 'Lung Cancer Screening Guidelines',
-    subtitle: 'Early Detection and Management',
-    category: 'Pedoman',
-    tags: ['Kanker Paru', 'Skrining'],
-    year: 2024,
-    authors: 'PDPI Oncology Working Group',
-    version: 'Version 1.0',
-    language: 'EN',
-    downloadCount: 890,
-    fileSizeMB: 3.4,
-    description: 'Comprehensive guidelines for lung cancer screening.',
-    isActive: false,
-    createdAt: new Date('2024-05-15'),
-    fileName: 'lung-cancer-screening.pdf',
-  },
-  {
-    id: '5',
-    title: 'SOP Bronkoskopi',
-    subtitle: 'Standar Operasional Prosedur',
-    category: 'SOP',
-    tags: ['Bronkoskopi', 'Prosedur'],
-    year: 2023,
-    authors: 'Divisi Bronkologi PDPI',
-    version: 'Revisi 1',
-    language: 'ID',
-    downloadCount: 1567,
-    fileSizeMB: 2.1,
-    description: 'SOP lengkap untuk pelaksanaan bronkoskopi.',
-    isActive: true,
-    createdAt: new Date('2023-11-05'),
-    fileName: 'sop-bronkoskopi.pdf',
-  },
-];
+import { useEbooks, type AdminEbook } from '@/hooks/useEbooks';
 
 const AdminBankData = () => {
   const { toast } = useToast();
-  const [ebooks, setEbooks] = useState<AdminEbook[]>(INITIAL_DUMMY_EBOOKS);
+  const {
+    fetchAllEbooks,
+    createEbook,
+    updateEbook,
+    toggleActive,
+    deleteEbook,
+    loading,
+  } = useEbooks();
+  
+  const [ebooks, setEbooks] = useState<AdminEbook[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingEbook, setEditingEbook] = useState<AdminEbook | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [ebookToDelete, setEbookToDelete] = useState<AdminEbook | null>(null);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+
+  // Load ebooks on mount
+  useEffect(() => {
+    loadEbooks();
+  }, []);
+
+  const loadEbooks = async () => {
+    const data = await fetchAllEbooks();
+    setEbooks(data);
+  };
 
   // Filter ebooks
   const filteredEbooks = ebooks.filter((ebook) => {
@@ -190,7 +104,7 @@ const AdminBankData = () => {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleToggleActive(ebook.id)}>
+              <DropdownMenuItem onClick={() => handleToggleActive(ebook)}>
                 {ebook.isActive ? (
                   <>
                     <EyeOff className="h-4 w-4 mr-2" />
@@ -237,55 +151,37 @@ const AdminBankData = () => {
 
   const handleAdd = () => {
     setEditingEbook(null);
+    setPdfFile(null);
+    setCoverFile(null);
     setIsFormModalOpen(true);
   };
 
   const handleEdit = (ebook: AdminEbook) => {
     setEditingEbook(ebook);
+    setPdfFile(null);
+    setCoverFile(null);
     setIsFormModalOpen(true);
   };
 
-  const handleSave = (ebookData: Partial<AdminEbook>) => {
-    if (editingEbook) {
-      // Update existing
-      setEbooks((prev) =>
-        prev.map((e) =>
-          e.id === editingEbook.id ? { ...e, ...ebookData } : e
-        )
-      );
-      toast({
-        title: 'E-book diperbarui',
-        description: 'Data e-book berhasil diperbarui.',
-      });
-    } else {
-      // Add new
-      const newEbook: AdminEbook = {
-        id: Date.now().toString(),
-        createdAt: new Date(),
-        downloadCount: 0,
-        isActive: true,
-        ...ebookData,
-      } as AdminEbook;
-      setEbooks((prev) => [newEbook, ...prev]);
-      toast({
-        title: 'E-book ditambahkan',
-        description: 'E-book baru berhasil ditambahkan.',
-      });
+  const handleSave = async (ebookData: Partial<AdminEbook>) => {
+    const success = editingEbook
+      ? await updateEbook(editingEbook.id, ebookData, pdfFile, coverFile)
+      : await createEbook(ebookData, pdfFile, coverFile);
+
+    if (success) {
+      setIsFormModalOpen(false);
+      setEditingEbook(null);
+      setPdfFile(null);
+      setCoverFile(null);
+      await loadEbooks();
     }
-    setIsFormModalOpen(false);
-    setEditingEbook(null);
   };
 
-  const handleToggleActive = (id: string) => {
-    setEbooks((prev) =>
-      prev.map((e) =>
-        e.id === id ? { ...e, isActive: !e.isActive } : e
-      )
-    );
-    toast({
-      title: 'Status diubah',
-      description: 'Status e-book berhasil diubah.',
-    });
+  const handleToggleActive = async (ebook: AdminEbook) => {
+    const success = await toggleActive(ebook.id, ebook.isActive);
+    if (success) {
+      await loadEbooks();
+    }
   };
 
   const handleDeleteClick = (ebook: AdminEbook) => {
@@ -293,15 +189,14 @@ const AdminBankData = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (ebookToDelete) {
-      setEbooks((prev) => prev.filter((e) => e.id !== ebookToDelete.id));
-      toast({
-        title: 'E-book dihapus',
-        description: 'E-book berhasil dihapus dari sistem.',
-      });
-      setDeleteDialogOpen(false);
-      setEbookToDelete(null);
+      const success = await deleteEbook(ebookToDelete.id);
+      if (success) {
+        setDeleteDialogOpen(false);
+        setEbookToDelete(null);
+        await loadEbooks();
+      }
     }
   };
 
@@ -377,7 +272,7 @@ const AdminBankData = () => {
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleAdd} className="w-full md:w-auto">
+            <Button onClick={handleAdd} className="w-full md:w-auto" disabled={loading}>
               <Plus className="h-4 w-4 mr-2" />
               Tambah E-book
             </Button>
@@ -401,7 +296,13 @@ const AdminBankData = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredEbooks.length === 0 ? (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                      Memuat data...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredEbooks.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                       Tidak ada e-book yang ditemukan
@@ -453,7 +354,7 @@ const AdminBankData = () => {
                               <Edit className="h-4 w-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleToggleActive(ebook.id)}>
+                            <DropdownMenuItem onClick={() => handleToggleActive(ebook)}>
                               {ebook.isActive ? (
                                 <>
                                   <EyeOff className="h-4 w-4 mr-2" />
@@ -485,7 +386,11 @@ const AdminBankData = () => {
 
           {/* Mobile Card View */}
           <div className="md:hidden">
-            {filteredEbooks.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8 text-muted-foreground">
+                Memuat data...
+              </div>
+            ) : filteredEbooks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 Tidak ada e-book yang ditemukan
               </div>
@@ -504,9 +409,13 @@ const AdminBankData = () => {
         onClose={() => {
           setIsFormModalOpen(false);
           setEditingEbook(null);
+          setPdfFile(null);
+          setCoverFile(null);
         }}
         onSave={handleSave}
         ebook={editingEbook}
+        onPdfFileChange={setPdfFile}
+        onCoverFileChange={setCoverFile}
       />
 
       {/* Delete Confirmation Dialog */}
