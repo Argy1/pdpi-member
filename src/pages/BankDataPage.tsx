@@ -7,116 +7,15 @@ import { EbookCard } from '@/components/bankdata/EbookCard';
 import { EbookDetailModal } from '@/components/bankdata/EbookDetailModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Book } from 'lucide-react';
-
-export interface Ebook {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  tags: string[];
-  year: number;
-  authors: string;
-  version: string;
-  language: 'ID' | 'EN';
-  downloadCount: number;
-  fileSizeMB: number;
-  coverUrl?: string;
-  description: string;
-}
-
-// Dummy data
-const DUMMY_EBOOKS: Ebook[] = [
-  {
-    id: '1',
-    title: 'Pedoman Diagnosis dan Penatalaksanaan PPOK',
-    subtitle: 'Penyakit Paru Obstruktif Kronik',
-    category: 'Pedoman',
-    tags: ['PPOK', 'Diagnosis', 'Terapi'],
-    year: 2023,
-    authors: 'Tim Penyusun PDPI',
-    version: 'Revisi 2023',
-    language: 'ID',
-    downloadCount: 1245,
-    fileSizeMB: 5.2,
-    description: 'Pedoman lengkap mengenai diagnosis dan penatalaksanaan Penyakit Paru Obstruktif Kronik (PPOK) yang disusun oleh tim ahli PDPI.',
-  },
-  {
-    id: '2',
-    title: 'Konsensus Asma Indonesia',
-    subtitle: 'Pedoman Praktis Tatalaksana Asma',
-    category: 'Konsensus',
-    tags: ['Asma', 'Tatalaksana'],
-    year: 2024,
-    authors: 'Kelompok Kerja Asma PDPI',
-    version: 'Edisi 2024',
-    language: 'ID',
-    downloadCount: 2340,
-    fileSizeMB: 4.8,
-    description: 'Konsensus terbaru mengenai tatalaksana asma di Indonesia berdasarkan evidence-based medicine.',
-  },
-  {
-    id: '3',
-    title: 'Buku Ajar Respirologi',
-    subtitle: 'Comprehensive Respiratory Medicine',
-    category: 'Buku Ajar',
-    tags: ['Respirologi', 'Textbook'],
-    year: 2023,
-    authors: 'Prof. Dr. Faisal Yunus, dkk',
-    version: 'Edisi 2',
-    language: 'ID',
-    downloadCount: 3120,
-    fileSizeMB: 12.5,
-    description: 'Buku ajar lengkap mengenai ilmu penyakit paru dan pernapasan untuk mahasiswa kedokteran dan dokter spesialis.',
-  },
-  {
-    id: '4',
-    title: 'Lung Cancer Screening Guidelines',
-    subtitle: 'Early Detection and Management',
-    category: 'Pedoman',
-    tags: ['Kanker Paru', 'Skrining'],
-    year: 2024,
-    authors: 'PDPI Oncology Working Group',
-    version: 'Version 1.0',
-    language: 'EN',
-    downloadCount: 890,
-    fileSizeMB: 3.4,
-    description: 'Comprehensive guidelines for lung cancer screening, early detection, and management protocols.',
-  },
-  {
-    id: '5',
-    title: 'SOP Bronkoskopi',
-    subtitle: 'Standar Operasional Prosedur',
-    category: 'SOP',
-    tags: ['Bronkoskopi', 'Prosedur'],
-    year: 2023,
-    authors: 'Divisi Bronkologi PDPI',
-    version: 'Revisi 1',
-    language: 'ID',
-    downloadCount: 1567,
-    fileSizeMB: 2.1,
-    description: 'Standar operasional prosedur lengkap untuk pelaksanaan bronkoskopi diagnostik dan terapeutik.',
-  },
-  {
-    id: '6',
-    title: 'Laporan Tahunan PDPI 2023',
-    subtitle: 'Annual Report',
-    category: 'Laporan',
-    tags: ['Laporan', 'Statistik'],
-    year: 2023,
-    authors: 'PDPI',
-    version: 'Final',
-    language: 'ID',
-    downloadCount: 678,
-    fileSizeMB: 8.9,
-    description: 'Laporan tahunan PDPI mencakup kegiatan, program, dan statistik organisasi tahun 2023.',
-  },
-];
+import { useEbooks, type Ebook } from '@/hooks/useEbooks';
 
 const BankDataPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const [filteredEbooks, setFilteredEbooks] = useState<Ebook[]>(DUMMY_EBOOKS);
+  const { fetchActiveEbooks, incrementDownload, getFileUrl, loading: ebooksLoading } = useEbooks();
+  
+  const [ebooks, setEbooks] = useState<Ebook[]>([]);
+  const [filteredEbooks, setFilteredEbooks] = useState<Ebook[]>([]);
   const [selectedEbook, setSelectedEbook] = useState<Ebook | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -124,18 +23,28 @@ const BankDataPage = () => {
   const [languageFilter, setLanguageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate('/login');
-      } else {
-        setIsPageLoading(false);
-      }
+    if (!authLoading && !user) {
+      navigate('/login');
     }
-  }, [user, loading, navigate]);
+  }, [user, authLoading, navigate]);
 
+  // Fetch ebooks on mount
   useEffect(() => {
-    let result = [...DUMMY_EBOOKS];
+    if (user) {
+      loadEbooks();
+    }
+  }, [user]);
+
+  const loadEbooks = async () => {
+    const data = await fetchActiveEbooks();
+    setEbooks(data);
+  };
+
+  // Apply filters and sorting
+  useEffect(() => {
+    let result = [...ebooks];
 
     // Search
     if (searchQuery) {
@@ -172,9 +81,18 @@ const BankDataPage = () => {
     }
 
     setFilteredEbooks(result);
-  }, [searchQuery, categoryFilter, yearFilter, languageFilter, sortBy]);
+  }, [ebooks, searchQuery, categoryFilter, yearFilter, languageFilter, sortBy]);
 
-  if (loading || isPageLoading) {
+  const handleDownload = async (ebook: Ebook) => {
+    // Increment download count
+    await incrementDownload(ebook.id);
+    
+    // Get file URL and open in new tab
+    const fileUrl = getFileUrl(ebook.filePath);
+    window.open(fileUrl, '_blank');
+  };
+
+  if (authLoading || ebooksLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container-pdpi py-8">
@@ -192,7 +110,7 @@ const BankDataPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BankDataHero totalEbooks={DUMMY_EBOOKS.length} />
+      <BankDataHero totalEbooks={ebooks.length} />
 
       <div className="container-pdpi py-8">
         <BankDataFilters
@@ -225,7 +143,7 @@ const BankDataPage = () => {
                 key={ebook.id}
                 ebook={ebook}
                 onDetailClick={() => setSelectedEbook(ebook)}
-                onDownloadClick={() => console.log('Download dummy:', ebook.title)}
+                onDownloadClick={() => handleDownload(ebook)}
               />
             ))}
           </div>
@@ -236,7 +154,7 @@ const BankDataPage = () => {
         ebook={selectedEbook}
         open={!!selectedEbook}
         onClose={() => setSelectedEbook(null)}
-        onDownload={(ebook) => console.log('Download dummy from modal:', ebook.title)}
+        onDownload={handleDownload}
       />
     </div>
   );

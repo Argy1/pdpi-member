@@ -21,16 +21,18 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Upload, X } from 'lucide-react';
-import type { AdminEbook } from '@/pages/admin/AdminBankData';
+import type { AdminEbook } from '@/hooks/useEbooks';
 
 interface EbookFormModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (ebook: Partial<AdminEbook>) => void;
   ebook: AdminEbook | null;
+  onPdfFileChange: (file: File | null) => void;
+  onCoverFileChange: (file: File | null) => void;
 }
 
-export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalProps) => {
+export const EbookFormModal = ({ open, onClose, onSave, ebook, onPdfFileChange, onCoverFileChange }: EbookFormModalProps) => {
   const [formData, setFormData] = useState<Partial<AdminEbook>>({
     title: '',
     subtitle: '',
@@ -42,9 +44,8 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
     language: 'ID',
     description: '',
     isActive: true,
-    fileName: '',
     coverUrl: '',
-    fileSizeMB: 0,
+    fileSizeBytes: 0,
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -65,19 +66,22 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
         language: 'ID',
         description: '',
         isActive: true,
-        fileName: '',
         coverUrl: '',
-        fileSizeMB: 0,
+        fileSizeBytes: 0,
       });
     }
     setErrors({});
   }, [ebook, open]);
 
-  const handleInputChange = (field: keyof AdminEbook, value: any) => {
+  const handleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
   };
 
@@ -101,11 +105,10 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // For now, just save the file name
+      onPdfFileChange(file);
       setFormData((prev) => ({
         ...prev,
-        fileName: file.name,
-        fileSizeMB: parseFloat((file.size / (1024 * 1024)).toFixed(2)),
+        fileSizeBytes: file.size,
       }));
     }
   };
@@ -113,11 +116,7 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // For now, just save a dummy URL
-      setFormData((prev) => ({
-        ...prev,
-        coverUrl: `dummy-cover-${file.name}`,
-      }));
+      onCoverFileChange(file);
     }
   };
 
@@ -348,7 +347,7 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
           {/* File Upload */}
           <div className="space-y-2">
             <Label htmlFor="file">Upload File PDF</Label>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
               <Input
                 id="file"
                 type="file"
@@ -356,9 +355,6 @@ export const EbookFormModal = ({ open, onClose, onSave, ebook }: EbookFormModalP
                 onChange={handleFileChange}
                 className="flex-1"
               />
-              {formData.fileName && (
-                <Badge variant="secondary">{formData.fileName}</Badge>
-              )}
             </div>
             <p className="text-xs text-muted-foreground">
               File PDF maksimal 50MB

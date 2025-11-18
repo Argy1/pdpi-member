@@ -2,7 +2,7 @@ import { Download, Eye, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import type { Ebook } from '@/pages/BankDataPage';
+import type { Ebook } from '@/hooks/useEbooks';
 
 interface EbookCardProps {
   ebook: Ebook;

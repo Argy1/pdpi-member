@@ -71,6 +71,69 @@ export type Database = {
         }
         Relationships: []
       }
+      ebooks: {
+        Row: {
+          authors: string
+          category: string
+          cover_url: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string
+          download_count: number | null
+          file_path: string
+          file_size_bytes: number
+          id: string
+          is_active: boolean | null
+          language: string
+          subtitle: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          version: string
+          year: number
+        }
+        Insert: {
+          authors: string
+          category: string
+          cover_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          download_count?: number | null
+          file_path: string
+          file_size_bytes: number
+          id?: string
+          is_active?: boolean | null
+          language: string
+          subtitle?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          version: string
+          year: number
+        }
+        Update: {
+          authors?: string
+          category?: string
+          cover_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          download_count?: number | null
+          file_path?: string
+          file_size_bytes?: number
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          subtitle?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          version?: string
+          year?: number
+        }
+        Relationships: []
+      }
       member_change_requests: {
         Row: {
           changes: Json
