@@ -13,10 +13,10 @@ export const BankDataGuard = ({ children }: BankDataGuardProps) => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!loading && user && profile?.role === 'user') {
+    if (!loading && user && profile?.role !== 'admin_pusat') {
       toast({
         title: 'Akses Ditolak',
-        description: 'Akses khusus admin Bank Data.',
+        description: 'Akses khusus Admin Pusat Bank Data.',
         variant: 'destructive',
       });
     }
@@ -34,8 +34,8 @@ export const BankDataGuard = ({ children }: BankDataGuardProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Only admin_pusat and admin_cabang can access
-  if (profile?.role === 'user') {
+  // Only admin_pusat can access admin bank data
+  if (profile?.role !== 'admin_pusat') {
     return <Navigate to="/bank-data" replace />;
   }
 
