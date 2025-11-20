@@ -17,7 +17,19 @@
     "ctaSecondary": "Lihat Sebaran",
     "logoUpdate": "Update",
     "organization": "PDPI",
-    "organizationSubtitle": "Direktori Anggota"
+    "organizationSubtitle": "Direktori Anggota",
+    "searchTitle": "Cari Anggota",
+    "searchPlaceholder": "Cari nama, NPA, RS, kota, provinsi, atau PD...",
+    "howToUseTitle": "Panduan Menggunakan",
+    "howToUseSubtitle": "Ikuti langkah mudah untuk menemukan informasi anggota yang Anda butuhkan",
+    "howToUseStep1": "1. Cari Anggota",
+    "howToUseStep1Desc": "Masukkan nama, NPA, nama RS, atau lokasi di kolom pencarian untuk menemukan anggota",
+    "howToUseStep2": "2. Filter Data",
+    "howToUseStep2Desc": "Gunakan filter provinsi, cabang, atau lainnya untuk mempersempit hasil pencarian",
+    "howToUseStep3": "3. Lihat Detail",
+    "howToUseStep3Desc": "Klik anggota untuk melihat informasi lengkap secara detail",
+    "dataSource": "Sumber Data",
+    "dataSourceDesc": "Data anggota ini dikelola oleh Pengurus Pusat PDPI dan diperbarui secara berkala. Untuk informasi lebih lanjut atau koreksi data, silakan hubungi sekretariat PDPI."
   },
   "filters": {
     "province": "Provinsi",

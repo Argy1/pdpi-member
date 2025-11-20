@@ -11,13 +11,25 @@
     "dues": "Dues"
   },
   "homepage": {
-    "title": "ISPR Members Directory",
-    "subtitle": "Complete directory of Indonesian Society of Pulmonary and Respiratory members for easy access to professional information across Indonesia.",
+    "title": "ISR Members Directory",
+    "subtitle": "Complete directory of Indonesian Society of Respirology members for easy access to professional information across Indonesia.",
     "ctaPrimary": "Open Members Table",
     "ctaSecondary": "View Distribution",
     "logoUpdate": "Update",
-    "organization": "ISPR",
-    "organizationSubtitle": "Members Directory"
+    "organization": "ISR",
+    "organizationSubtitle": "Members Directory",
+    "searchTitle": "Search Members",
+    "searchPlaceholder": "Search name, NPA, hospital, city, province, or branch...",
+    "howToUseTitle": "How to Use Guide",
+    "howToUseSubtitle": "Follow simple steps to find the member information you need",
+    "howToUseStep1": "1. Search Members",
+    "howToUseStep1Desc": "Enter name, NPA, hospital name, or location in the search field to find members",
+    "howToUseStep2": "2. Filter Data",
+    "howToUseStep2Desc": "Use province, branch, or other filters to narrow down your search results",
+    "howToUseStep3": "3. View Details",
+    "howToUseStep3Desc": "Click on any member to view complete information in detail",
+    "dataSource": "Data Source",
+    "dataSourceDesc": "This member data is managed by the Central Board of PDPI and updated regularly. For more information or data corrections, please contact the PDPI secretariat."
   },
   "filters": {
     "province": "Province",
@@ -59,16 +71,16 @@
     "viewDetails": "View Details"
   },
   "hero": {
-    "title": "ISPR Members Directory",
-    "subtitle": "A complete directory of Indonesian pulmonologists for easy access to professional information",
+    "title": "ISR Members Directory",
+    "subtitle": "A complete directory of Indonesian respirology specialists for easy access to professional information",
     "cta": "Open Members Table"
   },
   "stats": {
     "totalMembers": "Total Members",
     "provinces": "Provinces",
     "branches": "Branches",
-    "branchesDescription": "PDPI Branches",
-    "pulmonologists": "Pulmonologists",
+    "branchesDescription": "ISR Branches",
+    "respirologists": "Respirologists",
     "regionalBoards": "Nationwide",
     "activeMembers": "Active Members",
     "maleMembers": "Male",
@@ -76,16 +88,16 @@
   },
   "search": {
     "placeholder": "Search name/NPA/hospital/city/province…",
-    "title": "Search PDPI Members",
-    "description": "Find pulmonologists by name, hospital, or location",
+    "title": "Search ISR Members",
+    "description": "Find respirology specialists by name, hospital, or location",
     "searchMember": "Search member name...",
     "searching": "Name: {{query}}"
   },
   "members": {
-    "title": "ISPR Members Directory",
-    "titleAdmin": "ISPR Member Management",
-    "subtitle": "Public directory of Indonesian Society of Pulmonary and Respiratory members",
-    "subtitleAdmin": "Manage Indonesian Society of Pulmonary and Respiratory member data",
+    "title": "ISR Members Directory",
+    "titleAdmin": "ISR Member Management",
+    "subtitle": "Public directory of Indonesian Society of Respirology members",
+    "subtitleAdmin": "Manage Indonesian Society of Respirology member data",
     "found": "members found",
     "loading": "Loading...",
     "loadingData": "Loading member data...",
@@ -103,7 +115,7 @@
     "yearDesc": "Latest Graduation Year"
   },
   "sebaran": {
-    "title": "ISPR Member Distribution",
+    "title": "ISR Member Distribution",
     "subtitle": "Visualization of member distribution by province, branch, and city/regency across Indonesia",
     "totalMembers": "Members",
     "totalMembersLabel": "Total Members",
@@ -126,15 +138,15 @@
     "exportData": "Export Data"
   },
   "footer": {
-    "title": "ISPR Directory",
-    "subtitle": "Indonesian Society of Pulmonary and Respiratory",
+    "title": "ISR Directory",
+    "subtitle": "Indonesian Society of Respirology",
     "memberTable": "Members Table",
     "adminLogin": "Admin Login",
-    "credit": "Indonesian Society of Pulmonary and Respiratory. All rights reserved."
+    "credit": "Indonesian Society of Respirology. All rights reserved."
   },
   "howToUse": {
     "title": "How to Use",
-    "subtitle": "Quick guide to using the ISPR members directory",
+    "subtitle": "Quick guide to using the ISR members directory",
     "step1Title": "Search Members",
     "step1Desc": "Use the search box to find members by name, hospital, or location",
     "step2Title": "Filter Data",
@@ -144,6 +156,6 @@
   },
   "visitor": {
     "title": "Website Visitors",
-    "total": "Visitors who have accessed the ISPR member directory"
+    "total": "Visitors who have accessed the ISR member directory"
   }
 }
