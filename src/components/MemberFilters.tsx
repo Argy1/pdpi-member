@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { MemberFilters } from "@/types/member"
 import { AlphabeticalFilter } from "@/components/AlphabeticalFilter"
+import { useTranslation } from "react-i18next"
 
 interface MemberFiltersProps {
   filters: MemberFilters
@@ -57,6 +58,8 @@ export function MemberFiltersComponent({
   className = "",
   isPublicView = false
 }: MemberFiltersProps) {
+  const { t } = useTranslation()
+  
   // Static hospital type options
   const hospitalTypeOptions = [
     'Rs Tipe A',
@@ -189,64 +192,64 @@ export function MemberFiltersComponent({
         <FilterPopover
           open={openProvinsiKantor}
           setOpen={setOpenProvinsiKantor}
-          title={isPublicView ? "Provinsi" : "Provinsi Kantor"}
+          title={t('filters.province')}
           options={provinces}
           filterKey="provinsi_kantor"
-          placeholder={isPublicView ? "Cari provinsi..." : "Cari provinsi kantor..."}
+          placeholder={t('filters.searchFilter')}
         />
         
          <FilterPopover
           open={openPD}
           setOpen={setOpenPD}
-          title="Cabang"
+          title={t('filters.branch')}
           options={pds}
           filterKey="pd"
-          placeholder="Cari cabang..."
+          placeholder={t('filters.searchFilter')}
         />
 
         <FilterPopover
           open={openKotaKantor}
           setOpen={setOpenKotaKantor}
-          title={isPublicView ? "Kota/Kabupaten" : "Kota/Kabupaten Kantor"}
+          title={t('filters.city')}
           options={cities}
           filterKey="kota_kabupaten_kantor"
-          placeholder={isPublicView ? "Cari kota/kabupaten..." : "Cari kota/kabupaten kantor..."}
+          placeholder={t('filters.searchFilter')}
         />
 
         <FilterPopover
           open={openHospitalType}
           setOpen={setOpenHospitalType}
-          title="Tipe RS"
+          title={t('filters.hospitalType')}
           options={hospitalTypeOptions}
           filterKey="hospitalType"
-          placeholder="Cari tipe RS..."
+          placeholder={t('filters.searchFilter')}
         />
 
         <FilterPopover
           open={openSubspecialty}
           setOpen={setOpenSubspecialty}
-          title="Subspesialis"
+          title={t('filters.subspecialty')}
           options={subspecialties}
           filterKey="subspesialis"
-          placeholder="Cari subspesialis..."
+          placeholder={t('filters.searchFilter')}
         />
 
         <FilterPopover
           open={openAlumni}
           setOpen={setOpenAlumni}
-          title="Alumni Sp-1 FK"
+          title={t('filters.alumni')}
           options={alumniOptions}
           filterKey="alumni"
-          placeholder="Cari universitas..."
+          placeholder={t('filters.searchFilter')}
         />
 
         <FilterPopover
           open={openGelarFISR}
           setOpen={setOpenGelarFISR}
-          title="Gelar FISR"
+          title={t('filters.fisrDegree')}
           options={['Ya', 'Tidak']}
           filterKey="gelar_fisr"
-          placeholder="Pilih Gelar FISR..."
+          placeholder={t('filters.searchFilter')}
         />
 
         {hasActiveFilters && (
@@ -257,7 +260,7 @@ export function MemberFiltersComponent({
             className="text-muted-foreground hover:text-foreground focus-visible"
           >
             <X className="h-4 w-4 mr-1" />
-            Reset Filter
+            {t('filters.resetFilters')}
           </Button>
         )}
       </div>
@@ -267,7 +270,7 @@ export function MemberFiltersComponent({
         <Hospital className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Cari nama rumah sakit..."
+          placeholder={t('filters.hospitalName')}
           value={filters.namaRS || ''}
           onChange={(e) => handleNamaRSChange(e.target.value)}
           className="pl-9 focus-visible"
@@ -289,7 +292,7 @@ export function MemberFiltersComponent({
         <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Cari NPA..."
+          placeholder={t('filters.npa')}
           value={filters.npa || ''}
           onChange={(e) => handleNPAChange(e.target.value)}
           className="pl-9 focus-visible"
