@@ -46,8 +46,8 @@ export function Navbar() {
               />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold heading-medical">PDPI</h1>
-              <p className="text-xs text-muted-foreground">Direktori Anggota</p>
+              <h1 className="text-lg font-semibold heading-medical">{t('homepage.organization')}</h1>
+              <p className="text-xs text-muted-foreground">{t('homepage.organizationSubtitle')}</p>
             </div>
           </Link>
 
@@ -81,7 +81,7 @@ export function Navbar() {
                 }`}
               >
                 <Database className="h-4 w-4" />
-                Bank Data
+                {t('nav.bankData')}
               </Link>
             )}
             {user && profile?.role === 'user' && (
@@ -90,7 +90,7 @@ export function Navbar() {
                 className="text-sm font-medium text-foreground/80 hover:text-foreground transition-smooth flex items-center gap-1"
               >
                 <CreditCard className="h-4 w-4" />
-                Iuran
+                {t('nav.dues')}
               </Link>
             )}
             {user && (profile?.role === 'admin_pusat' || profile?.role === 'admin_cabang') && (
