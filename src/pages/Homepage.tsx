@@ -7,7 +7,6 @@ import { SearchBar } from "@/components/SearchBar";
 import { ProvinceChips } from "@/components/ProvinceChips";
 import { HowToUse } from "@/components/HowToUse";
 import { VisitorCounter } from "@/components/VisitorCounter";
-import { Footer } from "@/components/Footer";
 import { useStats } from "@/hooks/useStats";
 import { getAllProvinces } from "@/utils/getAllProvinces";
 import logoImage from "@/assets/logo-pdpi.png";
@@ -72,7 +71,7 @@ export default function Homepage() {
             <StatCard
               title={t('stats.totalMembers')}
               value={loading ? "..." : (summary?.total || 0).toLocaleString(i18n.language === 'en' ? 'en-US' : 'id-ID')}
-              description={t('stats.pulmonologists')}
+              description={t('stats.respirologists')}
               icon={Users}
             />
             <StatCard
@@ -129,16 +128,15 @@ export default function Homepage() {
       <section className="section-spacing bg-muted/20">
         <div className="container-pdpi">
           <div className="card-glass p-6 max-w-2xl mx-auto text-center">
-            <h3 className="text-lg font-semibold heading-medical mb-3">Sumber Data</h3>
+            <h3 className="text-lg font-semibold heading-medical mb-3">{t('homepage.dataSource')}</h3>
             <p className="text-medical-body">
-              Data anggota ini dikelola oleh Pengurus Pusat PDPI dan diperbarui secara berkala. Untuk informasi lebih
-              lanjut atau koreksi data, silakan hubungi sekretariat PDPI.
+              {t('homepage.dataSourceDesc')}
             </p>
           </div>
         </div>
       </section>
 
-      <Footer />
+      
     </div>
   );
 }

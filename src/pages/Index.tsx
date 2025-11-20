@@ -174,10 +174,10 @@ const Index = () => {
                     <Search className="h-7 w-7 text-white" />
                   </div>
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-sky-600 dark:from-emerald-400 dark:to-sky-400 bg-clip-text text-transparent">
-                    Cari Anggota
+                    {t('homepage.searchTitle')}
                   </h2>
                 </div>
-                <SearchBar size="hero" placeholder="Cari nama, NPA, RS, kota, provinsi, atau PD..." />
+                <SearchBar size="hero" placeholder={t('homepage.searchPlaceholder')} />
               </div>
             </div>
 
@@ -189,10 +189,10 @@ const Index = () => {
         <section className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-sky-600 dark:from-emerald-400 dark:to-sky-400 bg-clip-text text-transparent mb-4">
-              Panduan Menggunakan
+              {t('homepage.howToUseTitle')}
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Ikuti langkah mudah untuk menemukan informasi anggota yang Anda butuhkan
+              {t('homepage.howToUseSubtitle')}
             </p>
           </div>
 
@@ -203,9 +203,9 @@ const Index = () => {
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <Search className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">1. Cari Anggota</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">{t('homepage.howToUseStep1')}</h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Masukkan nama, NPA, nama RS, atau lokasi di kolom pencarian untuk menemukan anggota
+                  {t('homepage.howToUseStep1Desc')}
                 </p>
               </div>
             </div>
@@ -216,9 +216,9 @@ const Index = () => {
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <Filter className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">2. Filter Data</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">{t('homepage.howToUseStep2')}</h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Gunakan filter provinsi, cabang, atau kota untuk mempersempit hasil pencarian
+                  {t('homepage.howToUseStep2Desc')}
                 </p>
               </div>
             </div>
@@ -229,9 +229,9 @@ const Index = () => {
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <Eye className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">3. Lihat Detail</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">{t('homepage.howToUseStep3')}</h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Klik pada nama anggota untuk melihat informasi lengkap dan kontak profesional
+                  {t('homepage.howToUseStep3Desc')}
                 </p>
               </div>
             </div>
