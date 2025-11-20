@@ -2,12 +2,15 @@ import { Member } from "@/types/member"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MapPin, Building } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface PublicMemberCardProps {
   member: Member
 }
 
 export function PublicMemberCard({ member }: PublicMemberCardProps) {
+  const { t } = useTranslation()
+  
   const getInitials = (name: string) => {
     return name
       .split(' ')

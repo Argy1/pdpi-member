@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { Users } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 interface GenderChartProps {
   laki: number
@@ -9,11 +10,13 @@ interface GenderChartProps {
 }
 
 export function GenderChart({ laki, perempuan, loading }: GenderChartProps) {
+  const { t } = useTranslation()
+  
   if (loading) {
     return (
       <Card className="rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 backdrop-blur shadow-xl">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">Distribusi Gender</CardTitle>
+          <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">{t('sebaran.genderDistribution')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[280px] bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />
@@ -23,8 +26,8 @@ export function GenderChart({ laki, perempuan, loading }: GenderChartProps) {
   }
 
   const data = [
-    { name: 'Laki-laki', value: laki, color: 'hsl(var(--chart-1))' },
-    { name: 'Perempuan', value: perempuan, color: 'hsl(var(--chart-2))' }
+    { name: t('sebaran.male'), value: laki, color: 'hsl(var(--chart-1))' },
+    { name: t('sebaran.female'), value: perempuan, color: 'hsl(var(--chart-2))' }
   ]
 
   const total = laki + perempuan
@@ -35,7 +38,7 @@ export function GenderChart({ laki, perempuan, loading }: GenderChartProps) {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
           <Users className="h-5 w-5 text-teal-600 dark:text-teal-400" />
-          Distribusi Gender
+          {t('sebaran.genderDistribution')}
         </CardTitle>
       </CardHeader>
       <CardContent>
