@@ -1,33 +1,38 @@
 import { Search, Filter, Eye } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-const steps = [
-  {
-    icon: Search,
-    title: "Cari Anggota",
-    description: "Gunakan kotak pencarian untuk mencari berdasarkan nama, rumah sakit, atau lokasi"
-  },
-  {
-    icon: Filter,
-    title: "Filter Data",
-    description: "Gunakan filter provinsi, PD, atau subspesialis untuk mempersempit hasil"
-  },
-  {
-    icon: Eye,
-    title: "Lihat Detail",
-    description: "Klik pada baris anggota untuk melihat informasi lengkap dalam modal"
-  }
-]
+const stepIcons = [Search, Filter, Eye]
 
 export function HowToUse() {
+  const { t } = useTranslation()
+  
+  const steps = [
+    {
+      icon: stepIcons[0],
+      title: t('howToUse.step1Title'),
+      description: t('howToUse.step1Desc')
+    },
+    {
+      icon: stepIcons[1],
+      title: t('howToUse.step2Title'),
+      description: t('howToUse.step2Desc')
+    },
+    {
+      icon: stepIcons[2],
+      title: t('howToUse.step3Title'),
+      description: t('howToUse.step3Desc')
+    }
+  ]
+
   return (
     <div className="section-spacing">
       <div className="container-pdpi">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold heading-medical mb-4">
-            Cara Menggunakan
+            {t('howToUse.title')}
           </h2>
           <p className="text-lg text-medical-body max-w-2xl mx-auto">
-            Panduan singkat untuk menggunakan direktori anggota PDPI
+            {t('howToUse.subtitle')}
           </p>
         </div>
 

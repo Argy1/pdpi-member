@@ -8,10 +8,12 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import pdpiLogo from "@/assets/logo-pdpi.png";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const navigate = useNavigate();
   const { summary, loading } = useStats({});
+  const { t } = useTranslation();
 
   const lastUpdated = useMemo(() => {
     if (!summary) return new Date();
@@ -51,7 +53,7 @@ const Index = () => {
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Update: {formatDate(lastUpdated)}
+                        {t('homepage.logoUpdate')}: {formatDate(lastUpdated)}
                       </span>
                     </div>
                   </div>
@@ -59,13 +61,12 @@ const Index = () => {
 
                 {/* Main Title with Gradient */}
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-emerald-600 via-sky-600 to-emerald-600 dark:from-emerald-400 dark:via-sky-400 dark:to-emerald-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                  Direktori Anggota PDPI
+                  {t('homepage.title')}
                 </h1>
 
                 {/* Subtitle */}
                 <p className="text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-150">
-                  Direktori lengkap anggota Perhimpunan Dokter Paru Indonesia untuk kemudahan akses informasi
-                  profesional di seluruh nusantara.
+                  {t('homepage.subtitle')}
                 </p>
 
                 {/* CTA Buttons */}
@@ -75,7 +76,7 @@ const Index = () => {
                     onClick={() => navigate("/anggota")}
                     className="w-full sm:w-auto rounded-2xl px-8 py-6 text-base font-bold shadow-2xl hover:shadow-emerald-500/50 dark:hover:shadow-emerald-900/50 transition-all duration-300 hover:scale-105 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
                   >
-                    Buka Tabel Anggota
+                    {t('homepage.ctaPrimary')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <Button
@@ -85,7 +86,7 @@ const Index = () => {
                     className="w-full sm:w-auto rounded-2xl px-8 py-6 text-base font-bold border-2 border-emerald-300 dark:border-emerald-700 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm hover:bg-white dark:hover:bg-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 hover:scale-105 shadow-lg"
                   >
                     <MapPin className="mr-2 h-5 w-5" />
-                    Sebaran Anggota (Peta)
+                    {t('homepage.ctaSecondary')}
                   </Button>
                 </div>
               </div>
@@ -109,12 +110,12 @@ const Index = () => {
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
-                        Total Anggota
+                        {t('stats.totalMembers')}
                       </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-emerald-600 to-emerald-800 dark:from-emerald-400 dark:to-emerald-600 bg-clip-text text-transparent">
                         {summary?.total.toLocaleString("id-ID") || "0"}
                       </p>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Dokter Spesialis Paru</p>
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('stats.pulmonologists')}</p>
                     </div>
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 shadow-lg group-hover:rotate-12 transition-transform duration-500">
                       <Users className="h-8 w-8 text-white" />
@@ -127,12 +128,12 @@ const Index = () => {
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-sky-600 dark:text-sky-400 uppercase tracking-wide">
-                        Provinsi
+                        {t('stats.provinces')}
                       </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-sky-600 to-sky-800 dark:from-sky-400 dark:to-sky-600 bg-clip-text text-transparent">
                         {summary?.byProvinsi.length || 0}
                       </p>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Seluruh Indonesia</p>
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('stats.regionalBoards')}</p>
                     </div>
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-sky-700 shadow-lg group-hover:rotate-12 transition-transform duration-500">
                       <MapPin className="h-8 w-8 text-white" />
@@ -145,12 +146,12 @@ const Index = () => {
                   <div className="relative flex items-start justify-between">
                     <div className="space-y-3">
                       <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
-                        Cabang
+                        {t('stats.branches')}
                       </p>
                       <p className="text-5xl md:text-6xl font-black bg-gradient-to-br from-slate-600 to-slate-800 dark:from-slate-400 dark:to-slate-600 bg-clip-text text-transparent">
                         {summary?.byCabang.length || 0}
                       </p>
-                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Cabang PDPI</p>
+                      <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{t('stats.branchesDescription')}</p>
                     </div>
                     <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 shadow-lg group-hover:rotate-12 transition-transform duration-500">
                       <Building2 className="h-8 w-8 text-white" />
