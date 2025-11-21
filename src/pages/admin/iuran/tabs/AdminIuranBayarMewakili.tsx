@@ -319,12 +319,12 @@ export default function BayarMewakili() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Bayar Mewakili Anggota</h1>
-          <p className="text-muted-foreground">Bayar iuran untuk anggota lain</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Bayar Mewakili Anggota</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Bayar iuran untuk anggota lain</p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/admin/iuran')}>
+        <Button variant="outline" onClick={() => navigate('/admin/iuran')} className="w-full sm:w-auto">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Kembali
         </Button>
@@ -333,24 +333,24 @@ export default function BayarMewakili() {
       {/* Stepper */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between overflow-x-auto">
             {STEPS.map((step, index) => (
-              <div key={step.id} className="flex items-center flex-1">
-                <div className="flex flex-col items-center">
+              <div key={step.id} className="flex items-center flex-1 min-w-0">
+                <div className="flex flex-col items-center min-w-[80px]">
                   <div
-                    className={`flex items-center justify-center w-12 h-12 rounded-full border-2 ${
+                    className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 ${
                       currentStep >= step.id
                         ? 'bg-primary border-primary text-primary-foreground'
                         : 'border-muted text-muted-foreground'
                     }`}
                   >
-                    <step.icon className="h-6 w-6" />
+                    <step.icon className="h-4 w-4 sm:h-6 sm:w-6" />
                   </div>
-                  <span className="mt-2 text-sm font-medium">{step.title}</span>
+                  <span className="mt-2 text-xs sm:text-sm font-medium text-center">{step.title}</span>
                 </div>
                 {index < STEPS.length - 1 && (
                   <div
-                    className={`flex-1 h-1 mx-4 ${
+                    className={`flex-1 h-1 mx-2 sm:mx-4 ${
                       currentStep > step.id ? 'bg-primary' : 'bg-muted'
                     }`}
                   />
