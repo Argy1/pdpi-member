@@ -366,8 +366,8 @@ export default function PembayaranKolektif() {
       {/* Summary & Checkout */}
       <Card className="sticky bottom-4 shadow-lg border-primary/20">
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="space-y-1">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div className="space-y-1 w-full sm:w-auto">
               <p className="text-sm text-muted-foreground">
                 {getTotalMembers()} anggota • {getTotalYears()} tahun
               </p>
@@ -379,7 +379,7 @@ export default function PembayaranKolektif() {
               size="lg"
               onClick={handleCheckout}
               disabled={selectedMembers.size === 0}
-              className="gap-2"
+              className="gap-2 w-full sm:w-auto"
             >
               <ShoppingCart className="h-5 w-5" />
               Lanjut ke Checkout

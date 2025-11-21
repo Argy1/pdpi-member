@@ -159,7 +159,7 @@ export default function AdminIuranKelolaTagihan() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Cari berdasarkan kode invoice atau metode..."
+                  placeholder="Cari invoice atau metode..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -198,69 +198,111 @@ export default function AdminIuranKelolaTagihan() {
               <p>Tidak ada tagihan ditemukan</p>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Kode Invoice</TableHead>
-                    <TableHead>Tanggal</TableHead>
-                    <TableHead>Metode</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Expired/Paid At</TableHead>
-                    <TableHead className="text-center">Aksi</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredPayments.map((payment) => (
-                    <TableRow key={payment.id}>
-                      <TableCell className="font-mono text-sm font-semibold">
-                        {payment.group_code}
-                      </TableCell>
-                      <TableCell>
-                        {format(new Date(payment.created_at), 'dd MMM yyyy', { locale: id })}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {payment.method === 'qris' ? 'QRIS' : 'Transfer Bank'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-semibold text-primary">
-                        {formatRupiah(payment.total_payable)}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {payment.status === 'PAID' && payment.paid_at
-                          ? format(new Date(payment.paid_at), 'dd MMM yyyy, HH:mm', { locale: id })
-                          : payment.expired_at
-                          ? format(new Date(payment.expired_at), 'dd MMM yyyy', { locale: id })
-                          : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => viewDetails(payment)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          {payment.status === 'PENDING' && payment.method === 'bank_transfer' && (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block rounded-lg border overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Kode Invoice</TableHead>
+                      <TableHead>Tanggal</TableHead>
+                      <TableHead>Metode</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Expired/Paid At</TableHead>
+                      <TableHead className="text-center">Aksi</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPayments.map((payment) => (
+                      <TableRow key={payment.id}>
+                        <TableCell className="font-mono text-sm font-semibold">
+                          {payment.group_code}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(payment.created_at), 'dd MMM yyyy', { locale: id })}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {payment.method === 'qris' ? 'QRIS' : 'Transfer Bank'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-semibold text-primary">
+                          {formatRupiah(payment.total_payable)}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {payment.status === 'PAID' && payment.paid_at
+                            ? format(new Date(payment.paid_at), 'dd MMM yyyy, HH:mm', { locale: id })
+                            : payment.expired_at
+                            ? format(new Date(payment.expired_at), 'dd MMM yyyy', { locale: id })
+                            : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleMarkAsPaid(payment.id)}
+                              onClick={() => viewDetails(payment)}
                             >
-                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <Eye className="h-4 w-4" />
                             </Button>
-                          )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {filteredPayments.map((payment) => (
+                  <Card key={payment.id} className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-mono font-semibold text-sm">{payment.group_code}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(payment.created_at), 'dd MMM yyyy', { locale: id })}
+                          </p>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                        {getStatusBadge(payment.status)}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm pt-2 border-t">
+                        <div>
+                          <p className="text-muted-foreground text-xs">Metode</p>
+                          <Badge variant="outline" className="mt-1">
+                            {payment.method === 'qris' ? 'QRIS' : 'Transfer Bank'}
+                          </Badge>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-muted-foreground text-xs">Total</p>
+                          <p className="font-bold text-primary mt-1">{formatRupiah(payment.total_payable)}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t">
+                        <p className="text-xs text-muted-foreground">
+                          {payment.status === 'PAID' && payment.paid_at
+                            ? `Paid: ${format(new Date(payment.paid_at), 'dd MMM HH:mm', { locale: id })}`
+                            : payment.expired_at
+                            ? `Exp: ${format(new Date(payment.expired_at), 'dd MMM', { locale: id })}`
+                            : '-'}
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => viewDetails(payment)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Detail
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

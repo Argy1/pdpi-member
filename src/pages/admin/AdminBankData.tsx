@@ -221,33 +221,33 @@ const AdminBankData = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total E-book</CardDescription>
-            <CardTitle className="text-2xl">{ebooks.length}</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Total E-book</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">{ebooks.length}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>E-book Aktif</CardDescription>
-            <CardTitle className="text-2xl">
+            <CardDescription className="text-xs sm:text-sm">E-book Aktif</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">
               {ebooks.filter((e) => e.isActive).length}
             </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Total Unduhan</CardDescription>
-            <CardTitle className="text-2xl">
+            <CardDescription className="text-xs sm:text-sm">Total Unduhan</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">
               {ebooks.reduce((sum, e) => sum + e.downloadCount, 0)}
             </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>E-book Tahun Ini</CardDescription>
-            <CardTitle className="text-2xl">
+            <CardDescription className="text-xs sm:text-sm">E-book Tahun Ini</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">
               {ebooks.filter((e) => e.year === new Date().getFullYear()).length}
             </CardTitle>
           </CardHeader>

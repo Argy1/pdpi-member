@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Download, Loader2, FileSpreadsheet, FileText, CheckCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import { useToast } from '@/hooks/use-toast';
@@ -231,26 +232,28 @@ export default function AdminIuranVerifikasiLMS() {
                 Data anggota yang sudah membayar iuran untuk verifikasi LMS
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={exportToCSV}
                 disabled={paidMembers.length === 0}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <FileText className="h-4 w-4" />
-                Export CSV
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">CSV</span>
               </Button>
               <Button
                 variant="default"
                 size="sm"
                 onClick={exportToXLSX}
                 disabled={paidMembers.length === 0}
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                Export XLSX
+                <span className="hidden sm:inline">Export XLSX</span>
+                <span className="sm:hidden">XLSX</span>
               </Button>
             </div>
           </div>
@@ -317,34 +320,75 @@ export default function AdminIuranVerifikasiLMS() {
               <p>Belum ada anggota yang membayar dengan filter ini</p>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>No</TableHead>
-                    <TableHead>Nomor HP</TableHead>
-                    <TableHead>Nama</TableHead>
-                    <TableHead>NIK</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>NPA</TableHead>
-                    <TableHead>Cabang</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paidMembers.map((member, index) => (
-                    <TableRow key={`${member.nik}-${index}`}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>{member.no_hp}</TableCell>
-                      <TableCell className="font-medium">{member.nama}</TableCell>
-                      <TableCell>{member.nik}</TableCell>
-                      <TableCell>{member.email}</TableCell>
-                      <TableCell>{member.npa}</TableCell>
-                      <TableCell>{member.cabang}</TableCell>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block rounded-lg border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>No</TableHead>
+                      <TableHead>Nomor HP</TableHead>
+                      <TableHead>Nama</TableHead>
+                      <TableHead>NIK</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>NPA</TableHead>
+                      <TableHead>Cabang</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {paidMembers.map((member, index) => (
+                      <TableRow key={`${member.nik}-${index}`}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        <TableCell>{member.no_hp}</TableCell>
+                        <TableCell className="font-medium">{member.nama}</TableCell>
+                        <TableCell>{member.nik}</TableCell>
+                        <TableCell>{member.email}</TableCell>
+                        <TableCell>{member.npa}</TableCell>
+                        <TableCell>{member.cabang}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-3">
+                {paidMembers.map((member, index) => (
+                  <Card key={`${member.nik}-${index}`} className="border">
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div className="font-bold text-lg">{index + 1}</div>
+                        <Badge variant="outline">{member.cabang}</Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Nama</p>
+                          <p className="font-medium">{member.nama}</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <p className="text-sm text-muted-foreground">NPA</p>
+                            <p className="font-medium">{member.npa}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground">NIK</p>
+                            <p className="font-medium text-xs">{member.nik}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Email</p>
+                          <p className="text-sm break-all">{member.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Nomor HP</p>
+                          <p className="font-medium">{member.no_hp}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

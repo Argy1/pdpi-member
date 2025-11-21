@@ -52,9 +52,9 @@ export default function AdminIuranRekonsiliasi() {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="qris" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="qris">QRIS Webhook Log</TabsTrigger>
-          <TabsTrigger value="transfer">Transfer Manual</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsTrigger value="qris" className="text-sm sm:text-base">QRIS Webhook</TabsTrigger>
+          <TabsTrigger value="transfer" className="text-sm sm:text-base">Transfer Manual</TabsTrigger>
         </TabsList>
 
         <TabsContent value="qris" className="mt-6">
@@ -73,65 +73,120 @@ export default function AdminIuranRekonsiliasi() {
                   <p>Belum ada webhook log</p>
                 </div>
               ) : (
-                <div className="rounded-lg border overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Waktu</TableHead>
-                        <TableHead>Gateway</TableHead>
-                        <TableHead>Order ID</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Verified</TableHead>
-                        <TableHead>Processed</TableHead>
-                        <TableHead className="text-center">Aksi</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {webhookLogs.map((log) => (
-                        <TableRow key={log.id}>
-                          <TableCell className="text-sm">
-                            {format(new Date(log.created_at), 'dd MMM yyyy, HH:mm:ss', { locale: id })}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{log.gateway || '-'}</Badge>
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">{log.order_id || '-'}</TableCell>
-                          <TableCell>
+                <>
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block rounded-lg border overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Waktu</TableHead>
+                          <TableHead>Gateway</TableHead>
+                          <TableHead>Order ID</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Verified</TableHead>
+                          <TableHead>Processed</TableHead>
+                          <TableHead className="text-center">Aksi</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {webhookLogs.map((log) => (
+                          <TableRow key={log.id}>
+                            <TableCell className="text-sm">
+                              {format(new Date(log.created_at), 'dd MMM yyyy, HH:mm:ss', { locale: id })}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{log.gateway || '-'}</Badge>
+                            </TableCell>
+                            <TableCell className="font-mono text-sm">{log.order_id || '-'}</TableCell>
+                            <TableCell>
+                              <Badge variant={log.status_parsed === 'success' ? 'default' : 'destructive'}>
+                                {log.status_parsed || 'unknown'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {log.verified ? (
+                                <Badge className="bg-green-500">Yes</Badge>
+                              ) : (
+                                <Badge variant="outline">No</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {log.processed_at ? (
+                                <Badge className="bg-blue-500">
+                                  {format(new Date(log.processed_at), 'HH:mm', { locale: id })}
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline">Pending</Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleReprocess(log.id)}
+                                disabled={!!log.processed_at}
+                              >
+                                <RefreshCcw className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-3">
+                    {webhookLogs.map((log) => (
+                      <Card key={log.id} className="border">
+                        <CardContent className="p-4 space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="text-xs text-muted-foreground">
+                                {format(new Date(log.created_at), 'dd MMM yyyy, HH:mm', { locale: id })}
+                              </p>
+                              <p className="font-mono text-sm mt-1">{log.order_id || '-'}</p>
+                            </div>
                             <Badge variant={log.status_parsed === 'success' ? 'default' : 'destructive'}>
                               {log.status_parsed || 'unknown'}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {log.verified ? (
-                              <Badge className="bg-green-500">Yes</Badge>
-                            ) : (
-                              <Badge variant="outline">No</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-sm pt-2 border-t">
+                            <div>
+                              <p className="text-muted-foreground text-xs">Gateway</p>
+                              <Badge variant="outline" className="mt-1">{log.gateway || '-'}</Badge>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">Verified</p>
+                              {log.verified ? (
+                                <Badge className="bg-green-500 mt-1">Yes</Badge>
+                              ) : (
+                                <Badge variant="outline" className="mt-1">No</Badge>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center pt-2 border-t">
                             {log.processed_at ? (
                               <Badge className="bg-blue-500">
-                                {format(new Date(log.processed_at), 'HH:mm', { locale: id })}
+                                Processed: {format(new Date(log.processed_at), 'HH:mm', { locale: id })}
                               </Badge>
                             ) : (
                               <Badge variant="outline">Pending</Badge>
                             )}
-                          </TableCell>
-                          <TableCell className="text-center">
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => handleReprocess(log.id)}
                               disabled={!!log.processed_at}
                             >
                               <RefreshCcw className="h-4 w-4" />
                             </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>

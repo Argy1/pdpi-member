@@ -236,12 +236,12 @@ export default function IuranSaya() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-3 pt-2">
-              <Button onClick={handleAddToCart} size="lg" className="gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button onClick={handleAddToCart} size="lg" className="gap-2 w-full sm:w-auto">
                 <ShoppingCart className="h-4 w-4" />
                 Tambah ke Keranjang
               </Button>
-              <Button variant="outline" onClick={() => navigate('/iuran/kolektif')} size="lg">
+              <Button variant="outline" onClick={() => navigate('/iuran/kolektif')} size="lg" className="w-full sm:w-auto">
                 Pembayaran Kolektif
               </Button>
             </div>
@@ -265,41 +265,74 @@ export default function IuranSaya() {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Periode</TableHead>
-                  <TableHead>Tanggal</TableHead>
-                  <TableHead>Metode</TableHead>
-                  <TableHead className="text-right">Nominal</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentHistory.length > 0 ? (
-                  recentHistory.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{item.period}</TableCell>
-                      <TableCell>{item.date}</TableCell>
-                      <TableCell>{item.method}</TableCell>
-                      <TableCell className="text-right">{formatRupiah(item.amount)}</TableCell>
-                      <TableCell>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Periode</TableHead>
+                    <TableHead>Tanggal</TableHead>
+                    <TableHead>Metode</TableHead>
+                    <TableHead className="text-right">Nominal</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentHistory.length > 0 ? (
+                    recentHistory.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.period}</TableCell>
+                        <TableCell>{item.date}</TableCell>
+                        <TableCell>{item.method}</TableCell>
+                        <TableCell className="text-right">{formatRupiah(item.amount)}</TableCell>
+                        <TableCell>
+                          <Badge variant="default" className="bg-green-500">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Lunas
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                        Belum ada pembayaran
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {recentHistory.length > 0 ? (
+                recentHistory.map((item) => (
+                  <Card key={item.id} className="border">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">Periode {item.period}</p>
+                          <p className="text-sm text-muted-foreground">{item.date}</p>
+                        </div>
                         <Badge variant="default" className="bg-green-500">
                           <CheckCircle className="h-3 w-3 mr-1" />
                           Lunas
                         </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                      Belum ada pembayaran
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t">
+                        <span className="text-sm text-muted-foreground">{item.method}</span>
+                        <span className="font-bold text-primary">{formatRupiah(item.amount)}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  Belum ada pembayaran
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
