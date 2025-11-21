@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Users, FileText, RefreshCcw, BarChart3, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, RefreshCcw, BarChart3, ArrowLeft, CheckSquare } from 'lucide-react';
 import AdminIuranRingkasan from './tabs/AdminIuranRingkasan';
 import AdminIuranBayarMewakili from './tabs/AdminIuranBayarMewakili';
 import AdminIuranKelolaTagihan from './tabs/AdminIuranKelolaTagihan';
 import AdminIuranRekonsiliasi from './tabs/AdminIuranRekonsiliasi';
 import AdminIuranLaporan from './tabs/AdminIuranLaporan';
+import AdminIuranVerifikasiLMS from './tabs/AdminIuranVerifikasiLMS';
 
 export default function AdminIuranLayout() {
   const [activeTab, setActiveTab] = useState('ringkasan');
@@ -29,7 +30,7 @@ export default function AdminIuranLayout() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+        <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
           <TabsTrigger value="ringkasan" className="gap-2">
             <LayoutDashboard className="h-4 w-4" />
             <span className="hidden sm:inline">Ringkasan</span>
@@ -49,6 +50,10 @@ export default function AdminIuranLayout() {
           <TabsTrigger value="laporan" className="gap-2">
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">Laporan</span>
+          </TabsTrigger>
+          <TabsTrigger value="verifikasi-lms" className="gap-2">
+            <CheckSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">Verifikasi LMS</span>
           </TabsTrigger>
         </TabsList>
 
@@ -71,6 +76,10 @@ export default function AdminIuranLayout() {
 
           <TabsContent value="laporan" className="mt-0">
             <AdminIuranLaporan />
+          </TabsContent>
+
+          <TabsContent value="verifikasi-lms" className="mt-0">
+            <AdminIuranVerifikasiLMS />
           </TabsContent>
         </div>
       </Tabs>
