@@ -43,13 +43,13 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
   const hasActiveFilters = filters.q || filters.provinsi || filters.pd || filters.kota || filters.status || filters.gender
 
   return (
-    <div className="sticky top-16 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col gap-3">
+    <div className="sticky top-0 md:top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
+        <div className="flex flex-col gap-2 md:gap-3">
           {/* Filter Row */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
             {/* Search */}
-            <div className="flex gap-2 flex-1 min-w-[280px]">
+            <div className="flex gap-2 w-full md:flex-1 md:min-w-[280px]">
               <Input
                 placeholder="Cari nama, NPA, tempat tugas..."
                 value={searchInput}
@@ -74,7 +74,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
               onValueChange={(value) => onFiltersChange({ ...filters, provinsi: value === 'all' ? undefined : value })}
               disabled={loading}
             >
-              <SelectTrigger className="w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
+              <SelectTrigger className="w-full md:w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
                 <SelectValue placeholder="Provinsi" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -91,7 +91,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
               onValueChange={(value) => onFiltersChange({ ...filters, pd: value === 'all' ? undefined : value })}
               disabled={loading}
             >
-              <SelectTrigger className="w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
+              <SelectTrigger className="w-full md:w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
                 <SelectValue placeholder="PD/Cabang" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -108,7 +108,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
               onValueChange={(value) => onFiltersChange({ ...filters, kota: value === 'all' ? undefined : value })}
               disabled={loading}
             >
-              <SelectTrigger className="w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
+              <SelectTrigger className="w-full md:w-[180px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
                 <SelectValue placeholder="Kota/Kabupaten" />
               </SelectTrigger>
               <SelectContent className="rounded-xl max-h-[300px]">
@@ -125,7 +125,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
               onValueChange={(value) => onFiltersChange({ ...filters, status: value === 'all' ? undefined : value })}
               disabled={loading}
             >
-              <SelectTrigger className="w-[140px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
+              <SelectTrigger className="w-[48%] md:w-[140px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -141,7 +141,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
               onValueChange={(value) => onFiltersChange({ ...filters, gender: value === 'all' ? undefined : value })}
               disabled={loading}
             >
-              <SelectTrigger className="w-[140px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
+              <SelectTrigger className="w-[48%] md:w-[140px] h-10 rounded-xl border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-teal-500">
                 <SelectValue placeholder="Gender" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
