@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserCircle, LogOut, Settings, Menu, ShoppingCart, CreditCard, User, Database } from "lucide-react"
+import { UserCircle, LogOut, Settings, Menu, ShoppingCart, CreditCard, User, Database, ShieldCheck } from "lucide-react"
 import logoImage from "@/assets/logo-pdpi.png"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePaymentCart } from "@/hooks/usePaymentCart"
@@ -102,6 +102,19 @@ export function Navbar() {
                 Admin Iuran
               </Link>
             )}
+            {user && profile?.role === 'admin_pusat' && (
+              <Link 
+                to="/admin/verifikasi-lms" 
+                className={`text-sm font-medium transition-smooth flex items-center gap-1 ${
+                  location.pathname === '/admin/verifikasi-lms' 
+                    ? 'text-primary font-semibold' 
+                    : 'text-foreground/80 hover:text-foreground'
+                }`}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Verifikasi LMS
+              </Link>
+            )}
           </div>
 
           {/* Right Section */}
@@ -178,6 +191,20 @@ export function Navbar() {
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       Admin Iuran
+                    </Link>
+                  )}
+                  {user && profile?.role === 'admin_pusat' && (
+                    <Link 
+                      to="/admin/verifikasi-lms" 
+                      className={`text-base font-medium transition-smooth py-2 flex items-center ${
+                        location.pathname === '/admin/verifikasi-lms' 
+                          ? 'text-primary font-semibold' 
+                          : 'text-foreground hover:text-primary'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      Verifikasi LMS
                     </Link>
                   )}
                   
