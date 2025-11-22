@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, X, Loader2, Download, FileSpreadsheet } from "lucide-react"
+import { Search, X, Loader2, Download, FileSpreadsheet, ChevronDown, ChevronUp, Filter } from "lucide-react"
 import { useState } from "react"
 import {
   DropdownMenu,
@@ -30,6 +30,7 @@ interface StatsFiltersProps {
 
 export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities, loading, onExport, isExporting }: StatsFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.q || '')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const handleSearch = () => {
     onFiltersChange({ ...filters, q: searchInput })
@@ -45,7 +46,21 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
   return (
     <div className="sticky top-14 md:top-16 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
-        <div className="flex flex-col gap-2 md:gap-3">
+        {/* Mobile Toggle Button */}
+        <div className="md:hidden flex items-center justify-between mb-3">
+          <Button
+            onClick={() => setIsExpanded(!isExpanded)}
+            variant="outline"
+            size="sm"
+            className="w-full rounded-xl border-slate-300 dark:border-slate-700 hover:bg-teal-50 dark:hover:bg-teal-950/30"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            {isExpanded ? 'Sembunyikan Filter' : 'Tampilkan Filter'}
+            {isExpanded ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+          </Button>
+        </div>
+
+        <div className={`flex-col gap-2 md:gap-3 ${isExpanded ? 'flex' : 'hidden md:flex'}`}>
           {/* Filter Row */}
           <div className="flex flex-wrap items-center gap-2 md:gap-3">
             {/* Search */}
