@@ -15,7 +15,8 @@ import {
   Receipt,
   RefreshCcw,
   FileText,
-  Database
+  Database,
+  ShieldCheck
 } from 'lucide-react';
 import {
   Sidebar,
@@ -89,6 +90,13 @@ const menuItems = [
     isIuran: true
   },
   {
+    title: 'Verifikasi LMS',
+    url: '/admin/verifikasi-lms',
+    icon: ShieldCheck,
+    roles: ['admin_pusat'],
+    isVerifikasi: true
+  },
+  {
     title: 'Profil Saya',
     url: '/admin/profil',
     icon: User,
@@ -123,8 +131,9 @@ export const AdminSidebar = () => {
     hasRole(item.roles)
   );
 
-  const mainMenuItems = filteredMenuItems.filter(item => !item.isIuran);
+  const mainMenuItems = filteredMenuItems.filter(item => !item.isIuran && !item.isVerifikasi);
   const iuranMenuItems = filteredMenuItems.filter(item => item.isIuran);
+  const verifikasiMenuItems = filteredMenuItems.filter(item => item.isVerifikasi);
 
   return (
     <Sidebar className={isCollapsed ? 'w-14' : 'w-64'} collapsible="icon">
@@ -179,6 +188,31 @@ export const AdminSidebar = () => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {iuranMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink
+                        to={item.url}
+                        className={getNavCls}
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {verifikasiMenuItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className={isCollapsed ? 'sr-only' : ''}>
+              Verifikasi & Validasi
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {verifikasiMenuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink

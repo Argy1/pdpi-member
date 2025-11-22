@@ -39,6 +39,8 @@ import AdminPeriodeTarif from "./pages/admin/iuran/AdminPeriodeTarif";
 import AdminKelolaTagihan from "./pages/admin/iuran/AdminKelolaTagihan";
 import AdminRekonsiliasi from "./pages/admin/iuran/AdminRekonsiliasi";
 import AdminLaporan from "./pages/admin/iuran/AdminLaporan";
+import AdminVerifikasiLMS from "./pages/admin/AdminVerifikasiLMS";
+import { VerifikasiLMSGuard } from "./components/guards/VerifikasiLMSGuard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -186,6 +188,13 @@ const App = () => (
                 <Route path="iuran/tagihan" element={<AdminKelolaTagihan />} />
                 <Route path="iuran/rekonsiliasi" element={<AdminRekonsiliasi />} />
                 <Route path="iuran/laporan" element={<AdminLaporan />} />
+                
+                {/* Verifikasi LMS - Admin Pusat Only */}
+                <Route path="verifikasi-lms" element={
+                  <VerifikasiLMSGuard>
+                    <AdminVerifikasiLMS />
+                  </VerifikasiLMSGuard>
+                } />
               </Route>
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
