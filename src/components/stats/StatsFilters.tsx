@@ -43,7 +43,7 @@ export function StatsFilters({ filters, onFiltersChange, provinces, pds, cities,
   const hasActiveFilters = filters.q || filters.provinsi || filters.pd || filters.kota || filters.status || filters.gender
 
   return (
-    <div className="sticky top-0 md:top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-md">
+    <div className="sticky top-14 md:top-16 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
         <div className="flex flex-col gap-2 md:gap-3">
           {/* Filter Row */}
