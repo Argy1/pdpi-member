@@ -147,21 +147,32 @@ Deno.serve(async (req) => {
     })
 
     if (authError) {
-      console.error('Auth error:', authError)
+      console.error('Auth error details:', {
+        message: authError.message,
+        status: authError.status,
+        code: (authError as any).code,
+        details: (authError as any).details
+      })
       
-      // Handle NIK validation error from trigger
-      if (authError.message?.includes('NIK') && authError.message?.includes('tidak terdaftar')) {
+      // Handle trigger errors (from handle_new_user function)
+      if (authError.message?.includes('NIK') || 
+          authError.message?.includes('metadata') ||
+          authError.message?.includes('tidak terdaftar')) {
         return new Response(
           JSON.stringify({ 
             success: false, 
-            error: 'NIK tidak valid atau tidak terdaftar dalam database. Hubungi sekretariat PD Anda.' 
+            error: authError.message.includes('tidak terdaftar') 
+              ? 'NIK tidak valid atau tidak terdaftar dalam database. Hubungi sekretariat PD Anda.'
+              : authError.message
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
       
       // Handle duplicate email
-      if (authError.message?.includes('already registered') || authError.message?.includes('User already registered')) {
+      if (authError.message?.includes('already registered') || 
+          authError.message?.includes('User already registered') ||
+          authError.message?.includes('duplicate')) {
         return new Response(
           JSON.stringify({ 
             success: false, 
@@ -171,10 +182,24 @@ Deno.serve(async (req) => {
         )
       }
 
+      // Handle RLS or constraint violations
+      if (authError.message?.includes('violates') || 
+          authError.message?.includes('policy') ||
+          authError.message?.includes('constraint')) {
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: 'Terjadi kesalahan database. NIK atau email mungkin sudah terdaftar. Detail: ' + authError.message
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        )
+      }
+
+      // Generic auth error with full message for debugging
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: authError.message || 'Gagal membuat akun. Silakan coba lagi.' 
+          error: 'Gagal membuat akun: ' + (authError.message || 'Silakan coba lagi.')
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )

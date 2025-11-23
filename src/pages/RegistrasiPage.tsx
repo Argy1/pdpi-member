@@ -75,6 +75,8 @@ export default function RegistrasiPage() {
       }
 
       // Call server-side edge function for registration
+      console.log('Attempting registration for NIK:', formData.nik);
+      
       const { data, error } = await supabase.functions.invoke('register-with-nik', {
         body: {
           nik: formData.nik,
@@ -83,9 +85,22 @@ export default function RegistrasiPage() {
         }
       });
 
-      if (error) throw error;
+      // Log the response for debugging
+      console.log('Registration response:', { data, error });
+
+      if (error) {
+        console.error('Edge function invocation error:', error);
+        toast({
+          variant: "destructive",
+          title: "Registrasi Gagal",
+          description: error.message || "Terjadi kesalahan saat menghubungi server"
+        });
+        setLoading(false);
+        return;
+      }
 
       if (!data.success) {
+        console.error('Registration failed:', data.error);
         toast({
           variant: "destructive",
           title: "Registrasi Gagal",
@@ -96,18 +111,19 @@ export default function RegistrasiPage() {
       }
 
       // Success
+      console.log('Registration successful:', data);
       toast({
         title: "Registrasi Berhasil! ✓",
         description: data.message || "Profil Anda sudah terhubung dengan data anggota.",
       });
 
-      // Redirect to profile page
+      // Redirect to login page instead
       setTimeout(() => {
-        navigate('/profil-saya');
+        navigate('/login');
       }, 1500);
 
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error('Unexpected registration error:', error);
       toast({
         variant: "destructive",
         title: "Error",
