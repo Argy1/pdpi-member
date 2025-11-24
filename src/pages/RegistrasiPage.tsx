@@ -90,10 +90,24 @@ export default function RegistrasiPage() {
 
       if (error) {
         console.error('Edge function invocation error:', error);
+        
+        let errorMessage = error.message || "Terjadi kesalahan saat menghubungi server";
+        
+        // Parse specific error codes from trigger
+        if (error.message.includes('REGISTRASI_HANYA_UNTUK_ANGGOTA')) {
+          errorMessage = 'Pendaftaran hanya untuk anggota terdaftar. Silakan gunakan NIK Anda untuk mendaftar.';
+        } else if (error.message.includes('NIK_FORMAT_INVALID')) {
+          errorMessage = 'NIK harus terdiri dari 16 digit angka.';
+        } else if (error.message.includes('NIK_NOT_FOUND')) {
+          errorMessage = 'NIK tidak terdaftar dalam database anggota. Silakan hubungi sekretariat PD Anda untuk mendaftarkan data terlebih dahulu.';
+        } else if (error.message.includes('NIK_ALREADY_USED')) {
+          errorMessage = 'NIK sudah terdaftar dan terhubung dengan akun lain. Jika ini adalah kesalahan, silakan hubungi administrator.';
+        }
+        
         toast({
           variant: "destructive",
           title: "Registrasi Gagal",
-          description: error.message || "Terjadi kesalahan saat menghubungi server"
+          description: errorMessage
         });
         setLoading(false);
         return;
@@ -101,10 +115,24 @@ export default function RegistrasiPage() {
 
       if (!data.success) {
         console.error('Registration failed:', data.error);
+        
+        let errorMessage = data.error || "Terjadi kesalahan saat registrasi";
+        
+        // Parse additional error cases from edge function
+        if (typeof errorMessage === 'string') {
+          if (errorMessage.includes('NIK') && errorMessage.includes('tidak terdaftar')) {
+            errorMessage = 'NIK tidak terdaftar dalam database anggota. Silakan hubungi sekretariat PD Anda.';
+          } else if (errorMessage.includes('NIK') && errorMessage.includes('sudah terdaftar')) {
+            errorMessage = 'NIK sudah terhubung dengan akun lain. Hubungi administrator jika ini kesalahan.';
+          } else if (errorMessage.includes('email') && (errorMessage.includes('sudah') || errorMessage.includes('already'))) {
+            errorMessage = 'Email sudah terdaftar. Silakan gunakan email lain atau login.';
+          }
+        }
+        
         toast({
           variant: "destructive",
           title: "Registrasi Gagal",
-          description: data.error || "Terjadi kesalahan saat registrasi"
+          description: errorMessage
         });
         setLoading(false);
         return;

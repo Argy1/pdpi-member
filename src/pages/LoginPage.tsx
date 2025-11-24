@@ -102,21 +102,32 @@ export default function LoginPage() {
       // Validate form data
       registerSchema.parse(registerData)
 
-      // Sign up with Supabase
+      // Sign up with Supabase - Pass NIK as 'nik' not 'name'
       const { data, error } = await supabase.auth.signUp({
         email: registerData.email,
         password: registerData.password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            name: registerData.name
+            nik: registerData.name  // Pass as 'nik' to match trigger expectations
           }
         }
       })
 
       if (error) {
-        if (error.message.includes("User already registered")) {
+        // Parse specific error messages from trigger
+        if (error.message.includes("REGISTRASI_HANYA_UNTUK_ANGGOTA")) {
+          setError("Pendaftaran hanya untuk anggota terdaftar. Silakan gunakan NIK Anda untuk mendaftar.")
+        } else if (error.message.includes("NIK_FORMAT_INVALID")) {
+          setError("NIK harus terdiri dari 16 digit angka.")
+        } else if (error.message.includes("NIK_NOT_FOUND")) {
+          setError("NIK tidak terdaftar dalam database anggota. Silakan hubungi sekretariat PD Anda untuk mendaftarkan data terlebih dahulu.")
+        } else if (error.message.includes("NIK_ALREADY_USED")) {
+          setError("NIK sudah terdaftar dan terhubung dengan akun lain. Jika ini adalah kesalahan, silakan hubungi administrator.")
+        } else if (error.message.includes("User already registered")) {
           setError("Email sudah terdaftar. Silakan gunakan email lain atau login.")
+        } else if (error.message.includes("Database error")) {
+          setError("Terjadi kesalahan database. Pastikan NIK Anda sudah terdaftar di sistem.")
         } else {
           setError(error.message)
         }
