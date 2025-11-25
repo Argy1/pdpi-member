@@ -532,10 +532,12 @@ export default function AdminMembers() {
                       <TableCell className="font-medium">{member.nama}</TableCell>
                       <TableCell>{member.npa}</TableCell>
                       <TableCell>{member.alumni || '-'}</TableCell>
-                      <TableCell>
-                        <code className="text-xs bg-muted px-2 py-1 rounded whitespace-nowrap">
-                          {member.nik || "-"}
-                        </code>
+                      <TableCell className="text-center">
+                        {member.nik ? (
+                          <Check className="h-5 w-5 text-green-600 inline-block" />
+                        ) : (
+                          <X className="h-5 w-5 text-red-500 inline-block" />
+                        )}
                       </TableCell>
                       <TableCell>{member.rumahSakit || member.tempat_tugas}</TableCell>
                       <TableCell>{member.kota_kabupaten_kantor || '-'}</TableCell>
