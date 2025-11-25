@@ -99,7 +99,7 @@ export default function PembayaranKolektif() {
 
     setSelectedMembers(new Map(selectedMembers.set(member.id, { 
       member, 
-      years: [new Date().getFullYear()] 
+      years: [2026] 
     })));
     
     toast({
@@ -203,8 +203,7 @@ export default function PembayaranKolektif() {
     return null;
   }
 
-  const currentYear = new Date().getFullYear();
-  const availableYears = Array.from({ length: 10 }, (_, i) => currentYear + i);
+  const availableYears = Array.from({ length: 7 }, (_, i) => 2026 + i);
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">

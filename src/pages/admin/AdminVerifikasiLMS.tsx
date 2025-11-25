@@ -25,7 +25,7 @@ export default function AdminVerifikasiLMS() {
   const [paidMembers, setPaidMembers] = useState<PaidMemberData[]>([]);
   
   // Filters
-  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [yearFilter, setYearFilter] = useState('2026');
   const [pdFilter, setPdFilter] = useState('all');
   const [branches, setBranches] = useState<any[]>([]);
 
@@ -271,9 +271,9 @@ export default function AdminVerifikasiLMS() {
               <Select value={yearFilter} onValueChange={setYearFilter}>
                 <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700">
                   <SelectValue placeholder="Pilih tahun" />
-                </SelectTrigger>
+              </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                  {Array.from({ length: 7 }, (_, i) => 2026 + i).map(year => (
                     <SelectItem key={year} value={year.toString()}>
                       {year}
                     </SelectItem>
