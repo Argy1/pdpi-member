@@ -27,7 +27,7 @@ export default function AdminIuranVerifikasiLMS() {
   const [paidMembers, setPaidMembers] = useState<PaidMemberData[]>([]);
   
   // Filters
-  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [yearFilter, setYearFilter] = useState('2026');
   const [pdFilter, setPdFilter] = useState('all');
   const [branches, setBranches] = useState<any[]>([]);
 
@@ -268,7 +268,7 @@ export default function AdminIuranVerifikasiLMS() {
                   <SelectValue placeholder="Pilih tahun" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                  {Array.from({ length: 7 }, (_, i) => 2026 + i).map(year => (
                     <SelectItem key={year} value={year.toString()}>
                       {year}
                     </SelectItem>

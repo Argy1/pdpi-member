@@ -25,7 +25,7 @@ export default function IuranSaya() {
   const { paymentGroups } = usePaymentGroups();
   const { dues, isPaidYear } = useMemberDues(myMember?.id);
 
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2026;
 
   // Redirect admins to admin iuran page
   useEffect(() => {

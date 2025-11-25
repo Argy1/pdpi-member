@@ -16,7 +16,7 @@ export default function AdminIuranLaporan() {
   const { isAdminPusat, branchId } = useAdminAccess();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [yearFilter, setYearFilter] = useState('2026');
   const [statusFilter, setStatusFilter] = useState('all');
   const [methodFilter, setMethodFilter] = useState('all');
   const [reportData, setReportData] = useState<any[]>([]);
@@ -126,8 +126,7 @@ export default function AdminIuranLaporan() {
     });
   };
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: 7 }, (_, i) => 2026 + i);
 
   return (
     <div className="space-y-6">

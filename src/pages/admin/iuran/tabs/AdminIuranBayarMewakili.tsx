@@ -161,11 +161,10 @@ export default function BayarMewakili() {
   const getAvailableYears = (memberId: string): number[] => {
     const dues = memberDues[memberId] || [];
     const paidYears = dues.filter(d => d.status === 'PAID').map(d => d.year);
-    const currentYear = new Date().getFullYear();
     const years: number[] = [];
     
-    for (let i = 0; i < 10; i++) {
-      const year = currentYear + i;
+    for (let i = 0; i < 7; i++) {
+      const year = 2026 + i;
       if (!paidYears.includes(year)) {
         years.push(year);
       }

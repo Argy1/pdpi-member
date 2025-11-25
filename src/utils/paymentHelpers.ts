@@ -28,11 +28,10 @@ export const calculateExpiry = (method: 'qris' | 'bank_transfer'): Date => {
 };
 
 export const getAvailableYears = (paidYears: number[]): number[] => {
-  const currentYear = new Date().getFullYear();
   const years: number[] = [];
   
-  for (let i = 0; i < 10; i++) {
-    const year = currentYear + i;
+  for (let i = 0; i < 7; i++) {
+    const year = 2026 + i;
     if (!paidYears.includes(year)) {
       years.push(year);
     }
