@@ -26,14 +26,32 @@ export const useMemberPaymentStatus = (year: number) => {
     try {
       setLoading(true);
 
-      // Fetch members dengan status AKTIF
+      // Fetch members dengan status AKTIF (tanpa filter cabang dulu)
       let membersQuery = supabase
         .from('members')
         .select('id, npa, nama, cabang, status, email, no_hp')
-        .eq('status', 'AKTIF')
+        .or('status.eq.AKTIF,status.eq.Aktif,status.is.null')
         .order('nama');
 
-      // Filter by branch for admin_cabang
+      const { data: membersData, error: membersError } = await membersQuery;
+
+      if (membersError) {
+        console.error('Error fetching members:', membersError);
+        throw membersError;
+      }
+
+      if (!membersData || membersData.length === 0) {
+        console.log('No members data found');
+        setMembers([]);
+        setStats({ total: 0, paid: 0, unpaid: 0 });
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetched members:', membersData.length);
+
+      // Filter by branch for admin_cabang on client side
+      let filteredMembers = membersData;
       if (isAdminCabang && branchId) {
         const { data: branchData } = await supabase
           .from('branches')
@@ -42,18 +60,9 @@ export const useMemberPaymentStatus = (year: number) => {
           .single();
         
         if (branchData?.name) {
-          membersQuery = membersQuery.eq('cabang', branchData.name);
+          filteredMembers = membersData.filter(m => m.cabang === branchData.name);
+          console.log('Filtered by branch:', branchData.name, filteredMembers.length);
         }
-      }
-
-      const { data: membersData, error: membersError } = await membersQuery;
-
-      if (membersError) throw membersError;
-
-      if (!membersData) {
-        setMembers([]);
-        setStats({ total: 0, paid: 0, unpaid: 0 });
-        return;
       }
 
       // Fetch payment status untuk tahun yang dipilih
@@ -62,14 +71,19 @@ export const useMemberPaymentStatus = (year: number) => {
         .select('member_id, status, paid_at')
         .eq('year', year);
 
-      if (duesError) throw duesError;
+      if (duesError) {
+        console.error('Error fetching dues:', duesError);
+        // Don't throw, just continue with empty dues
+      }
+
+      console.log('Fetched dues for year', year, ':', duesData?.length || 0);
 
       // Map payment status ke members
       const duesMap = new Map(
         (duesData || []).map(due => [due.member_id, { status: due.status, paid_at: due.paid_at }])
       );
 
-      const membersWithStatus: MemberPaymentStatus[] = membersData.map(member => {
+      const membersWithStatus: MemberPaymentStatus[] = filteredMembers.map(member => {
         const dueInfo = duesMap.get(member.id);
         return {
           ...member,
@@ -77,6 +91,8 @@ export const useMemberPaymentStatus = (year: number) => {
           paid_at: dueInfo?.paid_at || null,
         };
       });
+
+      console.log('Members with payment status:', membersWithStatus.length);
 
       setMembers(membersWithStatus);
 
@@ -93,19 +109,19 @@ export const useMemberPaymentStatus = (year: number) => {
       console.error('Error fetching member payment status:', error);
       toast({
         title: 'Error',
-        description: 'Gagal memuat status pembayaran anggota',
+        description: error.message || 'Gagal memuat status pembayaran anggota',
         variant: 'destructive',
       });
+      setMembers([]);
+      setStats({ total: 0, paid: 0, unpaid: 0 });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (isAdminPusat || isAdminCabang) {
-      fetchMemberPaymentStatus();
-    }
-  }, [year, isAdminPusat, isAdminCabang, branchId]);
+    fetchMemberPaymentStatus();
+  }, [year, branchId]);
 
   return {
     members,
