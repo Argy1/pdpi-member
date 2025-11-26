@@ -44,7 +44,7 @@ export default function AdminIuranLayout() {
           </TabsTrigger>
           <TabsTrigger value="rekonsiliasi" className="gap-2">
             <RefreshCcw className="h-4 w-4" />
-            <span className="hidden sm:inline">Rekonsiliasi</span>
+            <span className="hidden sm:inline">Status Iuran</span>
           </TabsTrigger>
           <TabsTrigger value="laporan" className="gap-2">
             <BarChart3 className="h-4 w-4" />
