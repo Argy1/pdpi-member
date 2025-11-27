@@ -11,6 +11,7 @@ import { useStats } from "@/hooks/useStats";
 import { getAllProvinces } from "@/utils/getAllProvinces";
 import logoImage from "@/assets/logo-pdpi.png";
 import { useTranslation } from "react-i18next";
+import { SEO } from "@/components/SEO";
 
 export default function Homepage() {
   const { t, i18n } = useTranslation();
@@ -29,7 +30,14 @@ export default function Homepage() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <>
+      <SEO 
+        title="PDPI - Perhimpunan Dokter Paru Indonesia | Direktori Anggota Dokter Spesialis Paru"
+        description="Direktori resmi anggota Perhimpunan Dokter Paru Indonesia (PDPI). Temukan dokter spesialis paru dan respirologi terpercaya di seluruh Indonesia. Informasi lengkap 1800+ dokter paru profesional."
+        keywords="PDPI, Perhimpunan Dokter Paru Indonesia, dokter paru, dokter spesialis paru, pulmonologist, respirologist, direktori dokter paru, dokter paru Indonesia, ISR, Indonesia Society of Respirology"
+        url="https://daftaranggota.pdpi.or.id/"
+      />
+      <div className="min-h-screen">
       {/* Hero Section */}
       <section className="section-spacing bg-gradient-subtle bg-grid">
         <div className="container-pdpi">
@@ -137,6 +145,7 @@ export default function Homepage() {
       </section>
 
       
-    </div>
+      </div>
+    </>
   );
 }
