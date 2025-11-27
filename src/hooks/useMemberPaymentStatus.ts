@@ -26,14 +26,37 @@ export const useMemberPaymentStatus = (year: number) => {
     try {
       setLoading(true);
 
-      // Fetch members dengan status Biasa (anggota reguler)
-      let membersQuery = supabase
-        .from('members')
-        .select('id, npa, nama, cabang, status, email, no_hp')
-        .eq('status', 'Biasa')
-        .order('nama');
+      // Fetch ALL members dengan status Biasa menggunakan pagination
+      // Supabase default limit adalah 1000, jadi kita perlu fetch semua dengan range
+      const pageSize = 1000;
+      let allMembers: any[] = [];
+      let from = 0;
+      let hasMore = true;
 
-      const { data: membersData, error: membersError } = await membersQuery;
+      while (hasMore) {
+        const { data: batch, error: batchError } = await supabase
+          .from('members')
+          .select('id, npa, nama, cabang, status, email, no_hp')
+          .eq('status', 'Biasa')
+          .order('nama')
+          .range(from, from + pageSize - 1);
+
+        if (batchError) {
+          console.error('Error fetching members batch:', batchError);
+          throw batchError;
+        }
+
+        if (batch && batch.length > 0) {
+          allMembers = [...allMembers, ...batch];
+          from += pageSize;
+          hasMore = batch.length === pageSize;
+        } else {
+          hasMore = false;
+        }
+      }
+
+      const membersData = allMembers;
+      const membersError = null;
 
       if (membersError) {
         console.error('Error fetching members:', membersError);
