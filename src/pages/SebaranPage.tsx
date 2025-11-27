@@ -15,6 +15,7 @@ import { exportMembersToExcel, getExportFilename } from "@/utils/exportMembers";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
+import { SEO } from "@/components/SEO";
 
 export default function SebaranPage() {
   const { toast } = useToast();
@@ -148,7 +149,14 @@ export default function SebaranPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-sky-50 dark:from-slate-950 dark:via-teal-950/20 dark:to-sky-950/20">
+    <>
+      <SEO 
+        title="Sebaran Anggota PDPI - Peta Distribusi Dokter Paru Indonesia"
+        description="Lihat sebaran dan distribusi dokter spesialis paru Indonesia di setiap provinsi. Statistik lengkap anggota PDPI berdasarkan lokasi, gender, dan cabang."
+        keywords="sebaran dokter paru, peta dokter paru Indonesia, distribusi pulmonologist, statistik PDPI, dokter paru per provinsi"
+        url="https://daftaranggota.pdpi.or.id/sebaran"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-sky-50 dark:from-slate-950 dark:via-teal-950/20 dark:to-sky-950/20">
       {/* Hero Header */}
       <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -270,6 +278,7 @@ export default function SebaranPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

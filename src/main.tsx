@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import "leaflet/dist/leaflet.css";
@@ -13,17 +14,19 @@ import "./i18n/config";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="light" storageKey="pdpi-ui-theme">
-      <AuthProvider>
-        <MemberSyncProvider>
-          <MemberProvider>
-            <ImportProvider>
-              <App />
-              <Toaster />
-            </ImportProvider>
-          </MemberProvider>
-        </MemberSyncProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider defaultTheme="light" storageKey="pdpi-ui-theme">
+        <AuthProvider>
+          <MemberSyncProvider>
+            <MemberProvider>
+              <ImportProvider>
+                <App />
+                <Toaster />
+              </ImportProvider>
+            </MemberProvider>
+          </MemberSyncProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </HelmetProvider>
   </StrictMode>
 );

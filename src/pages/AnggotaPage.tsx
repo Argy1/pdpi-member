@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { AnggotaAPI } from "@/pages/api/AnggotaAPI"
 import { ArrowUpDown, Users, RefreshCw, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import { SEO } from "@/components/SEO"
 
 export default function AnggotaPage() {
   const { t, i18n } = useTranslation();
@@ -234,7 +235,14 @@ export default function AnggotaPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <>
+      <SEO 
+        title="Direktori Anggota PDPI - Cari Dokter Spesialis Paru Indonesia"
+        description="Cari dan temukan dokter spesialis paru Indonesia dalam direktori resmi PDPI. Database lengkap 1800+ pulmonologist dan respirologist di seluruh Indonesia."
+        keywords="direktori dokter paru, cari dokter paru, dokter spesialis paru Indonesia, pulmonologist Indonesia, respirologist, PDPI, daftar dokter paru"
+        url="https://daftaranggota.pdpi.or.id/anggota"
+      />
+      <div className="min-h-screen">
       <div className="container-pdpi section-spacing">
         {/* Header */}
         <div className="space-y-6 mb-8">
@@ -390,6 +398,7 @@ export default function AnggotaPage() {
           />
         )}
       </div>
-    </div>
+      </div>
+    </>
   )
 }
