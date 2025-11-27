@@ -26,11 +26,11 @@ export const useMemberPaymentStatus = (year: number) => {
     try {
       setLoading(true);
 
-      // Fetch members dengan status AKTIF (tanpa filter cabang dulu)
+      // Fetch members dengan status Biasa (anggota reguler)
       let membersQuery = supabase
         .from('members')
         .select('id, npa, nama, cabang, status, email, no_hp')
-        .or('status.eq.AKTIF,status.eq.Aktif,status.is.null')
+        .eq('status', 'Biasa')
         .order('nama');
 
       const { data: membersData, error: membersError } = await membersQuery;
