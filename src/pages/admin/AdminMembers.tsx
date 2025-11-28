@@ -230,6 +230,7 @@ export default function AdminMembers() {
         .eq('id', memberId);
 
       if (error) {
+        console.error('Delete member error:', error);
         throw error;
       }
 
@@ -238,10 +239,11 @@ export default function AdminMembers() {
         title: 'Anggota dihapus',
         description: 'Data anggota berhasil dihapus dari sistem.',
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error deleting member:', error);
       toast({
         title: 'Error',
-        description: 'Gagal menghapus data anggota.',
+        description: error?.message || 'Gagal menghapus data anggota. Pastikan Anda memiliki akses admin_pusat.',
         variant: 'destructive',
       });
     }
