@@ -41,21 +41,39 @@ export default function PembayaranKolektif() {
     }
   }, [profile, navigate]);
 
-  // Load all members with status "Biasa" on mount
+  // Load all members with status "Biasa" on mount using pagination
   useEffect(() => {
     const loadMembers = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('members')
-          .select('id, npa, nama, cabang')
-          .eq('status', 'Biasa')
-          .order('nama', { ascending: true });
+        
+        // Fetch ALL members using pagination (Supabase default limit is 1000)
+        const pageSize = 1000;
+        let allMembersData: Member[] = [];
+        let from = 0;
+        let hasMore = true;
 
-        if (error) throw error;
+        while (hasMore) {
+          const { data: batch, error: batchError } = await supabase
+            .from('members')
+            .select('id, npa, nama, cabang')
+            .eq('status', 'Biasa')
+            .order('nama', { ascending: true })
+            .range(from, from + pageSize - 1);
 
-        setAllMembers(data || []);
-        setFilteredMembers(data || []);
+          if (batchError) throw batchError;
+
+          if (batch && batch.length > 0) {
+            allMembersData = [...allMembersData, ...batch];
+            from += pageSize;
+            hasMore = batch.length === pageSize;
+          } else {
+            hasMore = false;
+          }
+        }
+
+        setAllMembers(allMembersData);
+        setFilteredMembers(allMembersData);
       } catch (error: any) {
         console.error('Error loading members:', error);
         toast({

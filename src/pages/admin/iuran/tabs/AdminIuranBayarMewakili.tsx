@@ -48,29 +48,48 @@ export default function BayarMewakili() {
     }
   }, [profileLoading, isAdminPusat, isAdminCabang, navigate]);
 
-  // Load all members with status "Biasa" on mount
+  // Load all members with status "Biasa" on mount using pagination
   useEffect(() => {
     const loadMembers = async () => {
       if (!profile) return;
 
       try {
         setLoading(true);
-        let query = supabase
-          .from('members')
-          .select('id, npa, nama, cabang')
-          .eq('status', 'Biasa')
-          .order('nama', { ascending: true });
+        
+        // Fetch ALL members using pagination (Supabase default limit is 1000)
+        const pageSize = 1000;
+        let allMembersData: any[] = [];
+        let from = 0;
+        let hasMore = true;
 
-        // Filter by branch for admin_cabang
-        if (isAdminCabang && profile?.branches?.name) {
-          query = query.eq('cabang', profile.branches.name);
+        while (hasMore) {
+          let query = supabase
+            .from('members')
+            .select('id, npa, nama, cabang')
+            .eq('status', 'Biasa')
+            .order('nama', { ascending: true })
+            .range(from, from + pageSize - 1);
+
+          // Filter by branch for admin_cabang
+          if (isAdminCabang && profile?.branches?.name) {
+            query = query.eq('cabang', profile.branches.name);
+          }
+
+          const { data: batch, error: batchError } = await query;
+          
+          if (batchError) throw batchError;
+
+          if (batch && batch.length > 0) {
+            allMembersData = [...allMembersData, ...batch];
+            from += pageSize;
+            hasMore = batch.length === pageSize;
+          } else {
+            hasMore = false;
+          }
         }
 
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        setAllMembers(data || []);
-        setFilteredMembers(data || []);
+        setAllMembers(allMembersData);
+        setFilteredMembers(allMembersData);
       } catch (error: any) {
         toast({
           title: 'Error',
