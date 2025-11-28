@@ -154,7 +154,7 @@ export default function SebaranPage() {
         title="Sebaran Anggota PDPI - Peta Distribusi Dokter Paru Indonesia"
         description="Lihat sebaran dan distribusi dokter spesialis paru Indonesia di setiap provinsi. Statistik lengkap anggota PDPI berdasarkan lokasi, gender, dan cabang."
         keywords="sebaran dokter paru, peta dokter paru Indonesia, distribusi pulmonologist, statistik PDPI, dokter paru per provinsi"
-        url="https://daftaranggota.pdpi.or.id/sebaran"
+        url="https://pdpi-member.lovable.app/sebaran"
       />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-sky-50 dark:from-slate-950 dark:via-teal-950/20 dark:to-sky-950/20">
       {/* Hero Header */}

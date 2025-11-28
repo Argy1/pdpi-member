@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import logoImage from "@/assets/logo-pdpi.png"
 import { z } from "zod"
+import { SEO } from "@/components/SEO"
 
 // Validation schema
 const registerSchema = z.object({
@@ -223,8 +224,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle bg-grid">
-      <div className="container-pdpi py-8">
+    <>
+      <SEO 
+        title="Login - PDPI | Akses Sistem Keanggotaan"
+        description="Login ke sistem keanggotaan PDPI (Perhimpunan Dokter Paru Indonesia). Akses profil, iuran, dan layanan anggota."
+        keywords="login PDPI, masuk PDPI, akun anggota PDPI, sistem keanggotaan dokter paru"
+        url="https://pdpi-member.lovable.app/login"
+        noindex={true}
+      />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle bg-grid">
+        <div className="container-pdpi py-8">
         <div className="flex justify-center">
           <Card className="w-full max-w-md card-glass">
             <CardHeader className="text-center space-y-4">
@@ -537,7 +546,8 @@ export default function LoginPage() {
             </CardContent>
           </Card>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

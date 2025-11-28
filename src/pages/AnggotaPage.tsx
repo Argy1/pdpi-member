@@ -240,7 +240,7 @@ export default function AnggotaPage() {
         title="Direktori Anggota PDPI - Cari Dokter Spesialis Paru Indonesia"
         description="Cari dan temukan dokter spesialis paru Indonesia dalam direktori resmi PDPI. Database lengkap 1800+ pulmonologist dan respirologist di seluruh Indonesia."
         keywords="direktori dokter paru, cari dokter paru, dokter spesialis paru Indonesia, pulmonologist Indonesia, respirologist, PDPI, daftar dokter paru"
-        url="https://daftaranggota.pdpi.or.id/anggota"
+        url="https://pdpi-member.lovable.app/anggota"
       />
       <div className="min-h-screen">
       <div className="container-pdpi section-spacing">

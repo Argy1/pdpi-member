@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import { SEO } from '@/components/SEO';
 
 // Validation schema
 const registrationSchema = z.object({
@@ -162,8 +163,16 @@ export default function RegistrasiPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <>
+      <SEO 
+        title="Registrasi Anggota PDPI - Daftar Akun Baru"
+        description="Daftar akun baru untuk anggota PDPI (Perhimpunan Dokter Paru Indonesia). Registrasi menggunakan NIK untuk mengakses sistem keanggotaan."
+        keywords="registrasi PDPI, daftar anggota PDPI, buat akun PDPI, pendaftaran dokter paru"
+        url="https://pdpi-member.lovable.app/registrasi"
+        noindex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2 mb-2">
             <Button
@@ -326,6 +335,7 @@ export default function RegistrasiPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

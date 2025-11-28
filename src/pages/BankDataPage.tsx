@@ -8,6 +8,7 @@ import { EbookDetailModal } from '@/components/bankdata/EbookDetailModal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Book } from 'lucide-react';
 import { useEbooks, type Ebook } from '@/hooks/useEbooks';
+import { SEO } from '@/components/SEO';
 
 const BankDataPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -109,8 +110,15 @@ const BankDataPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <BankDataHero totalEbooks={ebooks.length} />
+    <>
+      <SEO 
+        title="Bank Data PDPI - Koleksi E-Book dan Publikasi Dokter Paru"
+        description="Akses koleksi e-book, panduan klinis, dan publikasi ilmiah PDPI. Sumber referensi terpercaya untuk dokter spesialis paru dan respirologi Indonesia."
+        keywords="bank data PDPI, e-book kedokteran paru, publikasi pulmonologi, panduan klinis paru, referensi dokter paru, PDPI ebook"
+        url="https://pdpi-member.lovable.app/bank-data"
+      />
+      <div className="min-h-screen bg-background">
+        <BankDataHero totalEbooks={ebooks.length} />
 
       <div className="container-pdpi py-8">
         <BankDataFilters
@@ -150,13 +158,14 @@ const BankDataPage = () => {
         )}
       </div>
 
-      <EbookDetailModal
-        ebook={selectedEbook}
-        open={!!selectedEbook}
-        onClose={() => setSelectedEbook(null)}
-        onDownload={handleDownload}
-      />
-    </div>
+        <EbookDetailModal
+          ebook={selectedEbook}
+          open={!!selectedEbook}
+          onClose={() => setSelectedEbook(null)}
+          onDownload={handleDownload}
+        />
+      </div>
+    </>
   );
 };
 
