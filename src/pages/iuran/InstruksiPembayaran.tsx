@@ -256,8 +256,8 @@ export default function InstruksiPembayaran() {
 
   const bankDetails = {
     bank: 'Bank Mega Syariah',
-    accountNumber: '010.01.0003.6734',
-    accountName: 'PDPI Pusat'
+    accountNumber: '1000-151-651',
+    accountName: 'Perhimpunan Dokter Paru Indonesia'
   };
 
   return (
