@@ -6,48 +6,48 @@
   
   <!-- Homepage -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   
   <!-- Direktori Anggota -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/anggota</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/anggota</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   
   <!-- Sebaran Anggota -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/sebaran</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/sebaran</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <!-- Bank Data -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/bank-data</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/bank-data</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <!-- Login -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/login</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/login</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <!-- Registrasi -->
   <url>
-    <loc>https://daftaranggota.pdpi.or.id/registrasi</loc>
-    <lastmod>2025-11-27</lastmod>
+    <loc>https://pdpi-member.lovable.app/registrasi</loc>
+    <lastmod>2025-11-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

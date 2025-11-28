@@ -10,7 +10,7 @@ interface SEOProps {
   noindex?: boolean;
 }
 
-const BASE_URL = 'https://daftaranggota.pdpi.or.id';
+const BASE_URL = 'https://pdpi-member.lovable.app';
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`;
 
 export const SEO = ({
