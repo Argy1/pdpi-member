@@ -3,9 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { MemberProvider } from "@/contexts/MemberContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AdminLayout } from "@/components/admin/AdminLayout";
@@ -47,11 +44,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="pdpi-theme">
-      <AuthProvider>
-        <MemberProvider>
-          <TooltipProvider>
-          <BrowserRouter>
+    <TooltipProvider>
+      <BrowserRouter>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={
@@ -203,11 +197,8 @@ const App = () => (
             <Toaster />
             <Sonner />
           </BrowserRouter>
-          </TooltipProvider>
-        </MemberProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
 );
 
 export default App;
