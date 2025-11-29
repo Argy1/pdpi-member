@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserDuesStatus } from '@/hooks/useUserDuesStatus';
 import { BankDataHero } from '@/components/bankdata/BankDataHero';
 import { BankDataFilters } from '@/components/bankdata/BankDataFilters';
 import { EbookCard } from '@/components/bankdata/EbookCard';
 import { EbookDetailModal } from '@/components/bankdata/EbookDetailModal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Book } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Book, Lock, CreditCard, AlertTriangle } from 'lucide-react';
 import { useEbooks, type Ebook } from '@/hooks/useEbooks';
 import { SEO } from '@/components/SEO';
 
 const BankDataPage = () => {
   const { user, loading: authLoading } = useAuth();
+  const { hasPaidDues, loading: duesLoading, isAdmin, memberData } = useUserDuesStatus();
   const navigate = useNavigate();
   const { fetchActiveEbooks, incrementDownload, getFileUrl, loading: ebooksLoading } = useEbooks();
   
@@ -31,12 +35,12 @@ const BankDataPage = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Fetch ebooks on mount
+  // Fetch ebooks on mount (only if has access)
   useEffect(() => {
-    if (user) {
+    if (user && !duesLoading && hasPaidDues) {
       loadEbooks();
     }
-  }, [user]);
+  }, [user, duesLoading, hasPaidDues]);
 
   const loadEbooks = async () => {
     const data = await fetchActiveEbooks();
@@ -93,7 +97,83 @@ const BankDataPage = () => {
     window.open(fileUrl, '_blank');
   };
 
-  if (authLoading || ebooksLoading) {
+  // Loading state
+  if (authLoading || duesLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container-pdpi py-8">
+          <Skeleton className="h-64 w-full rounded-2xl mb-8" />
+          <Skeleton className="h-32 w-full rounded-xl mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-96 w-full rounded-xl" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Access denied - user has not paid dues
+  if (!hasPaidDues && !isAdmin) {
+    return (
+      <>
+        <SEO 
+          title="Bank Data PDPI - Akses Terbatas"
+          description="Akses Bank Data PDPI memerlukan pembayaran iuran anggota."
+          url="https://pdpi-member.lovable.app/bank-data"
+        />
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <Card className="max-w-md w-full">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
+                <Lock className="h-8 w-8 text-destructive" />
+              </div>
+              <CardTitle className="text-xl">Akses Terbatas</CardTitle>
+              <CardDescription>
+                Bank Data hanya dapat diakses oleh anggota yang telah membayar iuran.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground">Status Iuran Anda: Belum Lunas</p>
+                    <p>Silakan lunasi iuran keanggotaan Anda untuk mendapatkan akses penuh ke Bank Data PDPI.</p>
+                  </div>
+                </div>
+              </div>
+
+              {memberData && (
+                <div className="text-sm text-muted-foreground border rounded-lg p-3">
+                  <p><span className="font-medium">Nama:</span> {memberData.nama}</p>
+                  {memberData.npa && <p><span className="font-medium">NPA:</span> {memberData.npa}</p>}
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
+                <Button asChild className="w-full">
+                  <Link to="/iuran-saya">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Bayar Iuran Sekarang
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild className="w-full">
+                  <Link to="/">
+                    Kembali ke Beranda
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
+  // Loading ebooks
+  if (ebooksLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container-pdpi py-8">
